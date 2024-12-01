@@ -1,64 +1,48 @@
 import axios from "axios";
 import { base_url, config } from "../../utils/axiosConfig";
-
-const getProducts = async (data) => {
-  console.log(data);
-  const response = await axios.get(
-    `${base_url}product?${data?.brand ? `brand=${data?.brand}&&` : ""}${
-      data?.tag ? `tags=${data?.tag}&&` : ""
-    }${data?.category ? `category=${data?.category}&&` : ""}${
-      data?.minPrice ? `price[gte]=${data?.minPrice}&&` : ""
-    }${data?.maxPrice ? `price[lte]=${data?.maxPrice}&&` : ""}${
-      data?.sort ? `sort=${data?.sort}&&` : ""
-    }`, {
-      headers: {
-        "ngrok-skip-browser-warning": "69420"
-      }
-    }
-  );
-
-  if (response.data) {
-    return response.data;
-  }
+import instance from "../../utils/axios-customize";
+const getProducts = async (query = "") => {
+  const response = await instance.get(`products?${query}`);
+  return response;
 };
 
 const getSingleProduct = async (id) => {
-  const response = await axios.get(`${base_url}product/${id}`,{
-    headers: {
-      "ngrok-skip-browser-warning": "69420"
-    }
-  });
-  if (response.data) {
-    return response.data;
+  const response = await instance.get(`products/${id}`);
+  if (response) {
+    return response;
   }
 };
 
 const addToWishlist = async (prodId) => {
-  const response = await axios.put(
+  const response = await instance.put(
     `${base_url}product/Wishlist`,
     { prodId },
     config
   );
-  if (response.data) {
-    return response.data;
+  if (response) {
+    return response;
   }
 };
 
 const rateProduct = async (data) => {
-  const response = await axios.put(`${base_url}product/rating`, data, config);
-  if (response.data) {
-    return response.data;
+  const response = await instance.put(
+    `${base_url}product/rating`,
+    data,
+    config
+  );
+  if (response) {
+    return response;
   }
 };
 
 const updateOrder = async (data) => {
-  const response = await axios.put(
+  const response = await instance.put(
     `${base_url}user/updateOrder/${data.id}`,
     { status: data.status },
     config
   );
 
-  return response.data;
+  return response;
 };
 
 export const productSevice = {

@@ -18,7 +18,7 @@ import {
 } from "../features/products/productSlilce";
 import { toast } from "react-toastify";
 import { addProdToCart, getUserCart } from "../features/user/userSlice";
-import './../Css/CssSingleProduct.css';
+import "./../Css/CssSingleProduct.css";
 
 const SingleProduct = () => {
   const [color, setColor] = useState(null);
@@ -70,8 +70,8 @@ const SingleProduct = () => {
     width: 594,
     height: 600,
     zoomWidth: 600,
-    img: productState?.images[0]?.url
-      ? productState?.images[0]?.url
+    img: productState?.images[0]
+      ? productState?.images[0]
       : "https://images.pexels.com/photos/190819/pexels-photo-190819.jpeg?cs=srgb&dl=pexels-fernando-arcos-190819.jpg&fm=jpg",
   };
 
@@ -149,7 +149,9 @@ const SingleProduct = () => {
   useEffect(() => {
     if (productState?.category) {
       const filteredProducts = productsState.filter(
-        (product) => product.category === productState.category && product._id !== getProductId
+        (product) =>
+          product.category === productState.category &&
+          product._id !== getProductId
       );
       setRelatedProducts(filteredProducts);
     }
@@ -162,7 +164,10 @@ const SingleProduct = () => {
     if (productState?.brand) {
       const categories = new Set();
       const filteredProducts = productsState.filter((product) => {
-        if (product.brand === productState.brand && product._id !== getProductId) {
+        if (
+          product.brand === productState.brand &&
+          product._id !== getProductId
+        ) {
           if (!categories.has(product.category)) {
             categories.add(product.category);
             return true;
@@ -174,7 +179,7 @@ const SingleProduct = () => {
     }
   }, [productState, productsState, getProductId]);
 
-// -------------------------------------------------------------
+  // -------------------------------------------------------------
   const [error, setError] = useState("");
 
   const handleQuantityChange = (e) => {
@@ -188,66 +193,58 @@ const SingleProduct = () => {
     }
   };
 
-
   return (
     <>
       <Meta title={"Product Name"} />
-      <BreadCrumb title={productState?.title} />
+      <BreadCrumb title={productState?.name} />
       <Container class1="main-product-wrapper py-5 home-wrapper-2">
         <div className="row">
-
-
-        <div className="col-6">
-          <div className="main-product-image">
-            <div className="image-container" style={{ position: "relative" }}>
-              {productState?.images[currentImageIndex]?.url && (
-                <ReactImageZoom
-                  {...props}
-                  img={productState?.images[currentImageIndex]?.url}
-                />
-              )}
+          <div className="col-6">
+            <div className="main-product-image">
+              <div className="image-container" style={{ position: "relative" }}>
+                {productState?.images[currentImageIndex] && (
+                  <ReactImageZoom
+                    {...props}
+                    img={productState?.images[currentImageIndex]}
+                  />
+                )}
                 <button
-                className="prev-button"
-                onClick={prevImage}
-                // style={prevButtonStyle}
-              >
-                &#10094;
-              </button>
-              <button
-                className="next-button"
-                onClick={nextImage}
-                //style={nextButtonStyle}
-              >
-                &#10095;
-              </button>
-
+                  className="prev-button"
+                  onClick={prevImage}
+                  // style={prevButtonStyle}
+                >
+                  &#10094;
+                </button>
+                <button
+                  className="next-button"
+                  onClick={nextImage}
+                  //style={nextButtonStyle}
+                >
+                  &#10095;
+                </button>
+              </div>
+            </div>
+            <div className="other-product-images d-flex flex-wrap gap-3 justify-content-center mt-3">
+              {productState?.images.map((item, index) => (
+                <div
+                  key={index}
+                  className="image-thumbnail"
+                  onClick={() => setCurrentImageIndex(index)}
+                >
+                  <img
+                    src={item}
+                    className="img-fluid thumbnail-img"
+                    alt={`Product Thumbnail ${index + 1}`}
+                  />
+                </div>
+              ))}
             </div>
           </div>
-          <div className="other-product-images d-flex flex-wrap gap-3 justify-content-center mt-3">
-            {productState?.images.map((item, index) => (
-              <div
-                key={index}
-                className="image-thumbnail"
-                onClick={() => setCurrentImageIndex(index)}
-              >
-                <img
-                  src={item?.url}
-                  className="img-fluid thumbnail-img"
-                  alt={`Product Thumbnail ${index + 1}`}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-
-
-
-
 
           <div className="col-6">
             <div className="main-product-details">
               <div className="border-bottom">
-                <h3 className="title">{productState?.title}</h3>
+                <h3 className="title">{productState?.name}</h3>
               </div>
               <div className="border-bottom py-3">
                 <p className="price">
@@ -298,7 +295,7 @@ const SingleProduct = () => {
                   <div className="d-flex gap-10 flex-column mt-2 mb-3">
                     <Color
                       setColor={setColor}
-                      colorData={productState?.color}
+                      colorData={productState?.colors}
                     />
                   </div>
                 )}
@@ -307,17 +304,17 @@ const SingleProduct = () => {
                   <h3 className="product-heading">Số lượng :</h3>
                   {alreadyAdded === false && (
                     <div className="">
-                    <input
-                      type="number"
-                      min={1}
-                      max={10}
-                      className="form-control"
-                      style={{ width: "70px" }}
-                      // onChange={(e) => setQuantity(e.target.value)}
-                      onChange={handleQuantityChange}
-                      value={quantity}
-                    />
-                     {error && <small className="text-danger">{error}</small>}
+                      <input
+                        type="number"
+                        min={1}
+                        max={10}
+                        className="form-control"
+                        style={{ width: "70px" }}
+                        // onChange={(e) => setQuantity(e.target.value)}
+                        onChange={handleQuantityChange}
+                        value={quantity}
+                      />
+                      {error && <small className="text-danger">{error}</small>}
                     </div>
                   )}
                   <div
@@ -333,23 +330,23 @@ const SingleProduct = () => {
                         alreadyAdded ? navigate("/cart") : uploadCart();
                       }}
                     >
-                      {alreadyAdded ? "sản phẩm vào giỏ hàng" : "Thêm sản phẩm vào giỏ hàng "}
+                      {alreadyAdded
+                        ? "sản phẩm vào giỏ hàng"
+                        : "Thêm sản phẩm vào giỏ hàng "}
                     </button>
                   </div>
                 </div>
                 <div className="d-flex align-items-center gap-15">
-                  <div>
-                    
-                  </div>
+                  <div></div>
                 </div>
                 <div className="d-flex gap-10 flex-column  my-3">
                   <h3 className="product-heading">Vận chuyển & Đổi trả :</h3>
                   <p className="product-data">
-                    Miễn phí vận chuyển và đổi trả cho tất cả các đơn hàng! <br /> Chúng tôi
-                    sẽ giao tất cả các đơn hàng nội địa Việt Nam trong vòng
+                    Miễn phí vận chuyển và đổi trả cho tất cả các đơn hàng!{" "}
+                    <br /> Chúng tôi sẽ giao tất cả các đơn hàng nội địa Việt
+                    Nam trong vòng
                     <b> 5-10 ngày làm việc!</b>
                   </p>
-
                 </div>
                 <div className="d-flex gap-10 align-items-center my-3">
                   <h3 className="product-heading">Link sản phẩm:</h3>
@@ -442,7 +439,7 @@ const SingleProduct = () => {
                     className="button border-0"
                     type="button"
                   >
-                   Gửi đánh giá
+                    Gửi đánh giá
                   </button>
                 </div>
               </div>
@@ -490,7 +487,7 @@ const SingleProduct = () => {
           <ProductCard data={popularProduct} />
         </div>
       </Container>
-      
+
       <Container class1="related-wrapper py-5 home-wrapper-2">
         <div className="row">
           <div className="col-12">
@@ -508,7 +505,7 @@ const SingleProduct = () => {
 const prevButtonStyle = {
   position: "absolute",
   top: "50%",
-  left: "10px",  // Adjust this value to move the button further to the left
+  left: "10px", // Adjust this value to move the button further to the left
   transform: "translateY(-50%)",
   backgroundColor: "rgba(0, 0, 0, 0.5)",
   color: "white",
@@ -521,7 +518,7 @@ const prevButtonStyle = {
 const nextButtonStyle = {
   position: "absolute",
   top: "50%",
-  right: "10px",  // Adjust this value to move the button further to the right
+  right: "10px", // Adjust this value to move the button further to the right
   transform: "translateY(-50%)",
   backgroundColor: "rgba(0, 0, 0, 0.5)",
   color: "white",

@@ -4,7 +4,10 @@ import Meta from "../components/Meta";
 import BlogCard from "../components/BlogCard";
 import Container from "../components/Container";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllBlogs as fetchAllBlogs, getBlogCategories } from "../features/blogs/blogSlice";
+import {
+  getAllBlogs as fetchAllBlogs,
+  getBlogCategories,
+} from "../features/blogs/blogSlice";
 import moment from "moment";
 
 const Blog = () => {
@@ -66,8 +69,10 @@ const Blog = () => {
                       id={item?._id}
                       title={item?.title}
                       description={item?.description}
-                      image={item?.images[0]?.url}
-                      date={moment(item?.createdAt).format("MMMM Do YYYY, h:mm a")}
+                      image={item?.images[0]}
+                      date={moment(item?.createdAt).format(
+                        "MMMM Do YYYY, h:mm a"
+                      )}
                     />
                   </div>
                 ))}

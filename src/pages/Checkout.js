@@ -14,7 +14,7 @@ import {
 } from "../features/user/userSlice";
 import DiscountCodeModal from "../components/DiscountCodeModal"; // Corrected path
 import "bootstrap/dist/css/bootstrap.min.css";
-import './../Css/CssCheckout.css';
+import "./../Css/CssCheckout.css";
 
 let shippingSchema = yup.object({
   firstname: yup.string().required("First Name is Required"),
@@ -29,8 +29,6 @@ let shippingSchema = yup.object({
 const Checkout = () => {
   const dispatch = useDispatch();
   const userState = useSelector((state) => state.auth.user);
-
-  console.log("🚀 ~ file: Checkout.js:33 ~ Checkout ~ userState:", userState);
 
   const cartState = useSelector((state) => state?.auth?.cartProducts);
   const authState = useSelector((state) => state?.auth);
@@ -61,8 +59,8 @@ const Checkout = () => {
       Authorization: `Bearer ${
         getTokenFromLocalStorage !== null ? getTokenFromLocalStorage.token : ""
       }`,
-      Accept: 'application/json',
-      "ngrok-skip-browser-warning": "69420"
+      Accept: "application/json",
+      "ngrok-skip-browser-warning": "69420",
     },
   };
 
@@ -105,7 +103,7 @@ const Checkout = () => {
   const checkOutHandler = async (shippingInfo) => {
     try {
       const result = await axios.post(
-        'http://localhost:5000/api/user/order/checkout',
+        "http://localhost:5000/api/user/order/checkout",
         {
           amount: totalAmount + shippingCost - discountAmount,
           orderInfo: "Order from A2K",
@@ -413,7 +411,6 @@ const Checkout = () => {
                   />
                 </div>
 
-                
                 <div className="w-100">
                   <h4 className="mb-3">Phương thức thanh toán</h4>
                   <div className="form-check">
@@ -528,9 +525,8 @@ const Checkout = () => {
                       }
                     />
                     <label className="form-check-label" htmlFor="economy">
-                      Economy: 15,000₫
-                      (HCM: 4 - 7 days / Nationwide: 7 - 10 days)
-                      
+                      Economy: 15,000₫ (HCM: 4 - 7 days / Nationwide: 7 - 10
+                      days)
                     </label>
                   </div>
                   <div className="form-check">
@@ -546,8 +542,8 @@ const Checkout = () => {
                       }
                     />
                     <label className="form-check-label" htmlFor="standard">
-                      Standard: 30,000₫
-                      (HCM: 2 - 3 days / Nationwide: 5 - 7 days)
+                      Standard: 30,000₫ (HCM: 2 - 3 days / Nationwide: 5 - 7
+                      days)
                     </label>
                   </div>
                   <div className="form-check">
@@ -563,8 +559,7 @@ const Checkout = () => {
                       }
                     />
                     <label className="form-check-label" htmlFor="express">
-                      Express: 60,000₫
-                      (HCM: 24 hours / Nationwide: 2 - 3 days)
+                      Express: 60,000₫ (HCM: 24 hours / Nationwide: 2 - 3 days)
                     </label>
                   </div>
                 </div>
@@ -613,17 +608,13 @@ const Checkout = () => {
                   onChange={(e) => setDiscountCode(e.target.value)}
                 />
                 <button
-                
                   className="button apply-discount-btn w-100 w-md-auto"
                   onClick={handleDiscountCode}
                 >
                   Áp dụng mã giảm giá
                 </button>
               </div>
-
             </div>
-
-
           </div>
         </div>
       </Container>

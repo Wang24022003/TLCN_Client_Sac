@@ -1,8 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { addToWishlist, toggleCompare } from "../features/products/productSlilce";
-import { AiFillHeart, AiOutlineHeart, AiOutlinePlusCircle } from "react-icons/ai";
+import {
+  addToWishlist,
+  toggleCompare,
+} from "../features/products/productSlilce";
+import {
+  AiFillHeart,
+  AiOutlineHeart,
+  AiOutlinePlusCircle,
+} from "react-icons/ai";
 import ReactStars from "react-rating-stars-component";
 
 const ProductCard = (props) => {
@@ -12,7 +19,9 @@ const ProductCard = (props) => {
   const location = useLocation();
 
   const wishlistState = useSelector((state) => state?.auth?.wishlist?.wishlist);
-  const compareState = useSelector((state) => state?.product?.compareList || []);
+  const compareState = useSelector(
+    (state) => state?.product?.compareList || []
+  );
 
   const [wishlist, setWishlist] = useState(wishlistState || []);
   const [compareList, setCompareList] = useState(compareState);
@@ -25,8 +34,10 @@ const ProductCard = (props) => {
     setCompareList(compareState);
   }, [compareState]);
 
-  const isProductInWishlist = (productId) => wishlist.some((item) => item._id === productId);
-  const isProductInCompareList = (productId) => compareList.some((item) => item._id === productId);
+  const isProductInWishlist = (productId) =>
+    wishlist.some((item) => item._id === productId);
+  const isProductInCompareList = (productId) =>
+    compareList.some((item) => item._id === productId);
 
   const handleWishlistToggle = (productId) => {
     dispatch(addToWishlist(productId));
@@ -43,27 +54,36 @@ const ProductCard = (props) => {
         const isCompare = isProductInCompareList(item._id);
 
         return (
-          <div key={index} className={` ${location.pathname === "/product" ? `gr-${grid}` : "col-3"} `}>
+          <div
+            key={index}
+            className={` ${
+              location.pathname === "/product" ? `gr-${grid}` : "col-3"
+            } `}
+          >
             <div className="product-card position-relative">
               <div className="wishlist-icon position-absolute">
                 <button
                   className="border-0 bg-transparent"
                   onClick={() => handleWishlistToggle(item?._id)}
                 >
-                  {isWishlist ? <AiFillHeart className="fs-5 me-1" /> : <AiOutlineHeart className="fs-5 me-1" />}
+                  {isWishlist ? (
+                    <AiFillHeart className="fs-5 me-1" />
+                  ) : (
+                    <AiOutlineHeart className="fs-5 me-1" />
+                  )}
                 </button>
               </div>
 
               <div className="product-image">
                 <img
-                  src={item?.images[0]?.url}
+                  src={item?.images[0]}
                   alt="product"
                   height={"250px"}
                   width={"100%"}
                   onClick={() => navigate("/product/" + item?._id)}
                 />
                 <img
-                  src={item?.images[0]?.url}
+                  src={item?.images[0]}
                   alt="product"
                   height={"250px"}
                   width={"100%"}
@@ -73,14 +93,33 @@ const ProductCard = (props) => {
 
               <div className="product-details">
                 <h6 className="brand">{item?.brand}</h6>
-                <h5 className="product-title">{grid === 12 || grid === 6 ? item?.title : item?.title?.substr(0, 80) + "..."}</h5>
-                <ReactStars count={5} size={24} value={item?.totalrating} edit={false} activeColor="#ffd700" />
-                <p className="price">{item?.price && `${item.price.toLocaleString('vi-VN')}đ`}</p>
+                <h5 className="product-title">
+                  {grid === 12 || grid === 6
+                    ? item?.name
+                    : item?.name?.substr(0, 80) + "..."}
+                </h5>
+                <ReactStars
+                  count={5}
+                  size={24}
+                  value={item?.totalrating}
+                  edit={false}
+                  activeColor="#ffd700"
+                />
+                <p className="price">
+                  {item?.price && `${item.price.toLocaleString("vi-VN")}đ`}
+                </p>
               </div>
               <div className="action-bar position-absolute">
                 <div className="d-flex flex-column gap-15">
-                  <button className="border-0 bg-transparent" onClick={() => addToCompare(item?._id)}>
-                    <AiOutlinePlusCircle className={`fs-5 ${isCompare ? 'text-danger' : 'text-dark'}`} />
+                  <button
+                    className="border-0 bg-transparent"
+                    onClick={() => addToCompare(item?._id)}
+                  >
+                    <AiOutlinePlusCircle
+                      className={`fs-5 ${
+                        isCompare ? "text-danger" : "text-dark"
+                      }`}
+                    />
                   </button>
                 </div>
               </div>

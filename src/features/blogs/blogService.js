@@ -1,25 +1,16 @@
-import axios from "axios";
-import { base_url, config } from "../../utils/axiosConfig";
+import instance from "../../utils/axios-customize";
 
 const getBlogs = async () => {
-  const response = await axios.get(`${base_url}blog`, {
-    headers: {
-      "ngrok-skip-browser-warning": "69420"
-    }
-  });
-  if (response.data) {
-    return response.data;
+  const response = await instance.get(`blog`);
+  if (response) {
+    return response;
   }
 };
 
 const getBlog = async (id) => {
-  const response = await axios.get(`${base_url}blog/${id}`, {
-    headers: {
-      "ngrok-skip-browser-warning": "69420"
-    }
-  });
-  if (response.data) {
-    return response.data;
+  const response = await instance.get(`blog/${id}`);
+  if (response) {
+    return response;
   }
 };
 

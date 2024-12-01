@@ -4,6 +4,7 @@ import ReactStars from "react-rating-stars-component";
 
 const Compare = () => {
   const compareList = useSelector((state) => state.product.compareList);
+  console.log("🚀 ~ Compare ~ compareList:", compareList);
 
   return (
     <div className="container py-5">
@@ -16,7 +17,7 @@ const Compare = () => {
             <tr>
               <th>Thuộc tính</th>
               {compareList.map((product) => (
-                <th key={product._id}>{product.title}</th>
+                <th key={product._id}>{product.name}</th>
               ))}
             </tr>
           </thead>
@@ -24,7 +25,9 @@ const Compare = () => {
             <tr>
               <td>Giá</td>
               {compareList.map((product) => (
-                <td key={product._id}>{product.price.toLocaleString('vi-VN')}đ</td>
+                <td key={product._id}>
+                  {product.price.toLocaleString("vi-VN")}đ
+                </td>
               ))}
             </tr>
             <tr>
@@ -32,7 +35,7 @@ const Compare = () => {
               {compareList.map((product) => (
                 <td key={product._id}>
                   <img
-                    src={product?.images[0]?.url}
+                    src={product?.images[0]}
                     style={{ width: "300px", height: "200px" }}
                   />
                 </td>
@@ -48,7 +51,13 @@ const Compare = () => {
               <td>Đánh giá</td>
               {compareList.map((product) => (
                 <td key={product._id}>
-                  <ReactStars count={5} size={24} value={product.totalrating} edit={false} activeColor="#ffd700" />
+                  <ReactStars
+                    count={5}
+                    size={24}
+                    value={product.totalrating}
+                    edit={false}
+                    activeColor="#ffd700"
+                  />
                 </td>
               ))}
             </tr>
@@ -58,16 +67,28 @@ const Compare = () => {
                 <td key={product._id}>
                   {product.title === "iPhone 15 Pro Max" ? (
                     <div>
-                      <p><strong>Đặc điểm nổi bật của iPhone 15 Pro Max:</strong></p>
-                      <p>• Tăng độ cứng cáp và tối ưu khối lượng với chất liệu Titan</p>
-                      <p>• Bứt phá mọi giới hạn về hiệu năng nhờ chip A17 Pro</p>
+                      <p>
+                        <strong>Đặc điểm nổi bật của iPhone 15 Pro Max:</strong>
+                      </p>
+                      <p>
+                        • Tăng độ cứng cáp và tối ưu khối lượng với chất liệu
+                        Titan
+                      </p>
+                      <p>
+                        • Bứt phá mọi giới hạn về hiệu năng nhờ chip A17 Pro
+                      </p>
                       <p>• Phiên bản duy nhất cải tiến camera tele 5x</p>
                       <p>• Tích hợp camera 48 MP</p>
                       <p>• Nút tác vụ (Action Button) thay thế cần gạt rung</p>
-                      <p>• Chuyển đổi cổng sạc USB-C, truyền tải dữ liệu tốc độ cao</p>
+                      <p>
+                        • Chuyển đổi cổng sạc USB-C, truyền tải dữ liệu tốc độ
+                        cao
+                      </p>
                     </div>
                   ) : (
-                    <p dangerouslySetInnerHTML={{ __html: product.description }}></p>
+                    <p
+                      dangerouslySetInnerHTML={{ __html: product.description }}
+                    ></p>
                   )}
                 </td>
               ))}

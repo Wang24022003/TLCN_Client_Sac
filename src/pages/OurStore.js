@@ -6,10 +6,13 @@ import ProductCard from "../components/ProductCard";
 import Color from "../components/Color";
 import Container from "../components/Container";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllProducts, clearCompareList } from "../features/products/productSlilce";
+import {
+  getAllProducts,
+  clearCompareList,
+} from "../features/products/productSlilce";
 import { Link } from "react-router-dom";
 import { Modal, Button } from "react-bootstrap";
-import './../Css/CssOurStore.css';
+import "./../Css/CssOurStore.css";
 
 const OurStore = () => {
   const [grid, setGrid] = useState(4);
@@ -29,7 +32,6 @@ const OurStore = () => {
     let newBrands = [];
     let category = [];
     let newtags = [];
-    console.log("check",productState)
 
     for (let index = 0; index < productState?.length; index++) {
       const element = productState[index];
@@ -44,17 +46,36 @@ const OurStore = () => {
 
   const dispatch = useDispatch();
   useEffect(() => {
-    getProducts();
+    let query = ``;
+
+    if (category) {
+      query += `category=/${category}/i`;
+    }
+    if (tag) {
+      query += `&tags=/${tag}/i`;
+    }
+    if (brand) {
+      query += `&brand=/${brand}/i`;
+    }
+    if (minPrice) {
+      query += `&price>=${minPrice}`;
+    }
+    if (maxPrice) {
+      query += `price<=${maxPrice}`;
+    }
+    if (sort) {
+      query += `&sort=${sort}`;
+    }
+
+    //
+    getProducts(query);
   }, [sort, tag, brand, category, minPrice, maxPrice]);
-  const getProducts = () => {
-    dispatch(
-      getAllProducts({ sort, tag, brand, category, minPrice, maxPrice })
-    );
+  const getProducts = (query = "") => {
+    dispatch(getAllProducts(query));
   };
   const handleShowModal = () => setShowModal(true); // Mở modal
   const handleCloseModal = () => setShowModal(false); // Đóng modal
 
-  
   return (
     <>
       <Meta title={"Our Store"} />
@@ -170,8 +191,8 @@ const OurStore = () => {
                     id=""
                     onChange={(e) => setSort(e.target.value)}
                   >
-                    <option value="title">A-Z</option>
-                    <option value="-title">Z-A</option>
+                    <option value="name">A-Z</option>
+                    <option value="-name">Z-A</option>
                     <option value="price">Giá Thấp - Cao</option>
                     <option value="-price">Giá Cao - Thấp</option>
                     <option value="createdAt">Ngày Cũ - Mới</option>
@@ -224,9 +245,9 @@ const OurStore = () => {
             {compareList.length > 0 && (
               <div className="compare-section mb-4 d-flex justify-content-end">
                 {/* Nút so sánh sản phẩm căn lề phải với màu xám nền và chữ đỏ nháy */}
-                <Button 
-                  variant="primary" 
-                  onClick={handleShowModal} 
+                <Button
+                  variant="primary"
+                  onClick={handleShowModal}
                   className="blink-effect"
                 >
                   So sánh sản phẩm
@@ -238,11 +259,21 @@ const OurStore = () => {
                   <Modal.Body>
                     <div className="d-flex gap-3 overflow-auto">
                       {compareList.map((item) => (
-                        <div key={item._id} className="card" style={{ width: "18rem" }}>
-                          <img src={item.images[0]?.url} className="card-img-top" alt={item.title} />
+                        <div
+                          key={item._id}
+                          className="card"
+                          style={{ width: "18rem" }}
+                        >
+                          <img
+                            src={item.images[0]}
+                            className="card-img-top"
+                            alt={item.name}
+                          />
                           <div className="card-body">
-                            <h5 className="card-title">{item.title}</h5>
-                            <p className="card-text">{item.price.toLocaleString('vi-VN')}đ</p>
+                            <h5 className="card-title">{item.name}</h5>
+                            <p className="card-text">
+                              {item.price.toLocaleString("vi-VN")}đ
+                            </p>
                             {/* <button
                               onClick={() => dispatch(clearCompareList(item._id))} 
                               className="btn-close position-absolute top-0 end-0"
@@ -254,7 +285,9 @@ const OurStore = () => {
                     </div>
                   </Modal.Body>
                   <Modal.Footer>
-                    <Link to="/compare" className="btn btn-primary">So sánh ngay</Link>
+                    <Link to="/compare" className="btn btn-primary">
+                      So sánh ngay
+                    </Link>
                     <button
                       onClick={() => dispatch(clearCompareList())}
                       className="btn btn-secondary ms-2"
@@ -266,8 +299,6 @@ const OurStore = () => {
               </div>
             )}
 
-
-
             <div className="products-list pb-5">
               <div className="d-flex gap-10 flex-wrap">
                 <ProductCard
@@ -276,7 +307,6 @@ const OurStore = () => {
                 />
               </div>
             </div>
-            
           </div>
         </div>
       </Container>

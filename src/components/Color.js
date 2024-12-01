@@ -11,7 +11,12 @@ const Color = ({ colorData, setColor }) => {
   return (
     <>
       <div className="color-selection">
-        <span>Color: {selectedColor ? colorData.find(color => color._id === selectedColor)?.title : "None"}</span>
+        <span>
+          Color:{" "}
+          {selectedColor
+            ? colorData.find((color) => color._id === selectedColor)?.color
+            : "None"}
+        </span>
         <ul className="colors ps-0">
           {colorData &&
             colorData.map((item, index) => (
@@ -19,8 +24,9 @@ const Color = ({ colorData, setColor }) => {
                 key={index}
                 onClick={() => handleColorClick(item)}
                 style={{
-                  backgroundColor: item.title,
-                  border: selectedColor === item._id ? "2px solid black" : "none",
+                  backgroundColor: item.color,
+                  border:
+                    selectedColor === item._id ? "2px solid black" : "none",
                   borderRadius: "50%",
                   width: "24px",
                   height: "24px",
@@ -31,7 +37,16 @@ const Color = ({ colorData, setColor }) => {
               ></li>
             ))}
         </ul>
-        {selectedColor && <button onClick={() => { setSelectedColor(null); setColor(null); }}>× Clear</button>}
+        {selectedColor && (
+          <button
+            onClick={() => {
+              setSelectedColor(null);
+              setColor(null);
+            }}
+          >
+            × Clear
+          </button>
+        )}
       </div>
     </>
   );

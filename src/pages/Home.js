@@ -1,30 +1,16 @@
 import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Marquee from "react-fast-marquee";
 import BlogCard from "../components/BlogCard";
-import ProductCard from "../components/ProductCard";
 import SpecialProduct from "../components/SpecialProduct";
 import Container from "../components/Container";
 import { services } from "../utils/Data";
-import prodcompare from "../images/prodcompare.svg";
 import wish from "../images/wish.svg";
-import wishlist from "../images/wishlist.svg";
-import watch from "../images/watch.jpg";
-import watch2 from "../images/watch-1.avif";
-import addcart from "../images/add-cart.svg";
-import view from "../images/view.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllBlogs } from "../features/blogs/blogSlice";
 import moment from "moment";
 import { getAllProducts } from "../features/products/productSlilce";
 import ReactStars from "react-rating-stars-component";
 import { addToWishlist } from "../features/products/productSlilce";
-import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
-// import Home1 from "../../public/images/Home1.jpg";
-// import Home2 from "../../public/images/Home2.jpg";
-// import Home3 from "../../public/images/Home3.jpg";
-// import Home4 from "../../public/images/Home4.jpg";
-
 const Home = () => {
   const blogState = useSelector((state) => state?.blog?.blog);
   const productState = useSelector((state) => state?.product?.product);
@@ -49,7 +35,7 @@ const Home = () => {
   };
   return (
     <>
-     <Container className="home-wrapper-1 py-5">
+      <Container className="home-wrapper-1 py-5">
         <div
           style={{
             display: "flex",
@@ -57,7 +43,7 @@ const Home = () => {
             alignItems: "flex-start",
             gap: "20px",
             flexWrap: "wrap",
-            marginBottom:"26px",
+            marginBottom: "26px",
           }}
         >
           {/* Ảnh 1 */}
@@ -84,7 +70,9 @@ const Home = () => {
                 objectFit: "cover",
                 transition: "transform 0.3s ease",
               }}
-              onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+              onMouseOver={(e) =>
+                (e.currentTarget.style.transform = "scale(1.05)")
+              }
               onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
             />
           </div>
@@ -113,13 +101,12 @@ const Home = () => {
                 objectFit: "cover",
                 transition: "transform 0.3s ease",
               }}
-              onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+              onMouseOver={(e) =>
+                (e.currentTarget.style.transform = "scale(1.05)")
+              }
               onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
-
             />
           </div>
-
-          
 
           {/* Ảnh 3 */}
           <div
@@ -145,9 +132,10 @@ const Home = () => {
                 objectFit: "cover",
                 transition: "transform 0.3s ease",
               }}
-              onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+              onMouseOver={(e) =>
+                (e.currentTarget.style.transform = "scale(1.05)")
+              }
               onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
-
             />
           </div>
 
@@ -175,7 +163,9 @@ const Home = () => {
                 objectFit: "cover",
                 transition: "transform 0.3s ease",
               }}
-              onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+              onMouseOver={(e) =>
+                (e.currentTarget.style.transform = "scale(1.05)")
+              }
               onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
             />
           </div>
@@ -204,7 +194,9 @@ const Home = () => {
                 objectFit: "cover",
                 transition: "transform 0.3s ease",
               }}
-              onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+              onMouseOver={(e) =>
+                (e.currentTarget.style.transform = "scale(1.05)")
+              }
               onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
             />
           </div>
@@ -226,9 +218,6 @@ const Home = () => {
           `}
         </style>
       </Container>
-
-
-
 
       <Container class1="home-wrapper-2 py-1">
         <div className="row">
@@ -273,14 +262,14 @@ const Home = () => {
                       </div>
                       <div className="product-image">
                         <img
-                          src={item?.images[0]?.url}
+                          src={item?.images[0]}
                           alt="product image"
                           height={"250px"}
                           width={"260px"}
                           onClick={() => navigate("/product/" + item?._id)}
                         />
                         <img
-                          src={item?.images[0]?.url}
+                          src={item?.images[0]}
                           alt="product image"
                           height={"250px"}
                           width={"260px"}
@@ -290,17 +279,18 @@ const Home = () => {
                       <div className="product-details">
                         <h6 className="brand">{item?.brand}</h6>
                         <h5 className="product-title">
-                          {item?.title?.substr(0, 70) + "..."}
+                          {item?.name?.substr(0, 70) + "..."}
                         </h5>
                         <ReactStars
                           count={5}
                           size={24}
-                          value={item?.totalrating.toString()}
+                          value={item?.rating.toString()}
                           edit={false}
                           activeColor="#ffd700"
                         />
                         <p className="price">
-                          {item?.price ? (item.price).toLocaleString('vi-VN') : 0}₫
+                          {item?.price ? item.price.toLocaleString("vi-VN") : 0}
+                          ₫
                         </p>
                       </div>
                     </div>
@@ -311,7 +301,6 @@ const Home = () => {
         </div>
       </Container>
 
-      
       <Container class1="famous-wrapper py-1 home-wrapper-2">
         <div className="row">
           <div className="col-3">
@@ -336,19 +325,30 @@ const Home = () => {
                 alt="famous"
               />
               <div className="famous-content position-absolute">
-                <h5 className="text-dark"
-                style={{
-                  textShadow: "2px 2px 5px rgba(0, 0, 0, 0.7)"  // Thêm bóng cho chữ
-                }}>Ấn tượng</h5>
-                <h6 className="text-dark" 
-                style={{
-                  textShadow: "2px 2px 5px rgba(0, 0, 0, 0.6)"  // Thêm bóng cho chữ
-                }}>
-                Đa dạng màu sắc.</h6>
-                <p className="text-dark"
-                style={{
-                  textShadow: "2px 2px 5px rgba(0, 0, 0, 0.6)"  // Thêm bóng cho chữ
-                }}>Hơi hướng hiện đại</p>
+                <h5
+                  className="text-dark"
+                  style={{
+                    textShadow: "2px 2px 5px rgba(0, 0, 0, 0.7)", // Thêm bóng cho chữ
+                  }}
+                >
+                  Ấn tượng
+                </h5>
+                <h6
+                  className="text-dark"
+                  style={{
+                    textShadow: "2px 2px 5px rgba(0, 0, 0, 0.6)", // Thêm bóng cho chữ
+                  }}
+                >
+                  Đa dạng màu sắc.
+                </h6>
+                <p
+                  className="text-dark"
+                  style={{
+                    textShadow: "2px 2px 5px rgba(0, 0, 0, 0.6)", // Thêm bóng cho chữ
+                  }}
+                >
+                  Hơi hướng hiện đại
+                </p>
               </div>
             </div>
           </div>
@@ -360,15 +360,30 @@ const Home = () => {
                 alt="famous"
               />
               <div className="famous-content position-absolute">
-                <h5 className="text-dark"style={{
-                  textShadow: "2px 2px 5px rgba(0, 0, 0, 0.6)"  // Thêm bóng cho chữ
-                }}>Sáng tạo</h5>
-                <h6 className="text-dark"style={{
-                  textShadow: "2px 2px 5px rgba(0, 0, 0, 0.6)"  // Thêm bóng cho chữ
-                }}>Kết hợp độc đáo</h6>
-                <p className="text-dark"style={{
-                  textShadow: "2px 2px 5px rgba(0, 0, 0, 0.6)"  // Thêm bóng cho chữ
-                }}>Phong cách cá nhân</p>
+                <h5
+                  className="text-dark"
+                  style={{
+                    textShadow: "2px 2px 5px rgba(0, 0, 0, 0.6)", // Thêm bóng cho chữ
+                  }}
+                >
+                  Sáng tạo
+                </h5>
+                <h6
+                  className="text-dark"
+                  style={{
+                    textShadow: "2px 2px 5px rgba(0, 0, 0, 0.6)", // Thêm bóng cho chữ
+                  }}
+                >
+                  Kết hợp độc đáo
+                </h6>
+                <p
+                  className="text-dark"
+                  style={{
+                    textShadow: "2px 2px 5px rgba(0, 0, 0, 0.6)", // Thêm bóng cho chữ
+                  }}
+                >
+                  Phong cách cá nhân
+                </p>
               </div>
             </div>
           </div>
@@ -380,15 +395,30 @@ const Home = () => {
                 alt="famous"
               />
               <div className="famous-content position-absolute">
-                <h5 className="text-dark"style={{
-                  textShadow: "2px 2px 5px rgba(0, 0, 0, 0.6)"  // Thêm bóng cho chữ
-                }}>Truyền thống</h5>
-                <h6 className="text-dark"style={{
-                  textShadow: "2px 2px 5px rgba(255, 255, 255, 1)"  // Thêm bóng cho chữ
-                }}>Giữ dìn bản sắc</h6>
-                <p className="text-dark"style={{
-                  textShadow: "2px 2px 5px rgba(0, 0, 0, 0.6)"  // Thêm bóng cho chữ
-                }}>Tôn vinh vẽ đẹp Việt</p>
+                <h5
+                  className="text-dark"
+                  style={{
+                    textShadow: "2px 2px 5px rgba(0, 0, 0, 0.6)", // Thêm bóng cho chữ
+                  }}
+                >
+                  Truyền thống
+                </h5>
+                <h6
+                  className="text-dark"
+                  style={{
+                    textShadow: "2px 2px 5px rgba(255, 255, 255, 1)", // Thêm bóng cho chữ
+                  }}
+                >
+                  Giữ dìn bản sắc
+                </h6>
+                <p
+                  className="text-dark"
+                  style={{
+                    textShadow: "2px 2px 5px rgba(0, 0, 0, 0.6)", // Thêm bóng cho chữ
+                  }}
+                >
+                  Tôn vinh vẽ đẹp Việt
+                </p>
               </div>
             </div>
           </div>
@@ -408,11 +438,11 @@ const Home = () => {
                   <SpecialProduct
                     key={index}
                     id={item?._id}
-                    title={item?.title}
+                    title={item?.name}
                     brand={item?.brand}
-                    totalrating={item?.totalrating.toString()}
-                    price={item?.price ? (item.price).toLocaleString('vi-VN') : 0}
-                    img={item?.images[0].url}
+                    totalrating={item?.rating.toString()}
+                    price={item?.price ? item.price.toLocaleString("vi-VN") : 0}
+                    img={item?.images[0]}
                     sold={item?.sold}
                     quantity={item?.quantity}
                   />
@@ -447,14 +477,14 @@ const Home = () => {
                       </div>
                       <div className="product-image">
                         <img
-                          src={item?.images[0].url}
+                          src={item?.images[0]}
                           alt="product image"
                           height={"250px"}
                           width={"100%"}
                           onClick={() => navigate("/product/" + item?._id)}
                         />
                         <img
-                          src={item?.images[0].url}
+                          src={item?.images[0]}
                           alt="product image"
                           height={"250px"}
                           width={"100%"}
@@ -464,17 +494,18 @@ const Home = () => {
                       <div className="product-details">
                         <h6 className="brand">{item?.brand}</h6>
                         <h5 className="product-title">
-                          {item?.title?.substr(0, 70) + "..."}
+                          {item?.name?.substr(0, 70) + "..."}
                         </h5>
                         <ReactStars
                           count={5}
                           size={24}
-                          value={item?.totalrating.toString()}
+                          value={item?.rating.toString()}
                           edit={false}
                           activeColor="#ffd700"
                         />
                         <p className="price">
-                          {item?.price ? (item.price).toLocaleString('vi-VN') : 0}₫
+                          {item?.price ? item.price.toLocaleString("vi-VN") : 0}
+                          ₫
                         </p>
                       </div>
                     </div>
@@ -484,41 +515,6 @@ const Home = () => {
             })}
         </div>
       </Container>
-      {/* <Container class1="marque-wrapper home-wrapper-2 py-5">
-        <div className="row">
-          <div className="col-12">
-            <div className="marquee-inner-wrapper card-wrapper">
-              <Marquee className="d-flex">
-                <div className="mx-4 w-25">
-                  <img src="images/brand-01.png" alt="brand" />
-                </div>
-                <div className="mx-4 w-25">
-                  <img src="images/brand-02.png" alt="brand" />
-                </div>
-                <div className="mx-4 w-25">
-                  <img src="images/brand-03.png" alt="brand" />
-                </div>
-                <div className="mx-4 w-25">
-                  <img src="images/brand-04.png" alt="brand" />
-                </div>
-                <div className="mx-4 w-25">
-                  <img src="images/brand-05.png" alt="brand" />
-                </div>
-                <div className="mx-4 w-25">
-                  <img src="images/brand-06.png" alt="brand" />
-                </div>
-                <div className="mx-4 w-25">
-                  <img src="images/brand-07.png" alt="brand" />
-                </div>
-                <div className="mx-4 w-25">
-                  <img src="images/brand-08.png" alt="brand" />
-                </div>
-              </Marquee>
-            </div>
-          </div>
-        </div>
-      </Container> */}
-
       <Container class1="blog-wrapper py-5 home-wrapper-2">
         <div className="row">
           <div className="col-12">
@@ -535,7 +531,7 @@ const Home = () => {
                       id={item?._id}
                       title={item?.title}
                       description={item?.description}
-                      image={item?.images[0]?.url}
+                      image={item?.images[0]}
                       date={moment(item?.createdAt).format(
                         "MMMM Do YYYY, h:mm a"
                       )}
