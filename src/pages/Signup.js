@@ -81,27 +81,15 @@ const Signup = () => {
                 className="d-flex flex-column gap-15"
                 onSubmit={formik.handleSubmit}
               >
-              <label htmlFor="email" className="form-labels">
-                Họ <span className="required">*</span>
-              </label>
-              <CustomInput
-                  type="text"
-                  name="lastname"
-                  placeholder="Nhập Họ"
-                  value={formik.values.lastname}
-                  onChange={formik.handleChange('lastname')}
-                  onBlur={formik.handleBlur('lastname')}
-                />
-                <div className="error">
-                  {formik.touched.lastname && formik.errors.lastname}
-                </div>
+              
+             
                 <label htmlFor="email" className="form-labels">
-                  Tên <span className="required">*</span>
+                  Họ và Tên <span className="required">*</span>
                 </label>
                 <CustomInput
                   type="text"
                   name="firstname"
-                  placeholder="Nhập Tên"
+                  placeholder="Nhập Họ và Tên"
                   value={formik.values.firstname}
                   onChange={formik.handleChange('firstname')}
                   onBlur={formik.handleBlur('firstname')}
@@ -137,20 +125,8 @@ const Signup = () => {
                 <div className="error">
                   {formik.touched.password && formik.errors.password}
                 </div>
-                <label htmlFor="email" className="form-labels">
-                  Số điện thoại <span className="required">*</span>
-                </label>
-                <CustomInput
-                  type="tel"
-                  name="mobile"
-                  placeholder="Nhập số điện thoại"
-                  value={formik.values.mobile}
-                  onChange={formik.handleChange('mobile')}
-                  onBlur={formik.handleBlur('mobile')}
-                />
-                <div className="error">
-                  {formik.touched.mobile && formik.errors.mobile}
-                </div>
+                
+               
                   <div className="d-flex justify-content-between align-items-center mb-1">
                   <button className="buttons border-0 button" type="submit">
                     Đăng ký
