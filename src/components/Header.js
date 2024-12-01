@@ -16,6 +16,8 @@ import { getAProduct } from "../features/products/productSlilce";
 import { getUserCart } from "../features/user/userSlice";
 import logo from "../assets/Logo_Sac.png";
 import "./../Css/CssHeader.css";
+import { authService } from "../features/user/userService";
+import { toast } from "react-toastify";
 const Header = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [selected, setSelected] = useState([]);
@@ -29,6 +31,7 @@ const Header = () => {
   const cartState = useSelector((state) => state?.auth?.cartProducts);
   const wishlistState = useSelector((state) => state?.auth?.wishlist?.wishlist);
   const authState = useSelector((state) => state?.auth);
+  console.log("🚀 ~ Header ~ authState:", authState);
   const [total, setTotal] = useState(null);
   const [paginate, setPaginate] = useState(true);
   const productState = useSelector((state) => state?.product?.product);
@@ -84,9 +87,12 @@ const Header = () => {
     setCategories(category);
   }, [productState]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     localStorage.clear();
-    window.location.reload();
+    const re = await authService.logoutApi();
+    if (re && re.data) {
+      window.location.reload();
+    }
   };
 
   // Function to scroll to the top
@@ -326,7 +332,8 @@ const Header = () => {
                     style={{ position: "relative" }} // Đảm bảo phần tử chứa có vị trí relative
                   >
                     <Link
-                      to={authState?.user === null ? "/login" : "/my-profile"}
+                      // to={authState?.user === null ? "/login" : "/my-profile"}
+                      to={"/my-profile"}
                       className="d-flex align-items-center gap-10 text-white"
                       style={{
                         position: "relative",
@@ -355,7 +362,7 @@ const Header = () => {
                       >
                         {authState?.user === null
                           ? ""
-                          : `Welcome ${authState?.user?.firstname}`}
+                          : `Welcome ${authState?.user?.name}`}
                       </p>
                     </Link>
 

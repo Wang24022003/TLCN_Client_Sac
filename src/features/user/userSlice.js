@@ -5,10 +5,11 @@ import { toast } from "react-toastify";
 export const registerUser = createAsyncThunk(
   "auth/register",
   async (userData, thunkAPI) => {
-    try {
-      return await authService.register(userData);
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error);
+    const re = await authService.register(userData);
+    if (re && re.data) {
+      return re;
+    } else {
+      return thunkAPI.rejectWithValue(re);
     }
   }
 );
@@ -16,10 +17,11 @@ export const registerUser = createAsyncThunk(
 export const active_account = createAsyncThunk(
   "auth/active_account",
   async (userData, thunkAPI) => {
-    try {
-      return await authService.active_account(userData);
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error);
+    const re = await authService.active_account(userData);
+    if (re && re.data) {
+      return re;
+    } else {
+      return thunkAPI.rejectWithValue(re);
     }
   }
 );
@@ -27,22 +29,23 @@ export const active_account = createAsyncThunk(
 export const check_active_account = createAsyncThunk(
   "auth/check_active_account",
   async (userData, thunkAPI) => {
-    try {
-      return await authService.check_active_account(userData);
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error);
+    const re = await authService.check_active_account(userData);
+    if (re && re.data) {
+      return re;
+    } else {
+      return thunkAPI.rejectWithValue(re);
     }
   }
 );
 
-
 export const loginUser = createAsyncThunk(
   "auth/login",
   async (userData, thunkAPI) => {
-    try {
-      return await authService.login(userData);
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error);
+    const re = await authService.login(userData);
+    if (re && re.data) {
+      return re;
+    } else {
+      return thunkAPI.rejectWithValue(re);
     }
   }
 );
@@ -190,9 +193,10 @@ const initialState = {
   isError: false,
   isSuccess: false,
   isLoading: false,
+  handleApi: "...",
   message: "",
-  isBlocked:'...',
-  history:[]
+  isBlocked: "...",
+  history: [],
 };
 
 export const authSlice = createSlice({
@@ -208,10 +212,10 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
-        state.createdUser = action.payload;
+        state.createdUser = action.payload.data;
         if (state.isSuccess === true) {
+          state.handleApi = "resgister";
           toast.info("Đăng ký tài khoản thành công");
-
         }
       })
       .addCase(registerUser.rejected, (state, action) => {
@@ -220,7 +224,7 @@ export const authSlice = createSlice({
         state.isSuccess = false;
         state.message = action.error;
         if (state.isError === true) {
-          toast.error(action.payload.response.data.message);
+          toast.error(action.payload.message);
         }
       })
 
@@ -231,7 +235,6 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
-        
       })
       .addCase(active_account.rejected, (state, action) => {
         state.isLoading = false;
@@ -239,10 +242,9 @@ export const authSlice = createSlice({
         state.isSuccess = false;
         state.message = action.error;
         if (state.isError === true) {
-          toast.error(action.payload.response.data.message);
+          toast.error(action.payload.message);
         }
       })
-
 
       .addCase(check_active_account.pending, (state) => {
         state.isLoading = true;
@@ -251,10 +253,9 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
-        
         state.isBlocked = false;
         toast.success("Kích hoạt tài khoản thành công");
-        
+        state.handleApi = "activeAccount";
       })
       .addCase(check_active_account.rejected, (state, action) => {
         state.isLoading = false;
@@ -262,10 +263,9 @@ export const authSlice = createSlice({
         state.isSuccess = false;
         state.message = action.error;
         if (state.isError === true) {
-          toast.error(action.payload.response.data.message);
+          toast.error(action.payload.message);
         }
       })
-
 
       .addCase(loginUser.pending, (state) => {
         state.isLoading = true;
@@ -275,9 +275,17 @@ export const authSlice = createSlice({
         state.isError = false;
         state.isSuccess = true;
         state.user = action.payload;
-        if (state.isSuccess === true) {
-          localStorage.setItem("token", action.payload.token);
 
+        if (state.isSuccess === true) {
+          localStorage.setItem(
+            "access_token",
+            action.payload.data.access_token
+          );
+          localStorage.setItem(
+            "customer",
+            JSON.stringify(action.payload.data.user)
+          );
+          localStorage.removeItem("password");
           toast.info("User Logged In Successfully");
         }
         //toast.info("User Logged In Successfully");
@@ -288,12 +296,10 @@ export const authSlice = createSlice({
         state.isSuccess = false;
         state.message = action.error;
         if (state.isError === true) {
-          if(action.payload.response.data.message === "User Account isn't Active")
-            {
-              state.isBlocked = true
-  
-            }
-          toast.error(action.payload.response.data.message);
+          toast.error(action.payload.message);
+          if (action.payload.message === "Tài khoản chưa được kích hoạt") {
+            state.handleApi = "retryActive";
+          }
         }
       })
       .addCase(getuserProductWishlist.pending, (state) => {

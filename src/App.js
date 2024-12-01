@@ -108,7 +108,7 @@ function App() {
                 </OpenRoutes>
               }
             />
-            <Route path='/otp/:id' element={<OTPVerification/>} />
+            <Route path="/otp/:id" element={<OTPVerification />} />
             <Route path="reset-password/:token" element={<Resetpassword />} />
             <Route path="privacy-policy" element={<PrivacyPolicy />} />
             <Route path="refund-policy" element={<RefundPloicy />} />

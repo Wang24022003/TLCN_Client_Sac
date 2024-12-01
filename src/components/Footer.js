@@ -23,7 +23,11 @@ const Footer = () => {
                   aria-label="Your Email Address"
                   aria-describedby="basic-addon2"
                 />
-                <span className="input-group-text p-2" id="basic-addon2" style={{ backgroundColor: "black" }}>
+                <span
+                  className="input-group-text p-2"
+                  id="basic-addon2"
+                  style={{ backgroundColor: "black" }}
+                >
                   Đăng ký
                 </span>
               </div>
@@ -38,7 +42,8 @@ const Footer = () => {
               <h4 className="text-white mb-4">Liên hệ với chúng tôi</h4>
               <div>
                 <address className="text-white fs-6">
-                Địa chỉ : 1 Võ Văn Ngân, Phường Linh Chiểu, Thành phố Thủ Đức, Thành phố Hồ Chí Minh. <br />
+                  Địa chỉ : 1 Võ Văn Ngân, Phường Linh Chiểu, Thành phố Thủ Đức,
+                  Thành phố Hồ Chí Minh. <br />
                 </address>
                 <a
                   href="tel:+84 971035440"
@@ -83,13 +88,17 @@ const Footer = () => {
                 <Link to="/term-conditions" className="text-white py-2 mb-1">
                   Điều khoản & dịch vụ
                 </Link>
-                <Link to="/blogs" className="text-white py-2 mb-1">Bài viết</Link>
+                <Link to="/blogs" className="text-white py-2 mb-1">
+                  Bài viết
+                </Link>
               </div>
             </div>
             <div className="col-3">
               <h4 className="text-white mb-4">Tài khoản</h4>
               <div className="footer-link d-flex flex-column">
-                <Link to="/contact" className="text-white py-2 mb-1">Liên hệ</Link>
+                <Link to="/contact" className="text-white py-2 mb-1">
+                  Liên hệ
+                </Link>
                 <Link className="text-white py-2 mb-1">Câu hỏi thường gặp</Link>
                 <Link className="text-white py-2 mb-1">Về chúng tôi</Link>
               </div>
@@ -97,7 +106,7 @@ const Footer = () => {
             <div className="col-2">
               <h4 className="text-white mb-4">Liên kết nhanh</h4>
               <div className="footer-link d-flex flex-column">
-              <Link className="text-white py-2 mb-1">Hoàng Bào</Link>
+                <Link className="text-white py-2 mb-1">Hoàng Bào</Link>
                 <Link className="text-white py-2 mb-1">Áo Dài</Link>
                 <Link className="text-white py-2 mb-1">Áo Nhật Bình</Link>
                 <Link className="text-white py-2 mb-1">Áo Ngũ Thân</Link>
@@ -112,7 +121,7 @@ const Footer = () => {
           <div className="row">
             <div className="col-12">
               <p className="text-center mb-0 text-white">
-                &copy; {new Date().getFullYear()}; Được phát triển bở Sắc
+                &copy; {new Date().getFullYear()}; Được phát triển bởi Sắc
               </p>
             </div>
           </div>

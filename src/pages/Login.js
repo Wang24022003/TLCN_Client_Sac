@@ -9,7 +9,7 @@ import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../features/user/userSlice";
 import logo from "../assets/Remove-bg.ai_1720413887960.png"; // Adjust the path according to your project structure
-import './../Css/CssLogin.css';
+import "./../Css/CssLogin.css";
 
 let loginSchema = yup.object({
   email: yup
@@ -23,6 +23,7 @@ let loginSchema = yup.object({
 const Login = () => {
   const authState = useSelector((state) => state.auth);
   // const isBlocked = useSelector((state) => state.auth.isBlocked);
+  const { handleApi } = authState;
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const formik = useFormik({
@@ -32,8 +33,13 @@ const Login = () => {
     },
     validationSchema: loginSchema,
     onSubmit: (values) => {
-      dispatch(loginUser(values));
-      localStorage.setItem('password', formik.values.password);
+      dispatch(
+        loginUser({
+          username: values.email,
+          password: values.password,
+        })
+      );
+      localStorage.setItem("password", formik.values.password);
     },
   });
 
@@ -41,10 +47,10 @@ const Login = () => {
     if (authState.user !== null && authState.isError === false) {
       window.location.href = "/";
     }
-    if (authState.isError === true ) {
-
-      if(authState.isBlocked === true){
-        window.location.href = `/otp/${formik.values.email}`;
+    if (authState.isError === true) {
+      if (handleApi === "retryActive") {
+        // window.location.href = `/otp/${formik.values.email}`;
+        navigate(`/otp/${formik.values.email}`); // Điều hướng đến OTP
       }
     }
   }, [authState]);
@@ -67,18 +73,18 @@ const Login = () => {
 
           {/* Bên phải - Form */}
           <div className="login-form">
-          <h3 className="text-center mb-3">
-            Đăng nhập vào <span className="stylish-text">Sắc</span>
-          </h3>
+            <h3 className="text-center mb-3">
+              Đăng nhập vào <span className="stylish-text">Sắc</span>
+            </h3>
 
             <p className="text-left mb-3">Nhập thông tin của bạn bên dưới</p>
             <form
               onSubmit={formik.handleSubmit}
               className="d-flex flex-column gap-15"
             >
-            <label htmlFor="email" className="form-labels">
-              Email <span className="required">*</span>
-            </label>
+              <label htmlFor="email" className="form-labels">
+                Email <span className="required">*</span>
+              </label>
               <CustomInput
                 type="email"
                 name="email"
@@ -110,19 +116,19 @@ const Login = () => {
                   Đăng nhập
                 </button>
                 <Link to="/forgot-password">Quên mật khẩu?</Link>
-                
               </div>
 
               <div>
-  
-              <span>
-                Bạn chưa có tài khoản? <Link to="/signup" className="signup-link">Đăng ký</Link>
-              </span>
+                <span>
+                  Bạn chưa có tài khoản?{" "}
+                  <Link to="/signup" className="signup-link">
+                    Đăng ký
+                  </Link>
+                </span>
               </div>
             </form>
           </div>
         </div>
-
       </Container>
     </>
   );
