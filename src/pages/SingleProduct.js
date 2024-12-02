@@ -35,7 +35,12 @@ const SingleProduct = () => {
   const wishlistState = useSelector((state) => state?.auth?.wishlist);
 
   useEffect(() => {
-    dispatch(getAProduct(getProductId));
+    if (authState.user) {
+      console.log("đã login ");
+      dispatch(getAProduct({ id: getProductId, isLogin: true }));
+    } else {
+      dispatch(getAProduct({ id: getProductId }));
+    }
     dispatch(getUserCart());
     dispatch(getAllProducts());
   }, [dispatch, getProductId]);

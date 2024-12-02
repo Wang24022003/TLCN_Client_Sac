@@ -16,8 +16,12 @@ export const getAllProducts = createAsyncThunk(
 
 export const getAProduct = createAsyncThunk(
   "product/getAProduct",
-  async (id, thunkAPI) => {
-    const re = await productSevice.getSingleProduct(id);
+  async (data, thunkAPI) => {
+    const { id, isLogin } = data;
+    const re =
+      isLogin === true
+        ? await productSevice.getSingleProductForUser(id)
+        : await productSevice.getSingleProduct(id);
     if (re && re.data) {
       return re;
     } else {

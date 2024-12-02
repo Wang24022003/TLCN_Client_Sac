@@ -195,6 +195,12 @@ const getAddressUserDetail = async (id) => {
     return response;
   }
 };
+const getProductUserRecentView = async () => {
+  const response = await instance.get(`products/product/recent`);
+  if (response) {
+    return response;
+  }
+};
 
 export const authService = {
   register,
@@ -221,4 +227,5 @@ export const authService = {
   updateAddressUser,
   getAddressUserDetail,
   paymentVerification,
+  getProductUserRecentView,
 };

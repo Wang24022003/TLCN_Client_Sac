@@ -458,7 +458,7 @@ const Home = () => {
             })}
         </div>
       </Container>
-      
+
       <Container class1="popular-wrapper py-1 home-wrapper-2">
         <div className="row">
           <div className="col-12">

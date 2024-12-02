@@ -61,6 +61,17 @@ export const getuserProductWishlist = createAsyncThunk(
     }
   }
 );
+export const getProductUserRecentView = createAsyncThunk(
+  "user/recentlist",
+  async (thunkAPI) => {
+    const re = await authService.getProductUserRecentView();
+    if (re && re.data) {
+      return re;
+    } else {
+      return thunkAPI.rejectWithValue(re);
+    }
+  }
+);
 
 export const getuserProductHistory = createAsyncThunk(
   "user/history",
@@ -389,6 +400,22 @@ export const authSlice = createSlice({
         state.isReload = false;
       })
       .addCase(getuserProductWishlist.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
+      .addCase(getProductUserRecentView.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getProductUserRecentView.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.recentView = action.payload.data;
+        state.isReload = false;
+      })
+      .addCase(getProductUserRecentView.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;

@@ -12,6 +12,12 @@ const getSingleProduct = async (id) => {
     return response;
   }
 };
+const getSingleProductForUser = async (id) => {
+  const response = await instance.get(`products/user/${id}`);
+  if (response) {
+    return response;
+  }
+};
 
 const addToWishlist = async (prodId) => {
   const response = await instance.post(`like-products/add`, prodId);
@@ -54,4 +60,5 @@ export const productSevice = {
   rateProduct,
   updateOrder,
   removeToWishlist,
+  getSingleProductForUser,
 };

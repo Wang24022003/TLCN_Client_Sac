@@ -12,7 +12,6 @@ import menu from "../images/menu.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { Typeahead } from "react-bootstrap-typeahead";
 import "react-bootstrap-typeahead/css/Typeahead.css";
-import { getAProduct } from "../features/products/productSlilce";
 import { getUserCart } from "../features/user/userSlice";
 import logo from "../assets/Logo_Sac.png";
 import "./../Css/CssHeader.css";

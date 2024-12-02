@@ -7,18 +7,21 @@ import {
   addToWishlist,
   removeToWishlist,
 } from "../features/products/productSlilce";
-import { getuserProductWishlist } from "../features/user/userSlice";
+import {
+  getProductUserRecentView,
+  getuserProductWishlist,
+} from "../features/user/userSlice";
 const ProductHistory = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     getWishlistFromDb();
   }, []);
   const getWishlistFromDb = () => {
-    dispatch(getuserProductWishlist());
+    dispatch(getProductUserRecentView());
   };
 
-  const wishlistState = useSelector((state) => state?.auth?.wishlist);
- 
+  const wishlistState = useSelector((state) => state?.auth?.recentView);
+
   return (
     <>
       <Meta title={"Wishlist"} />
@@ -33,7 +36,11 @@ const ProductHistory = () => {
               return (
                 <div className="col-3" key={index}>
                   <div className="wishlist-card position-relative">
-                    
+                    <img
+                      src="images/cross.svg"
+                      alt="cross"
+                      className="position-absolute cross img-fluid"
+                    />
                     <div className="wishlist-card-image">
                       <img
                         src={
