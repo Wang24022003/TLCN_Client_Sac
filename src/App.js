@@ -28,6 +28,7 @@ import Profile from "./pages/Profile";
 import VNPayReturn from "./pages/VNPayReturn";
 import OTPVerification from "./pages/OTPVerification";
 import History from "./pages/History";
+import Address from "./pages/Address";
 
 function App() {
   return (
@@ -44,8 +45,7 @@ function App() {
             <Route path="blogs" element={<Blog />} />
             <Route path="blog/:id" element={<SingleBlog />} />
             <Route
-              path="cart"
-              element={
+              path="cart"element={
                 <PrivateRoutes>
                   <Cart />
                 </PrivateRoutes>
@@ -56,6 +56,14 @@ function App() {
               element={
                 <PrivateRoutes>
                   <Orders />
+                </PrivateRoutes>
+              }
+            />
+            <Route
+              path="address"
+              element={
+                <PrivateRoutes>
+                  <Address />
                 </PrivateRoutes>
               }
             />

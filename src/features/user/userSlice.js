@@ -116,6 +116,16 @@ export const getOrders = createAsyncThunk(
   }
 );
 
+export const getAddress = createAsyncThunk(
+  "user/address/get",
+  async (thunkAPI) => {
+    try {
+      return await authService.getAddressUser();
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
 export const deleteCartProduct = createAsyncThunk(
   "user/cart/product/delete",
   async (data, thunkAPI) => {
@@ -205,6 +215,7 @@ export const authSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+    
       .addCase(registerUser.pending, (state) => {
         state.isLoading = true;
       })
@@ -443,6 +454,17 @@ export const authSlice = createSlice({
         state.isSuccess = false;
         state.message = action.error;
       })
+      
+      .addCase(getAddress.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getAddress.fulfilled, (state, action) => {
+        // state.isLoading = false;
+        // state.isError = false;
+        // state.isSuccess = true;
+        state.address = action.payload.data.result; 
+      })
+      
       .addCase(updateProfile.pending, (state) => {
         state.isLoading = true;
       })

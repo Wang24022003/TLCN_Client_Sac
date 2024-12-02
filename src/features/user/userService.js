@@ -162,6 +162,14 @@ const paymentVerification = async (params) => {
   }
 };
 
+
+const getAddressUser = async (query) => {
+  const response = await instance.get(`/address-user?${query}`);
+  if (response) {
+    return response;
+  }
+};
+
 export const authService = {
   register,
   active_account,
@@ -180,5 +188,6 @@ export const authService = {
   forgotPasswordToken,
   resetPass,
   emptyCart,
+  getAddressUser,
   paymentVerification,
 };
