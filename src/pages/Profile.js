@@ -35,6 +35,7 @@ const Profile = () => {
       gender: userState?.gender || TYPE_GENDER.OTHER,
       email: userState?.email || "",
       point: userState?.point || 0,
+      
     });
     return () => {};
   }, [userState]);
@@ -52,30 +53,57 @@ const Profile = () => {
     setEdit(true); // Đóng chế độ chỉnh sửa sau khi cập nhật
   };
 
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0]; // Lấy file được chọn
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setdataProfile((prevState) => ({
+          ...prevState,
+          avatar: reader.result, // Lưu URL base64 vào state
+        }));
+      };
+      reader.readAsDataURL(file); // Đọc file và chuyển sang base64
+    }
+  };
+  
+
   return (
     <>
       <BreadCrumb title="My Profile" />
       <Container class1="cart-wrapper home-wrapper-2 py-5">
         <div className="row">
           <div className="col-12">
-            <div className="text-center mb-4">
-              <img
-                src={userState?.avatar || "/default-avatar.png"}
-                alt="Avatar"
-                className="rounded-circle"
-                style={{
-                  width: "150px",
-                  height: "150px",
-                  objectFit: "cover",
-                  border: "2px solid #ddd",
-                }}
-              />
-              {!edit && (
-                <button className="btn btn-link text-primary p-0 mt-2">
+          <div className="col-12 text-center mb-4">
+            <img
+              src={dataProfile?.avatar || "/default-avatar.png"}
+              alt="Avatar"
+              className="rounded-circle"
+              style={{
+                width: "150px",
+                height: "150px",
+                objectFit: "cover",
+                border: "2px solid #ddd",
+              }}
+            />
+            {!edit && (
+              <div className="mt-3">
+                <label htmlFor="upload-avatar" className="btn btn-link text-primary">
                   Thay đổi ảnh
-                </button>
-              )}
-            </div>
+                </label>
+                <input
+                  type="file"
+                  id="upload-avatar"
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  onChange={handleImageChange}
+                />
+              </div>
+            )}
+          </div>
+
+
             <div className="d-flex justify-content-between align-items-center">
               <h3 className="my-3">Thông tin tài khoản</h3>
               <FiEdit className="fs-3" onClick={() => setEdit(false)} />
