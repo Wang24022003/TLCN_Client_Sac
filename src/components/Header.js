@@ -86,9 +86,9 @@ const Header = () => {
   }, [productState]);
 
   const handleLogout = async () => {
-    localStorage.clear();
     const re = await authService.logoutApi();
     if (re && re.data) {
+      localStorage.clear();
       window.location.reload();
     }
   };

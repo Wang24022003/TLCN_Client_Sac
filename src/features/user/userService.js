@@ -102,12 +102,14 @@ const getUserOrders = async () => {
 };
 
 const updateUser = async (data) => {
-  const response = await instance.put(
-    `user/edit-user`,
-    data,
-    data.config2,
-    config
-  );
+  const response = await instance.patch(`auth/update-profile`, data);
+
+  if (response) {
+    return response;
+  }
+};
+const getNewInfoUser = async () => {
+  const response = await instance.get(`auth/refresh`);
 
   if (response) {
     return response;
@@ -228,4 +230,5 @@ export const authService = {
   getAddressUserDetail,
   paymentVerification,
   getProductUserRecentView,
+  getNewInfoUser,
 };

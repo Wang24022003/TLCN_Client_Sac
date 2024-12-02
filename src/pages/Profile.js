@@ -1,52 +1,56 @@
-import React, { useState } from "react";
-import BreadCrumb from "../components/BreadCrumb";
-import Container from "../components/Container";
-import { useFormik } from "formik";
+import React, { useEffect, useState } from "react";
+import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
-import { updateProfile } from "../features/user/userSlice";
+import { getNewProfile, updateProfile } from "../features/user/userSlice";
+import BreadCrumb from "../components/BreadCrumb";
+import Container from "../components/Container";
 import { FiEdit } from "react-icons/fi";
 
-let profileSchema = yup.object({
-  firstname: yup.string().required("First Name is Required"),
-  lastname: yup.string().required("Last Name is Required"),
-  email: yup
-    .string()
-    .required("Email is Required")
-    .email("Email Should be valid"),
-  mobile: yup.number().required().positive().integer("Mobile No is Required"),
+const TYPE_GENDER = {
+  FEMALE: "FEMALE",
+  MALE: "MALE",
+  OTHER: "OTHER",
+};
+
+const profileSchema = yup.object().shape({
+  name: yup.string().required("Họ và tên là bắt buộc"),
+  age: yup
+    .number()
+    .required("Tuổi là bắt buộc")
+    .min(0, "Tuổi không được nhỏ hơn 0")
+    .max(150, "Tuổi không được lớn hơn 150"),
+  gender: yup.string().required("Giới tính là bắt buộc"),
 });
 
 const Profile = () => {
-  const getTokenFromLocalStorage = localStorage.getItem("customer")
-    ? JSON.parse(localStorage.getItem("customer"))
-    : null;
-
-  const config2 = {
-    headers: {
-      Authorization: `Bearer ${
-        getTokenFromLocalStorage !== null ? getTokenFromLocalStorage.token : ""
-      }`,
-      Accept: "application/json",
-      "ngrok-skip-browser-warning": "69420"
-    },
-  };
   const dispatch = useDispatch();
   const userState = useSelector((state) => state.auth.user);
   const [edit, setEdit] = useState(true);
-  const formik = useFormik({
-    initialValues: {
-      firstname: userState?.firstname,
-      lastname: userState?.lastname,
-      email: userState?.email,
-      mobile: userState?.mobile,
-    },
-    validationSchema: profileSchema,
-    onSubmit: (values) => {
-      dispatch(updateProfile({ data: values, config2: config2 }));
-      setEdit(true);
-    },
-  });
+  const [dataProfile, setdataProfile] = useState();
+  useEffect(() => {
+    setdataProfile({
+      name: userState?.name || "",
+      age: userState?.age || "",
+      gender: userState?.gender || TYPE_GENDER.OTHER,
+      email: userState?.email || "",
+      point: userState?.point || 0,
+    });
+    return () => {};
+  }, [userState]);
+
+  const handleSubmit = (values) => {
+    console.log("🚀 ~ handleSubmit ~ values:", values);
+    dispatch(
+      updateProfile({
+        name: values.name,
+        age: values.age,
+        gender: values.gender,
+      })
+    );
+    dispatch(getNewProfile());
+    setEdit(true); // Đóng chế độ chỉnh sửa sau khi cập nhật
+  };
 
   return (
     <>
@@ -54,7 +58,7 @@ const Profile = () => {
       <Container class1="cart-wrapper home-wrapper-2 py-5">
         <div className="row">
           <div className="col-12">
-          <div className="text-center mb-4">
+            <div className="text-center mb-4">
               <img
                 src={userState?.avatar || "/default-avatar.png"}
                 alt="Avatar"
@@ -74,111 +78,102 @@ const Profile = () => {
             </div>
             <div className="d-flex justify-content-between align-items-center">
               <h3 className="my-3">Thông tin tài khoản</h3>
-
               <FiEdit className="fs-3" onClick={() => setEdit(false)} />
             </div>
           </div>
           <div className="col-12">
-            <form action="" onSubmit={formik.handleSubmit}>
-              <div className="mb-3">
-                <div className="mb-3">
-                  <label htmlFor="example1" className="form-label">
-                    Họ Và Tên
-                  </label>
-                  <input
-                    type="text"
-                    name="firstname"
-                    className="form-control"
-                    id="example1"
-                    disabled={edit}
-                    value={formik.values.firstname}
-                    onChange={formik.handleChange("firstname")}
-                    onBlur={formik.handleBlur("firstname")}
-                  />
-                  <div className="error">
-                    {formik.touched.firstname && formik.errors.firstname}
+            <Formik
+              initialValues={dataProfile}
+              validationSchema={profileSchema}
+              onSubmit={handleSubmit}
+              enableReinitialize
+            >
+              {({ values }) => (
+                <Form>
+                  <div className="mb-3">
+                    <label htmlFor="name" className="form-label">
+                      Họ và Tên
+                    </label>
+                    <Field
+                      type="text"
+                      name="name"
+                      className="form-control"
+                      disabled={edit}
+                    />
+                    <ErrorMessage
+                      name="name"
+                      component="div"
+                      className="text-danger"
+                    />
                   </div>
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="example1" className="form-label">
-                    Gmail
-                  </label>
-                  <input
-                    type="text"
-                    name="gmail"
-                    className="form-control"
-                    id="example1"
-                    disabled={edit}
-                    value={formik.values.firstname}
-                    onChange={formik.handleChange("firstname")}
-                    onBlur={formik.handleBlur("firstname")}
-                  />
-                  <div className="error">
-                    {formik.touched.firstname && formik.errors.firstname}
+                  <div className="mb-3">
+                    <label htmlFor="email" className="form-label">
+                      Email
+                    </label>
+                    <Field
+                      type="text"
+                      name="email"
+                      className="form-control"
+                      disabled
+                    />
                   </div>
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="example1" className="form-label">
-                    Giới tính
-                  </label>
-                  <input
-                    type="text"
-                    name="gmail"
-                    className="form-control"
-                    id="example1"
-                    disabled={edit}
-                    value={formik.values.firstname}
-                    onChange={formik.handleChange("firstname")}
-                    onBlur={formik.handleBlur("firstname")}
-                  />
-                  <div className="error">
-                    {formik.touched.firstname && formik.errors.firstname}
+                  <div className="mb-3">
+                    <label htmlFor="age" className="form-label">
+                      Tuổi
+                    </label>
+                    <Field
+                      type="number"
+                      name="age"
+                      className="form-control"
+                      disabled={edit}
+                    />
+                    <ErrorMessage
+                      name="age"
+                      component="div"
+                      className="text-danger"
+                    />
                   </div>
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="example1" className="form-label">
-                    Tuổi
-                  </label>
-                  <input
-                    type="text"
-                    name="gmail"
-                    className="form-control"
-                    id="example1"
-                    disabled={edit}
-                    value={formik.values.firstname}
-                    onChange={formik.handleChange("firstname")}
-                    onBlur={formik.handleBlur("firstname")}
-                  />
-                  <div className="error">
-                    {formik.touched.firstname && formik.errors.firstname}
+                  <div className="mb-3">
+                    <label htmlFor="gender" className="form-label">
+                      Giới tính
+                    </label>
+                    <Field
+                      as="select"
+                      name="gender"
+                      className="form-select"
+                      disabled={edit}
+                    >
+                      {Object.keys(TYPE_GENDER).map((key) => (
+                        <option key={key} value={TYPE_GENDER[key]}>
+                          {TYPE_GENDER[key]}
+                        </option>
+                      ))}
+                    </Field>
+                    <ErrorMessage
+                      name="gender"
+                      component="div"
+                      className="text-danger"
+                    />
                   </div>
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="example1" className="form-label">
-                    Điểm tích lũy
-                  </label>
-                  <input
-                    type="text"
-                    name="gmail"
-                    className="form-control"
-                    id="example1"
-                    disabled={edit}
-                    value={formik.values.firstname}
-                    onChange={formik.handleChange("firstname")}
-                    onBlur={formik.handleBlur("firstname")}
-                  />
-                  <div className="error">
-                    {formik.touched.firstname && formik.errors.firstname}
+                  <div className="mb-3">
+                    <label htmlFor="point" className="form-label">
+                      Điểm tích lũy
+                    </label>
+                    <Field
+                      type="text"
+                      name="point"
+                      className="form-control"
+                      disabled
+                    />
                   </div>
-                </div>
-              </div>
-
-              {edit === false && (
-                <button type="submit" className="btn btn-primary">
-                  Save
-                </button>
+                  {!edit && (
+                    <button type="submit" className="btn btn-primary">
+                      Lưu thay đổi
+                    </button>
+                  )}
+                </Form>
               )}
-            </form>
+            </Formik>
           </div>
         </div>
       </Container>

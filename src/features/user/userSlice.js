@@ -236,10 +236,22 @@ export const updateCartProduct = createAsyncThunk(
 export const updateProfile = createAsyncThunk(
   "user/profile/update",
   async (data, thunkAPI) => {
-    try {
-      return await authService.updateUser(data);
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error);
+    const re = await authService.updateUser(data);
+    if (re && re.data) {
+      return re;
+    } else {
+      return thunkAPI.rejectWithValue(re);
+    }
+  }
+);
+export const getNewProfile = createAsyncThunk(
+  "user/profile/newInfor",
+  async (thunkAPI) => {
+    const re = await authService.getNewInfoUser();
+    if (re && re.data) {
+      return re;
+    } else {
+      return thunkAPI.rejectWithValue(re);
     }
   }
 );
@@ -556,23 +568,35 @@ export const authSlice = createSlice({
         state.isError = false;
         state.isSuccess = true;
         state.updatedUser = action.payload;
+      })
+      .addCase(updateProfile.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+        if (state.isError) {
+          toast.error("Something Went Wrong!");
+        }
+      })
+      .addCase(getNewProfile.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getNewProfile.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.updatedUser = action.payload.data.user;
 
         if (state.isSuccess === true) {
-          let currentUserData = JSON.parse(localStorage.getItem("customer"));
-          let newUserData = {
-            _id: currentUserData?._id,
-            token: currentUserData.token,
-            firstname: action?.payload?.firstname,
-            lastname: action?.payload?.lastname,
-            email: action?.payload?.email,
-            mobile: action?.payload?.mobile,
-          };
-          localStorage.setItem("customer", JSON.stringify(newUserData));
-          state.user = newUserData;
+          localStorage.setItem(
+            "customer",
+            JSON.stringify(action.payload.data.user)
+          );
+          state.user = action.payload.data.user;
           toast.success("Profile Updated Successfully!");
         }
       })
-      .addCase(updateProfile.rejected, (state, action) => {
+      .addCase(getNewProfile.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;
