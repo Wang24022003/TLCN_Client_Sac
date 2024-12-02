@@ -419,6 +419,18 @@ const Header = () => {
                           Sản phẩm đã mua
                         </Link>
                         <Link
+                          to="/product-history"
+                          className="dropdown-item"
+                          style={{
+                            display: "block",
+                            padding: "8px 16px",
+                            textDecoration: "none",
+                            color: "#333",
+                          }}
+                        >
+                          Sản phẩm đã xem gần đây
+                        </Link>
+                        <Link
                           to="/Address"
                           className="dropdown-item"
                           style={{
