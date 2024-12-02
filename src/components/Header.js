@@ -27,10 +27,12 @@ const Header = () => {
   const togglePopup = () => setShowPopup(!showPopup);
 
   const dispatch = useDispatch();
-  const cartState = useSelector((state) => state?.auth?.cartProducts);
+  const userCartState = useSelector(
+    (state) => state?.auth?.cartProducts?.items
+  );
   const wishlistState = useSelector((state) => state?.auth?.wishlist);
   const authState = useSelector((state) => state?.auth);
-  const [total, setTotal] = useState(null);
+  const [totalAmount, setTotalAmount] = useState(0);
   const [paginate, setPaginate] = useState(true);
   const productState = useSelector((state) => state?.product?.product);
   const navigate = useNavigate();
@@ -58,18 +60,18 @@ const Header = () => {
 
   useEffect(() => {
     let sum = 0;
-    for (let index = 0; index < cartState?.length; index++) {
-      sum = sum + Number(cartState[index].quantity) * cartState[index].price;
-      setTotal(sum);
+    for (let index = 0; index < userCartState?.length; index++) {
+      sum = sum + Number(userCartState[index].quantity) * userCartState[index].price;
+      setTotalAmount(sum);
     }
-  }, [cartState]);
+  }, [userCartState]);
 
   useEffect(() => {
     let totalQuantity = 0; // Khởi tạo biến totalQuantity để tính tổng số lượng
     for (let index = 0; index < wishlistState?.length; index++) {
       totalQuantity = totalQuantity + Number(wishlistState[index].quantity); // Cộng dồn số lượng vào totalQuantity
     }
-    setTotal(totalQuantity); // Cập nhật state với tổng số lượng
+    setTotalAmount(totalQuantity); // Cập nhật state với tổng số lượng
   }, [wishlistState]);
 
   useEffect(() => {
@@ -487,7 +489,7 @@ const Header = () => {
                             fontSize: "14px",
                           }}
                         >
-                          {cartState?.length ? cartState?.length : 0}
+                          {userCartState?.length }
                         </span>
                         <p
                           className="mb-0"
@@ -498,10 +500,10 @@ const Header = () => {
                             color: "red",
                           }}
                         >
-                          {!cartState?.length
+                          {!userCartState?.length
                             ? 0
-                            : total
-                            ? total.toLocaleString("vi-VN")
+                            : totalAmount
+                            ? totalAmount.toLocaleString("vi-VN")
                             : 0}
                           ₫
                         </p>
