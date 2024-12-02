@@ -56,11 +56,19 @@ const SingleProduct = () => {
     } else {
       dispatch(
         addProdToCart({
-          productId: productState?._id,
-          quantity,
-          color: color._id,
-          price: productState?.price,
+          product: {
+            _id: productState?._id,
+            price: productState?.price,
+            quantity: quantity,
+            color: color._id,
+          },
         })
+        // addProdToCart({
+        //   productId: productState?._id,
+        //   quantity,
+        //   color: color._id,
+        //   price: productState?.price,
+        // })
       );
       navigate("/cart");
     }

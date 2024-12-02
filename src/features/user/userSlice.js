@@ -76,32 +76,35 @@ export const getuserProductHistory = createAsyncThunk(
 export const addProdToCart = createAsyncThunk(
   "user/cart/add",
   async (cartData, thunkAPI) => {
-    try {
-      return await authService.addToCart(cartData);
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error);
+    const re = await authService.addToCart(cartData);
+    if (re && re.data) {
+      return re;
+    } else {
+      return thunkAPI.rejectWithValue(re);
     }
   }
 );
 
 export const getUserCart = createAsyncThunk(
   "user/cart/get",
-  async (data, thunkAPI) => {
-    try {
-      return await authService.getCart(data);
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error);
+  async (thunkAPI) => {
+    const re = await authService.getCart();
+    if (re && re.data) {
+      return re;
+    } else {
+      return thunkAPI.rejectWithValue(re);
     }
   }
 );
 
 export const deleteUserCart = createAsyncThunk(
   "user/cart/delete",
-  async (data, thunkAPI) => {
-    try {
-      return await authService.emptyCart(data);
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error);
+  async (thunkAPI) => {
+    const re = await authService.emptyCart();
+    if (re && re.data) {
+      return re;
+    } else {
+      return thunkAPI.rejectWithValue(re);
     }
   }
 );
@@ -187,10 +190,11 @@ export const getAddressUserDetail = createAsyncThunk(
 export const deleteCartProduct = createAsyncThunk(
   "user/cart/product/delete",
   async (data, thunkAPI) => {
-    try {
-      return await authService.removeProductFromCart(data);
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error);
+    const re = await authService.removeProductFromCart(data);
+    if (re && re.data) {
+      return re;
+    } else {
+      return thunkAPI.rejectWithValue(re);
     }
   }
 );
@@ -209,10 +213,11 @@ export const createAnOrder = createAsyncThunk(
 export const updateCartProduct = createAsyncThunk(
   "user/cart/product/update",
   async (cartDetail, thunkAPI) => {
-    try {
-      return await authService.updateProductFromCart(cartDetail);
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error);
+    const re = await authService.updateProductFromCart(cartDetail);
+    if (re && re.data) {
+      return re;
+    } else {
+      return thunkAPI.rejectWithValue(re);
     }
   }
 );
@@ -411,7 +416,7 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
-        state.cartProduct = action.payload;
+        state.cartProduct = action.payload.data;
         if (state.isSuccess) {
           toast.success("Product Added To Cart");
         }
@@ -429,7 +434,7 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
-        state.cartProducts = action.payload;
+        state.cartProducts = action.payload.data;
       })
       .addCase(getUserCart.rejected, (state, action) => {
         state.isLoading = false;
@@ -465,7 +470,7 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
-        state.updatedCartProduct = action.payload;
+        state.updatedCartProduct = action.payload.data;
         if (state.isSuccess) {
           toast.success("Product Updated Successfully!");
         }

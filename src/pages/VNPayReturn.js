@@ -16,7 +16,7 @@ const VNPayReturn = () => {
       try {
         const res = await authService.paymentVerification(params);
         toast.success(res?.message);
-        dispatch(deleteUserCart(config)); // Xóa giỏ hàng ngay lập tức
+        dispatch(deleteUserCart()); // Xóa giỏ hàng ngay lập tức
         dispatch(resetState()); // Reset trạng thái giỏ hàng
         navigate("/my-orders");
       } catch (error) {

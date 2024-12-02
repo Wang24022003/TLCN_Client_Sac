@@ -46,14 +46,14 @@ const getUserHistory = async (Data) => {
 };
 
 const addToCart = async (cartData) => {
-  const response = await instance.post(`user/cart`, cartData, config);
+  const response = await instance.post(`carts/add`, cartData);
   if (response) {
     return response;
   }
 };
 
-const getCart = async (data) => {
-  const response = await instance.get(`user/cart`, data);
+const getCart = async () => {
+  const response = await instance.get(`carts/user`);
   if (response) {
     return response;
   }
@@ -61,7 +61,7 @@ const getCart = async (data) => {
 
 const removeProductFromCart = async (data) => {
   const response = await instance.delete(
-    `user/delete-product-cart/${data.id}`,
+    `carts/${data}`,
 
     data.config2,
     {
@@ -76,10 +76,7 @@ const removeProductFromCart = async (data) => {
 };
 
 const updateProductFromCart = async (cartDetail) => {
-  const response = await instance.delete(
-    `user/update-product-cart/${cartDetail.cartItemId}/${cartDetail.quantity}`,
-    config
-  );
+  const response = await instance.post(`carts/update`, cartDetail);
   if (response) {
     return response;
   }
@@ -139,8 +136,8 @@ const resetPass = async (data) => {
   }
 };
 
-const emptyCart = async (data) => {
-  const response = await instance.delete(`user/empty-cart`, data);
+const emptyCart = async () => {
+  const response = await instance.post(`carts/remove-all`);
 
   if (response) {
     return response;

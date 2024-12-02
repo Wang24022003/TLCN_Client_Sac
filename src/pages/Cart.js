@@ -10,48 +10,34 @@ import {
   deleteCartProduct,
   getUserCart,
   updateCartProduct,
+  deleteUserCart,
 } from "../features/user/userSlice";
 
 const Cart = () => {
-  const getTokenFromLocalStorage = localStorage.getItem("customer")
-    ? JSON.parse(localStorage.getItem("customer"))
-    : null;
-
-  const config2 = {
-    headers: {
-      Authorization: `Bearer ${getTokenFromLocalStorage?.token || ""}`,
-      Accept: "application/json",
-      "ngrok-skip-browser-warning": "69420"
-    },
-  };
-
   const dispatch = useDispatch();
   const [productupdateDetail, setProductupdateDetail] = useState(null);
   const [totalAmount, setTotalAmount] = useState(0);
-  const userCartState = useSelector((state) => state.auth.cartProducts);
+  const userCartState = useSelector(
+    (state) => state?.auth?.cartProducts?.items
+  );
 
   useEffect(() => {
-    dispatch(getUserCart(config2));
-  }, [dispatch, config2]);
+    dispatch(getUserCart());
+  }, []);
 
   useEffect(() => {
     if (productupdateDetail !== null) {
-      dispatch(
-        updateCartProduct({
-          cartItemId: productupdateDetail?.cartItemId,
-          quantity: productupdateDetail?.quantity,
-        })
-      );
+      dispatch(updateCartProduct(productupdateDetail));
       setTimeout(() => {
-        dispatch(getUserCart(config2));
+        dispatch(getUserCart());
       }, 200);
     }
-  }, [dispatch, productupdateDetail, config2]);
+  }, [productupdateDetail]);
 
   const deleteACartProduct = (id) => {
-    dispatch(deleteCartProduct({ id: id, config2: config2 }));
+    dispatch(deleteCartProduct(id));
     setTimeout(() => {
-      dispatch(getUserCart(config2));
+      dispatch(getUserCart());
     }, 200);
   };
 
@@ -64,15 +50,12 @@ const Cart = () => {
   }, [userCartState]);
 
   const deleteAllCartProduct = () => {
-    userCartState.map((item, index) => {
-      dispatch(deleteCartProduct({ id: item._id, config2: config2 }));
-    })
-    
+    dispatch(deleteUserCart());
+
     setTimeout(() => {
-      dispatch(getUserCart(config2));
+      dispatch(getUserCart());
     }, 200);
   };
-
 
   return (
     <>
@@ -89,6 +72,7 @@ const Cart = () => {
             </div>
             {userCartState &&
               userCartState.map((item, index) => {
+                console.log("🚀 ~ userCartState.map ~ item:", item);
                 return (
                   <div
                     key={index}
@@ -102,8 +86,7 @@ const Cart = () => {
                       <div className="w-25">
                         <img
                           src={
-                            item?.productId?.images?.[0]?.url ||
-                            "default-image-url"
+                            item?.product?.images?.[0] || "default-image-url"
                           }
                           className="img-fluid"
                           alt="product image"
@@ -119,7 +102,7 @@ const Cart = () => {
                           Color:
                           <ul className="colors ps-0">
                             <li
-                              style={{ backgroundColor: item?.color?.title }}
+                              style={{ backgroundColor: item?.color?.color }}
                             ></li>
                           </ul>
                         </p>
@@ -127,10 +110,7 @@ const Cart = () => {
                     </div>
                     <div className="cart-col-2">
                       <h5 className="price">
-                        {item?.price
-                          ? item.price.toLocaleString("vi-VN")
-                          : 0}
-                        ₫
+                        {item?.price ? item.price.toLocaleString("vi-VN") : 0}₫
                       </h5>
                     </div>
                     <div className="cart-col-3 d-flex align-items-center gap-15">
@@ -145,8 +125,12 @@ const Cart = () => {
                           value={item?.quantity}
                           onChange={(e) => {
                             setProductupdateDetail({
-                              cartItemId: item?._id,
-                              quantity: e.target.value,
+                              product: {
+                                _id: item.product._id,
+                                price: item.product.price,
+                                quantity: +e.target.value,
+                                color: item.color._id,
+                              },
                             });
                           }}
                         />
@@ -180,11 +164,8 @@ const Cart = () => {
               <Link to="/product" className="button">
                 Tiếp tục mua sắm
               </Link>
-              <button
-                  className="button danger"
-                  onClick={deleteAllCartProduct}
-                >
-                  Hủy đơn hàng
+              <button className="button danger" onClick={deleteAllCartProduct}>
+                Hủy đơn hàng
               </button>
               {totalAmount !== null && totalAmount !== 0 && (
                 <div className="d-flex flex-column align-items-end">

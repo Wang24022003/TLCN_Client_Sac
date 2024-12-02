@@ -73,7 +73,7 @@ const Checkout = () => {
       authState?.orderedProduct?.order !== null &&
       authState?.orderedProduct?.success === true
     ) {
-      dispatch(deleteUserCart(config2));
+      dispatch(deleteUserCart());
       dispatch(resetState()); // Xóa giỏ hàng sau khi đặt hàng thành công
       navigate("/my-orders");
     }
@@ -123,7 +123,7 @@ const Checkout = () => {
 
       if (paymentMethod === "COD") {
         alert("Order placed successfully with Cash on Delivery");
-        dispatch(deleteUserCart(config2)); // Xóa giỏ hàng ngay lập tức
+        dispatch(deleteUserCart()); // Xóa giỏ hàng ngay lập tức
         dispatch(resetState()); // Reset trạng thái giỏ hàng
         navigate("/my-orders");
       } else {
