@@ -81,14 +81,15 @@ const ProductCard = (props) => {
                   src={item?.images[0]}
                   alt="product"
                   height={"250px"}
-                  width={"100%"}
+                  width={"260px"}
                   onClick={() => navigate("/product/" + item?._id)}
                 />
                 <img
                   src={item?.images[0]}
                   alt="product"
                   height={"250px"}
-                  width={"100%"}
+                  width={"260px"}
+
                   onClick={() => navigate("/product/" + item?._id)}
                 />
               </div>

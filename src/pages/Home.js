@@ -458,6 +458,7 @@ const Home = () => {
             })}
         </div>
       </Container>
+      
       <Container class1="popular-wrapper py-1 home-wrapper-2">
         <div className="row">
           <div className="col-12">
@@ -469,7 +470,7 @@ const Home = () => {
             productState?.map((item, index) => {
               if (item.tags === "popular") {
                 return (
-                  <div key={index} className={"col-3"}>
+                  <div key={index} className={"col-3 my-4"}>
                     <div className="product-card position-relative">
                       <div className="wishlist-icon position-absolute">
                         <button className="border-0 bg-transparent">
@@ -487,14 +488,14 @@ const Home = () => {
                           src={item?.images[0]}
                           alt="product image"
                           height={"250px"}
-                          width={"100%"}
+                          width={"260px"}
                           onClick={() => navigate("/product/" + item?._id)}
                         />
                         <img
                           src={item?.images[0]}
                           alt="product image"
                           height={"250px"}
-                          width={"100%"}
+                          width={"260px"}
                           onClick={() => navigate("/product/" + item?._id)}
                         />
                       </div>
