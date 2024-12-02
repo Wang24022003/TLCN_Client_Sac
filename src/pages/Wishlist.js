@@ -3,7 +3,10 @@ import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
 import Container from "../components/Container";
 import { useDispatch, useSelector } from "react-redux";
-import { addToWishlist } from "../features/products/productSlilce";
+import {
+  addToWishlist,
+  removeToWishlist,
+} from "../features/products/productSlilce";
 import { getuserProductWishlist } from "../features/user/userSlice";
 const Wishlist = () => {
   const dispatch = useDispatch();
@@ -14,9 +17,9 @@ const Wishlist = () => {
     dispatch(getuserProductWishlist());
   };
 
-  const wishlistState = useSelector((state) => state?.auth?.wishlist?.wishlist);
+  const wishlistState = useSelector((state) => state?.auth?.wishlist);
   const removeFromWishlist = (id) => {
-    dispatch(addToWishlist(id));
+    dispatch(removeToWishlist(id));
     setTimeout(() => {
       dispatch(getuserProductWishlist());
     }, 300);
@@ -46,20 +49,17 @@ const Wishlist = () => {
                     <div className="wishlist-card-image">
                       <img
                         src={
-                          item?.images[0].url
-                            ? item?.images[0].url
-                            : "images/watch.jpg"
+                          item?.images[0] ? item?.images[0] : "images/watch.jpg"
                         }
                         className="img-fluid w-100"
                         alt="watch"
                       />
                     </div>
                     <div className="py-3 px-3">
-                      <h5 className="title">{item?.title}</h5>
+                      <h5 className="title">{item?.name}</h5>
                       <h6 className="price">
-  {item?.price ? (item.price).toLocaleString('vi-VN') : 0}₫
-</h6>
-
+                        {item?.price ? item.price.toLocaleString("vi-VN") : 0}₫
+                      </h6>
                     </div>
                   </div>
                 </div>

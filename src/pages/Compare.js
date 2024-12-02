@@ -4,7 +4,6 @@ import ReactStars from "react-rating-stars-component";
 
 const Compare = () => {
   const compareList = useSelector((state) => state.product.compareList);
-  console.log("🚀 ~ Compare ~ compareList:", compareList);
 
   return (
     <div className="container py-5">

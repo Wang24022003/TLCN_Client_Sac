@@ -53,10 +53,11 @@ export const loginUser = createAsyncThunk(
 export const getuserProductWishlist = createAsyncThunk(
   "user/wishlist",
   async (thunkAPI) => {
-    try {
-      return await authService.getUserWislist();
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error);
+    const re = await authService.getUserWislist();
+    if (re && re.data) {
+      return re;
+    } else {
+      return thunkAPI.rejectWithValue(re);
     }
   }
 );
@@ -118,14 +119,71 @@ export const getOrders = createAsyncThunk(
 
 export const getAddress = createAsyncThunk(
   "user/address/get",
-  async (thunkAPI) => {
-    try {
-      return await authService.getAddressUser();
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error);
+  async (query, thunkAPI) => {
+    const re = await authService.getAddressUser(query);
+    if (re && re.data) {
+      return re;
+    } else {
+      return thunkAPI.rejectWithValue(re);
     }
   }
 );
+export const deleteAddressUser = createAsyncThunk(
+  "user/address/delete",
+  async (id, thunkAPI) => {
+    const re = await authService.deleteAddressUser(id);
+    if (re && re.data) {
+      return re;
+    } else {
+      return thunkAPI.rejectWithValue(re);
+    }
+  }
+);
+export const setDefaultAddressUser = createAsyncThunk(
+  "user/address/setDefaultAddressUser",
+  async (id, thunkAPI) => {
+    const re = await authService.setDefaultAddressUser(id);
+    if (re && re.data) {
+      return re;
+    } else {
+      return thunkAPI.rejectWithValue(re);
+    }
+  }
+);
+export const createAddressUser = createAsyncThunk(
+  "user/address/add",
+  async (data, thunkAPI) => {
+    const re = await authService.createAddressUser(data);
+    if (re && re.data) {
+      return re;
+    } else {
+      return thunkAPI.rejectWithValue(re);
+    }
+  }
+);
+export const updateAddressUser = createAsyncThunk(
+  "user/address/update",
+  async (data, thunkAPI) => {
+    const re = await authService.updateAddressUser(data);
+    if (re && re.data) {
+      return re;
+    } else {
+      return thunkAPI.rejectWithValue(re);
+    }
+  }
+);
+export const getAddressUserDetail = createAsyncThunk(
+  "user/address/detail",
+  async (id, thunkAPI) => {
+    const re = await authService.getAddressUserDetail(id);
+    if (re && re.data) {
+      return re;
+    } else {
+      return thunkAPI.rejectWithValue(re);
+    }
+  }
+);
+
 export const deleteCartProduct = createAsyncThunk(
   "user/cart/product/delete",
   async (data, thunkAPI) => {
@@ -200,6 +258,7 @@ const getCustomerfromLocalStorage = localStorage.getItem("customer")
 
 const initialState = {
   user: getCustomerfromLocalStorage,
+  address: {},
   isError: false,
   isSuccess: false,
   isLoading: false,
@@ -207,6 +266,7 @@ const initialState = {
   message: "",
   isBlocked: "...",
   history: [],
+  isReload: false,
 };
 
 export const authSlice = createSlice({
@@ -215,7 +275,7 @@ export const authSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-    
+
       .addCase(registerUser.pending, (state) => {
         state.isLoading = true;
       })
@@ -320,7 +380,8 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
-        state.wishlist = action.payload;
+        state.wishlist = action.payload.data.items;
+        state.isReload = false;
       })
       .addCase(getuserProductWishlist.rejected, (state, action) => {
         state.isLoading = false;
@@ -454,17 +515,7 @@ export const authSlice = createSlice({
         state.isSuccess = false;
         state.message = action.error;
       })
-      
-      .addCase(getAddress.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(getAddress.fulfilled, (state, action) => {
-        // state.isLoading = false;
-        // state.isError = false;
-        // state.isSuccess = true;
-        state.address = action.payload.data.result; 
-      })
-      
+
       .addCase(updateProfile.pending, (state) => {
         state.isLoading = true;
       })
@@ -554,6 +605,130 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;
+        state.message = action.error;
+      })
+      .addCase(getAddress.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getAddress.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.addressUser = action.payload.data.result;
+        state.isReload = false;
+      })
+      .addCase(getAddress.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
+      .addCase(deleteAddressUser.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteAddressUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.isReload = true;
+        if (state.isSuccess) {
+          toast.success("Xóa địa chỉ thành công");
+        }
+        // state.addressUser = action.payload.data.result;
+      })
+      .addCase(deleteAddressUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        if (state.isError) {
+          toast.error(action.payload.message);
+        }
+        state.message = action.error;
+      })
+      .addCase(setDefaultAddressUser.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(setDefaultAddressUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.isReload = true;
+        // state.addressUser = action.payload.data.result;
+      })
+      .addCase(setDefaultAddressUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        if (state.isError) {
+          toast.error(action.payload.message);
+        }
+        state.message = action.error;
+      })
+      .addCase(createAddressUser.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(createAddressUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.isReload = true;
+        if (state.isSuccess) {
+          toast.success("Create new address successful");
+        }
+        // state.addressUser = action.payload.data.result;
+      })
+      .addCase(updateAddressUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        if (state.isError) {
+          toast.error(action.payload.message);
+        }
+        state.message = action.error;
+      })
+      .addCase(updateAddressUser.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateAddressUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.isReload = true;
+        if (state.isSuccess) {
+          toast.success("Update address successful");
+        }
+        // state.addressUser = action.payload.data.result;
+      })
+      .addCase(createAddressUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        if (state.isError) {
+          toast.error(action.payload.message);
+        }
+        state.message = action.error;
+      })
+      .addCase(getAddressUserDetail.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getAddressUserDetail.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.isReload = true;
+        if (state.isSuccess) {
+          //toast.success("Create new address successful");
+          state.address = action.payload.data;
+        }
+        // state.addressUser = action.payload.data.result;
+      })
+      .addCase(getAddressUserDetail.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        if (state.isError) {
+          toast.error(action.payload.message);
+        }
         state.message = action.error;
       })
       .addCase(resetState, () => initialState);

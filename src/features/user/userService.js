@@ -32,7 +32,7 @@ const logoutApi = async () => {
 };
 
 const getUserWislist = async () => {
-  const response = await instance.get(`user/wishlist`, config);
+  const response = await instance.get(`like-products/user`);
   if (response) {
     return response;
   }
@@ -162,9 +162,38 @@ const paymentVerification = async (params) => {
   }
 };
 
-
-const getAddressUser = async (query) => {
+const getAddressUser = async (query = "") => {
   const response = await instance.get(`/address-user?${query}`);
+  if (response) {
+    return response;
+  }
+};
+const deleteAddressUser = async (id) => {
+  const response = await instance.delete(`/address-user/user/remove/${id}`);
+  if (response) {
+    return response;
+  }
+};
+const setDefaultAddressUser = async (id) => {
+  const response = await instance.patch(`/address-user/user/default/${id}`);
+  if (response) {
+    return response;
+  }
+};
+const createAddressUser = async (data) => {
+  const response = await instance.post(`/address-user`, data);
+  if (response) {
+    return response;
+  }
+};
+const updateAddressUser = async (data) => {
+  const response = await instance.patch(`/address-user/user`, data);
+  if (response) {
+    return response;
+  }
+};
+const getAddressUserDetail = async (id) => {
+  const response = await instance.get(`address-user/user/${id}`);
   if (response) {
     return response;
   }
@@ -189,5 +218,10 @@ export const authService = {
   resetPass,
   emptyCart,
   getAddressUser,
+  deleteAddressUser,
+  setDefaultAddressUser,
+  createAddressUser,
+  updateAddressUser,
+  getAddressUserDetail,
   paymentVerification,
 };

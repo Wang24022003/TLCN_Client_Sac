@@ -32,7 +32,7 @@ const SingleProduct = () => {
   const productsState = useSelector((state) => state?.product?.product);
   const cartState = useSelector((state) => state?.auth?.cartProducts);
   const authState = useSelector((state) => state?.auth);
-  const wishlistState = useSelector((state) => state?.auth?.wishlist?.wishlist);
+  const wishlistState = useSelector((state) => state?.auth?.wishlist);
 
   useEffect(() => {
     dispatch(getAProduct(getProductId));

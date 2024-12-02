@@ -11,6 +11,7 @@ import {
   AiOutlinePlusCircle,
 } from "react-icons/ai";
 import ReactStars from "react-rating-stars-component";
+import { getuserProductWishlist } from "../features/user/userSlice";
 
 const ProductCard = (props) => {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ const ProductCard = (props) => {
   const dispatch = useDispatch();
   const location = useLocation();
 
-  const wishlistState = useSelector((state) => state?.auth?.wishlist?.wishlist);
+  const wishlistState = useSelector((state) => state?.auth?.wishlist);
   const compareState = useSelector(
     (state) => state?.product?.compareList || []
   );
@@ -41,6 +42,7 @@ const ProductCard = (props) => {
 
   const handleWishlistToggle = (productId) => {
     dispatch(addToWishlist(productId));
+    dispatch(getuserProductWishlist());
   };
 
   const addToCompare = (productId) => {

@@ -3,6 +3,7 @@ import authReducer from "../features/user/userSlice";
 import productReducer from "../features/products/productSlilce";
 import blogReducer from "../features/blogs/blogSlice";
 import contactReducer from "../features/contact/contactSlice";
+import addressReducer from "../features/addresses/addressSlice";
 
 export const store = configureStore({
   reducer: {
@@ -10,5 +11,6 @@ export const store = configureStore({
     product: productReducer,
     blog: blogReducer,
     contact: contactReducer,
+    addressData: addressReducer,
   },
 });

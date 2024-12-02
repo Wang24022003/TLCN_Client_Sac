@@ -14,11 +14,13 @@ const getSingleProduct = async (id) => {
 };
 
 const addToWishlist = async (prodId) => {
-  const response = await instance.put(
-    `${base_url}product/Wishlist`,
-    { prodId },
-    config
-  );
+  const response = await instance.post(`like-products/add`, prodId);
+  if (response) {
+    return response;
+  }
+};
+const removeToWishlist = async (prodId) => {
+  const response = await instance.delete(`like-products/${prodId}`);
   if (response) {
     return response;
   }
@@ -51,4 +53,5 @@ export const productSevice = {
   getSingleProduct,
   rateProduct,
   updateOrder,
+  removeToWishlist,
 };

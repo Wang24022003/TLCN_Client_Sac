@@ -29,9 +29,8 @@ const Header = () => {
 
   const dispatch = useDispatch();
   const cartState = useSelector((state) => state?.auth?.cartProducts);
-  const wishlistState = useSelector((state) => state?.auth?.wishlist?.wishlist);
+  const wishlistState = useSelector((state) => state?.auth?.wishlist);
   const authState = useSelector((state) => state?.auth);
-  console.log("🚀 ~ Header ~ authState:", authState);
   const [total, setTotal] = useState(null);
   const [paginate, setPaginate] = useState(true);
   const productState = useSelector((state) => state?.product?.product);

@@ -11,6 +11,7 @@ import moment from "moment";
 import { getAllProducts } from "../features/products/productSlilce";
 import ReactStars from "react-rating-stars-component";
 import { addToWishlist } from "../features/products/productSlilce";
+import { getuserProductWishlist } from "../features/user/userSlice";
 const Home = () => {
   const blogState = useSelector((state) => state?.blog?.blog);
   const productState = useSelector((state) => state?.product?.product);
@@ -21,6 +22,7 @@ const Home = () => {
   useEffect(() => {
     getblogs();
     getProducts();
+    dispatch(getuserProductWishlist());
   }, []);
   const getblogs = () => {
     dispatch(getAllBlogs());
@@ -31,7 +33,12 @@ const Home = () => {
   };
 
   const addToWish = (id) => {
-    dispatch(addToWishlist(id));
+    dispatch(
+      addToWishlist({
+        _id: id,
+      })
+    );
+    dispatch(getuserProductWishlist());
   };
   return (
     <>
