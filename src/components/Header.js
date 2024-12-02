@@ -489,7 +489,7 @@ const Header = () => {
                             fontSize: "14px",
                           }}
                         >
-                          {userCartState?.length }
+                          {userCartState?.length ? userCartState?.length : 0}
                         </span>
                         <p
                           className="mb-0"
