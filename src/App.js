@@ -31,6 +31,7 @@ import History from "./pages/History";
 import Address from "./pages/Address";
 import AddAddress from "./pages/AddAddress";
 import UpdateAddress from "./pages/UpdateAddress";
+import ProductHistory from "./pages/ProductHistory";
 
 function App() {
   return (
@@ -114,6 +115,14 @@ function App() {
               element={
                 <PrivateRoutes>
                   <History />
+                </PrivateRoutes>
+              }
+            />
+            <Route
+              path="product-history"
+              element={
+                <PrivateRoutes>
+                  <ProductHistory />
                 </PrivateRoutes>
               }
             />
