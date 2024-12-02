@@ -29,6 +29,8 @@ import VNPayReturn from "./pages/VNPayReturn";
 import OTPVerification from "./pages/OTPVerification";
 import History from "./pages/History";
 import Address from "./pages/Address";
+import AddAddress from "./pages/AddAddress";
+import UpdateAddress from "./pages/UpdateAddress";
 
 function App() {
   return (
@@ -64,6 +66,22 @@ function App() {
               element={
                 <PrivateRoutes>
                   <Address />
+                </PrivateRoutes>
+              }
+            />
+            <Route
+              path="add-address"
+              element={
+                <PrivateRoutes>
+                  <AddAddress />
+                </PrivateRoutes>
+              }
+            />
+            <Route
+              path="update-address/:_id"
+              element={
+                <PrivateRoutes>
+                  <UpdateAddress />
                 </PrivateRoutes>
               }
             />
