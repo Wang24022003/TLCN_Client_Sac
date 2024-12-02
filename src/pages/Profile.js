@@ -54,6 +54,24 @@ const Profile = () => {
       <Container class1="cart-wrapper home-wrapper-2 py-5">
         <div className="row">
           <div className="col-12">
+          <div className="text-center mb-4">
+              <img
+                src={userState?.avatar || "/default-avatar.png"}
+                alt="Avatar"
+                className="rounded-circle"
+                style={{
+                  width: "150px",
+                  height: "150px",
+                  objectFit: "cover",
+                  border: "2px solid #ddd",
+                }}
+              />
+              {!edit && (
+                <button className="btn btn-link text-primary p-0 mt-2">
+                  Thay đổi ảnh
+                </button>
+              )}
+            </div>
             <div className="d-flex justify-content-between align-items-center">
               <h3 className="my-3">Thông tin tài khoản</h3>
 
@@ -65,7 +83,7 @@ const Profile = () => {
               <div className="mb-3">
                 <div className="mb-3">
                   <label htmlFor="example1" className="form-label">
-                    Tên
+                    Họ Và Tên
                   </label>
                   <input
                     type="text"
@@ -82,56 +100,75 @@ const Profile = () => {
                   </div>
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="example2" className="form-label">
-                    Họ
+                  <label htmlFor="example1" className="form-label">
+                    Gmail
                   </label>
                   <input
                     type="text"
-                    name="lastname"
+                    name="gmail"
                     className="form-control"
-                    id="example2"
+                    id="example1"
                     disabled={edit}
-                    value={formik.values.lastname}
-                    onChange={formik.handleChange("lastname")}
-                    onBlur={formik.handleBlur("lastname")}
+                    value={formik.values.firstname}
+                    onChange={formik.handleChange("firstname")}
+                    onBlur={formik.handleBlur("firstname")}
                   />
                   <div className="error">
-                    {formik.touched.lastname && formik.errors.lastname}
+                    {formik.touched.firstname && formik.errors.firstname}
                   </div>
                 </div>
-                <label htmlFor="exampleInputEmail1" className="form-label">
-                  Email 
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  className="form-control"
-                  id="exampleInputEmail1"
-                  disabled={edit}
-                  aria-describedby="emailHelp"
-                  value={formik.values.email}
-                  onChange={formik.handleChange("email")}
-                  onBlur={formik.handleBlur("email")}
-                />
-                <div className="error">
-                  {formik.touched.email && formik.errors.email}
-                </div>
                 <div className="mb-3">
-                  <label htmlFor="example3" className="form-label">
-                    Điện thoại
+                  <label htmlFor="example1" className="form-label">
+                    Giới tính
                   </label>
                   <input
-                    type="number"
-                    name="mobile"
+                    type="text"
+                    name="gmail"
                     className="form-control"
-                    id="example3"
+                    id="example1"
                     disabled={edit}
-                    value={formik.values.mobile}
-                    onChange={formik.handleChange("mobile")}
-                    onBlur={formik.handleBlur("mobile")}
+                    value={formik.values.firstname}
+                    onChange={formik.handleChange("firstname")}
+                    onBlur={formik.handleBlur("firstname")}
                   />
                   <div className="error">
-                    {formik.touched.mobile && formik.errors.mobile}
+                    {formik.touched.firstname && formik.errors.firstname}
+                  </div>
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="example1" className="form-label">
+                    Tuổi
+                  </label>
+                  <input
+                    type="text"
+                    name="gmail"
+                    className="form-control"
+                    id="example1"
+                    disabled={edit}
+                    value={formik.values.firstname}
+                    onChange={formik.handleChange("firstname")}
+                    onBlur={formik.handleBlur("firstname")}
+                  />
+                  <div className="error">
+                    {formik.touched.firstname && formik.errors.firstname}
+                  </div>
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="example1" className="form-label">
+                    Điểm tích lũy
+                  </label>
+                  <input
+                    type="text"
+                    name="gmail"
+                    className="form-control"
+                    id="example1"
+                    disabled={edit}
+                    value={formik.values.firstname}
+                    onChange={formik.handleChange("firstname")}
+                    onBlur={formik.handleBlur("firstname")}
+                  />
+                  <div className="error">
+                    {formik.touched.firstname && formik.errors.firstname}
                   </div>
                 </div>
               </div>
