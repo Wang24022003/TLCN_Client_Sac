@@ -30,7 +30,8 @@ const Checkout = () => {
   const dispatch = useDispatch();
   const userState = useSelector((state) => state.auth.user);
 
-  const cartState = useSelector((state) => state?.auth?.cartProducts);
+  const cartState = useSelector((state) => state?.auth?.cartProducts?.items);
+  console.log("🚀 ~ Checkout ~ cartState:", cartState);
   const authState = useSelector((state) => state?.auth);
   const [totalAmount, setTotalAmount] = useState(null);
   const [shippingInfo, setShippingInfo] = useState(null);
@@ -50,23 +51,9 @@ const Checkout = () => {
     setTotalAmount(sum);
   }, [cartState]);
 
-  const getTokenFromLocalStorage = localStorage.getItem("customer")
-    ? JSON.parse(localStorage.getItem("customer"))
-    : null;
-
-  const config2 = {
-    headers: {
-      Authorization: `Bearer ${
-        getTokenFromLocalStorage !== null ? getTokenFromLocalStorage.token : ""
-      }`,
-      Accept: "application/json",
-      "ngrok-skip-browser-warning": "69420",
-    },
-  };
-
   useEffect(() => {
-    dispatch(getUserCart(config2));
-  }, [dispatch, config2]);
+    dispatch(getUserCart());
+  }, [dispatch]);
 
   useEffect(() => {
     if (
@@ -77,7 +64,7 @@ const Checkout = () => {
       dispatch(resetState()); // Xóa giỏ hàng sau khi đặt hàng thành công
       navigate("/my-orders");
     }
-  }, [authState, navigate, dispatch, config2]);
+  }, [authState, navigate, dispatch]);
 
   const formik = useFormik({
     initialValues: {
@@ -117,8 +104,7 @@ const Checkout = () => {
           })),
           totalPrice: totalAmount,
           totalPriceAfterDiscount: totalAmount + shippingCost - discountAmount,
-        },
-        config2
+        }
       );
 
       if (paymentMethod === "COD") {
@@ -463,6 +449,7 @@ const Checkout = () => {
             <div className="border-bottom py-4">
               {cartState &&
                 cartState?.map((item, index) => {
+                  console.log("🚀 ~ cartState?.map ~ item:", item);
                   return (
                     <div
                       key={index}
@@ -477,17 +464,15 @@ const Checkout = () => {
                             {item?.quantity}
                           </span>
                           <img
-                            src={item?.productId?.images[0]?.url}
+                            src={item?.product?.images[0]}
                             width={100}
                             height={100}
                             alt="product"
                           />
                         </div>
                         <div>
-                          <h5 className="total-price">
-                            {item?.productId?.title}
-                          </h5>
-                          <p className="total-price">{item?.color?.title}</p>
+                          <h5 className="total-price">{item?.product?.name}</h5>
+                          <p className="total-price">{item?.color?.color}</p>
                         </div>
                       </div>
                       <div className="flex-grow-1">

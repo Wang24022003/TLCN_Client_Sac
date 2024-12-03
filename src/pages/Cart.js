@@ -72,7 +72,6 @@ const Cart = () => {
             </div>
             {userCartState &&
               userCartState.map((item, index) => {
-                console.log("🚀 ~ userCartState.map ~ item:", item);
                 return (
                   <div
                     key={index}
