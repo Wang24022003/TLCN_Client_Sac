@@ -32,13 +32,15 @@ import Address from "./pages/Address";
 import AddAddress from "./pages/AddAddress";
 import UpdateAddress from "./pages/UpdateAddress";
 import ProductHistory from "./pages/ProductHistory";
+import Dashboard from "./pages/Dashboard";
+import ProtectUser from "./utils/ProtectUser";
 
 function App() {
   return (
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Layout />}>
+            <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="about" element={<About />} />
             <Route path="contact" element={<Contact />} />
@@ -143,6 +145,8 @@ function App() {
                 </OpenRoutes>
               }
             />
+
+            {/* <Route path="/dashboad" element={<Dashboard />} /> */}
             <Route path="/otp/:id" element={<OTPVerification />} />
             <Route path="reset-password/:token" element={<Resetpassword />} />
             <Route path="privacy-policy" element={<PrivacyPolicy />} />
@@ -151,6 +155,23 @@ function App() {
             <Route path="term-conditions" element={<TermAndContions />} />
             <Route path="vnpay_return" element={<VNPayReturn />} />
           </Route>
+
+
+          <Route path='/dashboard' element={<ProtectUser/>} >
+              <Route path='/dashboard' element={<Dashboard/>} >
+              
+              <Route path='my-orders' element={<Orders/>} />
+              <Route path='profile' element={<Profile/>} />
+              
+              <Route path='my-wishlist' element={<Wishlist/>} /> 
+              <Route path='history' element={<History/>} /> 
+              <Route path='address' element={<Address/>} />
+              <Route path='add-address' element={<AddAddress/>} /> 
+              <Route path='update-address/:_id' element={<UpdateAddress/>} />
+             
+      
+            </Route> 
+            </Route>
         </Routes>
       </BrowserRouter>
     </>

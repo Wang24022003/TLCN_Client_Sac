@@ -17,6 +17,7 @@ import logo from "../assets/Logo_Sac.png";
 import "./../Css/CssHeader.css";
 import { authService } from "../features/user/userService";
 import { toast } from "react-toastify";
+import Dashboard from './../pages/Dashboard';
 const Header = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [selected, setSelected] = useState([]);
@@ -32,6 +33,9 @@ const Header = () => {
   );
   const wishlistState = useSelector((state) => state?.auth?.wishlist);
   const authState = useSelector((state) => state?.auth);
+
+  console.log("🚀 ~ file: Header.js:37 ~ Header ~ authState:", authState);
+
   const [totalAmount, setTotalAmount] = useState(0);
   const [paginate, setPaginate] = useState(true);
   const productState = useSelector((state) => state?.product?.product);
@@ -332,7 +336,7 @@ const Header = () => {
                     style={{ position: "relative" }} // Đảm bảo phần tử chứa có vị trí relative
                   >
                     <Link
-                      to={authState?.user === null ? "/login" : "/my-profile"}
+                      to={authState?.user === null ? "/login" : "/dashboard"}
                       // to={"/my-profile"}
                       className="d-flex align-items-center gap-10 text-white"
                       style={{
