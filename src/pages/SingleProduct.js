@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ReactStars from "react-rating-stars-component";
 import BreadCrumb from "../components/BreadCrumb";
 import Meta from "../components/Meta";
+import wish from "../images/wish.svg";
 import ProductCard from "../components/ProductCard";
 import ReactImageZoom from "react-image-zoom";
 import Color from "../components/Color";
@@ -17,7 +18,7 @@ import {
   getAllProducts,
 } from "../features/products/productSlilce";
 import { toast } from "react-toastify";
-import { addProdToCart, getUserCart } from "../features/user/userSlice";
+import { addProdToCart, getUserCart, getuserProductWishlist } from "../features/user/userSlice";
 import "./../Css/CssSingleProduct.css";
 
 const SingleProduct = () => {
@@ -205,13 +206,39 @@ const SingleProduct = () => {
     }
   };
 
+
+  const addToWish = (id) => {
+    dispatch(
+      addToWishlist({
+        _id: id,
+      })
+    );
+    dispatch(getuserProductWishlist());
+  };
   return (
     <>
       <Meta title={"Product Name"} />
       <BreadCrumb title={productState?.name} />
       <Container class1="main-product-wrapper py-5 home-wrapper-2">
         <div className="row">
-          <div className="col-6">
+        <div className="col-2">
+            <div className="other-product-images d-flex flex-column gap-3 justify-content-center">
+              {productState?.images.map((item, index) => (
+                <div
+                  key={index}
+                  className="image-thumbnail"
+                  onClick={() => setCurrentImageIndex(index)}
+                >
+                  <img
+                    src={item}
+                    className="img-fluid thumbnail-img"
+                    alt={`Product Thumbnail ${index + 1}`}
+                  />
+                </div>
+              ))}
+            </div>
+        </div>
+          <div className="col-5">
             <div className="main-product-image">
               <div className="image-container" style={{ position: "relative" }}>
                 {productState?.images[currentImageIndex] && (
@@ -236,24 +263,11 @@ const SingleProduct = () => {
                 </button>
               </div>
             </div>
-            <div className="other-product-images d-flex flex-wrap gap-3 justify-content-center mt-3">
-              {productState?.images.map((item, index) => (
-                <div
-                  key={index}
-                  className="image-thumbnail"
-                  onClick={() => setCurrentImageIndex(index)}
-                >
-                  <img
-                    src={item}
-                    className="img-fluid thumbnail-img"
-                    alt={`Product Thumbnail ${index + 1}`}
-                  />
-                </div>
-              ))}
-            </div>
+
+
           </div>
 
-          <div className="col-6">
+          <div className="col-5">
             <div className="main-product-details">
               <div className="border-bottom">
                 <h3 className="title">{productState?.name}</h3>
@@ -311,6 +325,16 @@ const SingleProduct = () => {
                     />
                   </div>
                 )}
+                <div className="wishlist-icon ms-auto">
+                      <button
+                        className="border-0 bg-transparent"
+                        onClick={(e) => {
+                          addToWish(productState?._id);
+                        }}
+                      >
+                        <img src={wish} alt="wishlist" />
+                      </button>
+                    </div>
 
                 <div className="d-flex align-items-center gap-15 flex-row mb-3">
                   <h3 className="product-heading">Số lượng :</h3>
@@ -376,7 +400,7 @@ const SingleProduct = () => {
           </div>
         </div>
       </Container>
-      <Container class1="description-wrapper py-5 home-wrapper-2">
+      <Container class1="description-wrapper py-4 home-wrapper-2">
         <div className="row">
           <div className="col-12">
             <h4>Mô tả</h4>
@@ -395,7 +419,7 @@ const SingleProduct = () => {
             <div className="review-inner-wrapper">
               <div className="review-head d-flex justify-content-between align-items-end">
                 <div>
-                  <h4 className="mb-2">Customer Reviews</h4>
+                  <h4 className="mb-2">Đánh giá của khách hàng</h4>
                   <div className="d-flex align-items-center gap-10">
                     <ReactStars
                       count={5}
@@ -439,7 +463,7 @@ const SingleProduct = () => {
                     className="w-100 form-control"
                     cols="30"
                     rows="4"
-                    placeholder="Comments"
+                    placeholder="Nội dung..."
                     onChange={(e) => {
                       setComment(e.target.value);
                     }}

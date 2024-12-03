@@ -336,7 +336,7 @@ const Header = () => {
                     style={{ position: "relative" }} // Đảm bảo phần tử chứa có vị trí relative
                   >
                     <Link
-                      to={authState?.user === null ? "/login" : "/dashboard"}
+                      to={authState?.user === null ? "/login" : "/dashboard/my-profile"}
                       // to={"/my-profile"}
                       className="d-flex align-items-center gap-10 text-white"
                       style={{

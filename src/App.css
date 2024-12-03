@@ -647,12 +647,19 @@ footer .input-group-text {
 .other-product-images {
   background-color: white;
   padding: 20px;
+  display: flex;                /* Sử dụng Flexbox */
+  justify-content: center;      /* Căn giữa các phần tử con theo chiều ngang */
+  align-items: center;          /* Căn giữa các phần tử con theo chiều dọc */
+  flex-wrap: wrap;              /* Cho phép các phần tử con xuống dòng khi không đủ không gian */
 }
+
 .other-product-images > div {
-  padding: 20px;
-  width: 48%;
+  width: 75%;
   border: 1px solid rgba(0, 0, 0, 0.25);
+
+  box-sizing: border-box;       /* Đảm bảo padding được tính trong tổng chiều rộng */
 }
+
 .main-product-image .js-image-zoom__zoomed-image {
   left: 50px !important;
   padding: 10px;

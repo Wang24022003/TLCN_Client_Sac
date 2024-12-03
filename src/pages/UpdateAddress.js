@@ -82,7 +82,7 @@ const UpdateAddress = () => {
       isDefault: values.isDefault,
     };
     dispatch(updateAddressUser(data));
-    navigate("/Address");
+    navigate("/dashboard/address");
   };
 
   return (

@@ -268,18 +268,8 @@ const Home = () => {
                     onMouseLeave={() => setHoveredProduct(null)} // Khi rời chuột, reset trạng thái
                   >
                     <div className="product-card position-relative">
-                      <div className="wishlist-icon position-absolute">
-                        <button className="border-0 bg-transparent">
-                          <img
-                            src={wish}
-                            alt="wishlist"
-                            onClick={(e) => {
-                              addToWish(item?._id);
-                            }}
-                          />
-                        </button>
-                      </div>
-                      <div className="product-image">
+                    
+                      <div className="product-image" style={{ position: 'relative', width: '100%', height: '0', paddingBottom: '150%' }}>
                         <img
                           src={
                             hoveredProduct === index && item?.images?.[1]
@@ -293,25 +283,45 @@ const Home = () => {
                           style={{
                             objectFit: "cover",
                             display: "block", // Đảm bảo ảnh hiển thị
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            width: "100%",
+                            height: "100%",
                           }}
                         />
                       </div>
+
+
+
                       <div className="product-details">
-                        <h6 className="brand">{item?.brand}</h6>
-                        <h5 className="product-title">
-                          {item?.name?.substr(0, 70) + "..."}
-                        </h5>
-                        <ReactStars
-                          count={5}
-                          size={24}
-                          value={item?.rating.toString()}
-                          edit={false}
-                          activeColor="#ffd700"
-                        />
-                        <p className="price">
-                          {item?.price ? item.price.toLocaleString("vi-VN") : 0}₫
-                        </p>
-                      </div>
+                  <h6 className="brand">{item?.brand}</h6>
+                  <h5 className="product-title">
+                    {item?.name?.substr(0, 70) + "..."}
+                  </h5>
+                  <div className="d-flex align-items-center">
+                    <ReactStars
+                      count={5}
+                      size={24}
+                      value={item?.rating.toString()}
+                      edit={false}
+                      activeColor="#ffd700"
+                    />
+                    <div className="wishlist-icon ms-auto">
+                      <button
+                        className="border-0 bg-transparent"
+                        onClick={(e) => {
+                          addToWish(item?._id);
+                        }}
+                      >
+                        <img src={wish} alt="wishlist" />
+                      </button>
+                    </div>
+                  </div>
+                  <p className="price">
+                    {item?.price ? item.price.toLocaleString("vi-VN") : 0}₫
+                  </p>
+                </div>
                     </div>
                   </div>
                 );
@@ -485,40 +495,45 @@ const Home = () => {
             productState?.map((item, index) => {
               if (item.tags === "popular") {
                 return (
-                  <div key={index} className={"col-3 my-4"}>
+                  <div
+                    key={index}
+                    className="col-3 my-4"
+                    onMouseEnter={() => setHoveredProduct(index)} // Khi hover, lưu chỉ số sản phẩm
+                    onMouseLeave={() => setHoveredProduct(null)} // Khi rời chuột, reset trạng thái
+                  >
                     <div className="product-card position-relative">
-                      <div className="wishlist-icon position-absolute">
-                        <button className="border-0 bg-transparent">
-                          <img
-                            src={wish}
-                            alt="wishlist"
-                            onClick={(e) => {
-                              addToWish(item?._id);
-                            }}
-                          />
-                        </button>
-                      </div>
-                      <div className="product-image">
+
+                      
+
+                      <div className="product-image" style={{ position: 'relative', width: '100%', height: '0', paddingBottom: '150%' }}>
                         <img
-                          src={item?.images[0]}
+                          src={
+                            hoveredProduct === index && item?.images?.[1]
+                              ? item?.images[1] // Hiển thị ảnh thứ 2 khi hover
+                              : item?.images?.[0] || "/default-image.png" // Dùng ảnh mặc định nếu không có ảnh
+                          }
                           alt="product image"
                           height={"250px"}
                           width={"260px"}
                           onClick={() => navigate("/product/" + item?._id)}
-                        />
-                        <img
-                          src={item?.images[0]}
-                          alt="product image"
-                          height={"250px"}
-                          width={"260px"}
-                          onClick={() => navigate("/product/" + item?._id)}
+                          style={{
+                            objectFit: "cover",
+                            display: "block", // Đảm bảo ảnh hiển thị
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            width: "100%",
+                            height: "100%",
+                          }}
                         />
                       </div>
+
                       <div className="product-details">
                         <h6 className="brand">{item?.brand}</h6>
                         <h5 className="product-title">
                           {item?.name?.substr(0, 70) + "..."}
                         </h5>
+                        <div className="d-flex align-items-center">
                         <ReactStars
                           count={5}
                           size={24}
@@ -526,6 +541,17 @@ const Home = () => {
                           edit={false}
                           activeColor="#ffd700"
                         />
+                        <div className="wishlist-icon ms-auto">
+                          <button
+                            className="border-0 bg-transparent"
+                            onClick={(e) => {
+                              addToWish(item?._id);
+                            }}
+                          >
+                            <img src={wish} alt="wishlist" />
+                          </button>
+                        </div>
+                        </div>
                         <p className="price">
                           {item?.price ? item.price.toLocaleString("vi-VN") : 0}
                           ₫
