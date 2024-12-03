@@ -1,0 +1,19 @@
+.product-image {
+     position: relative; /* Đảm bảo nội dung bên trong được kiểm soát */
+     width: 100%; /* Đảm bảo ảnh chiếm toàn bộ chiều ngang */
+     height: 250px; /* Chiều cao cố định của container */
+     overflow: hidden; /* Ẩn phần ảnh tràn ra ngoài */
+   }
+   
+   .product-image img {
+     width: 100%; /* Chiếm toàn bộ chiều ngang container */
+     height: 100%; /* Chiếm toàn bộ chiều cao container */
+     object-fit: cover; /* Đảm bảo ảnh không bị méo */
+     display: block; /* Loại bỏ khoảng trắng mặc định của ảnh */
+   }
+
+   .col-3 {
+     padding: 0; /* Loại bỏ padding mặc định */
+     margin: 0; /* Loại bỏ khoảng cách */
+   }
+   

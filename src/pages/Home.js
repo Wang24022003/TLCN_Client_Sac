@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BlogCard from "../components/BlogCard";
 import SpecialProduct from "../components/SpecialProduct";
@@ -12,6 +12,7 @@ import { getAllProducts } from "../features/products/productSlilce";
 import ReactStars from "react-rating-stars-component";
 import { addToWishlist } from "../features/products/productSlilce";
 import { getuserProductWishlist } from "../features/user/userSlice";
+import "./../Css/CssHome.css"
 const Home = () => {
   const blogState = useSelector((state) => state?.blog?.blog);
   const productState = useSelector((state) => state?.product?.product);
@@ -40,6 +41,10 @@ const Home = () => {
     );
     dispatch(getuserProductWishlist());
   };
+
+  const [hoveredProduct, setHoveredProduct] = useState(null);
+
+
   return (
     <>
       <Container className="home-wrapper-1 py-5">
@@ -245,6 +250,8 @@ const Home = () => {
           </div>
         </div>
       </Container>
+
+
       <Container class1="featured-wrapper py-5 home-wrapper-2">
         <div className="row">
           <div className="col-12">
@@ -254,7 +261,12 @@ const Home = () => {
             productState?.map((item, index) => {
               if (item.tags === "featured") {
                 return (
-                  <div key={index} className={"col-3 my-4"}>
+                  <div
+                    key={index}
+                    className="col-3 my-4"
+                    onMouseEnter={() => setHoveredProduct(index)} // Khi hover, lưu chỉ số sản phẩm
+                    onMouseLeave={() => setHoveredProduct(null)} // Khi rời chuột, reset trạng thái
+                  >
                     <div className="product-card position-relative">
                       <div className="wishlist-icon position-absolute">
                         <button className="border-0 bg-transparent">
@@ -269,18 +281,19 @@ const Home = () => {
                       </div>
                       <div className="product-image">
                         <img
-                          src={item?.images[0]}
+                          src={
+                            hoveredProduct === index && item?.images?.[1]
+                              ? item?.images[1] // Hiển thị ảnh thứ 2 khi hover
+                              : item?.images?.[0] || "/default-image.png" // Dùng ảnh mặc định nếu không có ảnh
+                          }
                           alt="product image"
                           height={"250px"}
                           width={"260px"}
                           onClick={() => navigate("/product/" + item?._id)}
-                        />
-                        <img
-                          src={item?.images[0]}
-                          alt="product image"
-                          height={"250px"}
-                          width={"260px"}
-                          onClick={() => navigate("/product/" + item?._id)}
+                          style={{
+                            objectFit: "cover",
+                            display: "block", // Đảm bảo ảnh hiển thị
+                          }}
                         />
                       </div>
                       <div className="product-details">
@@ -296,8 +309,7 @@ const Home = () => {
                           activeColor="#ffd700"
                         />
                         <p className="price">
-                          {item?.price ? item.price.toLocaleString("vi-VN") : 0}
-                          ₫
+                          {item?.price ? item.price.toLocaleString("vi-VN") : 0}₫
                         </p>
                       </div>
                     </div>
@@ -306,7 +318,10 @@ const Home = () => {
               }
             })}
         </div>
-      </Container>
+      </Container>;
+
+
+
 
       <Container class1="famous-wrapper py-1 home-wrapper-2">
         <div className="row">
