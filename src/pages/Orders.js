@@ -8,40 +8,25 @@ import { useNavigate } from "react-router-dom";
 import { updateOrder } from "../features/products/productSlilce";
 import { toast } from "react-toastify";
 
-
 const Orders = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const orderState = useSelector(
-    (state) => state?.auth?.getorderedProduct?.orders
-  );
+  const orderState = useSelector((state) => state?.auth?.getorderedProduct);
+  console.log("🚀 ~ Orders ~ orderState:", orderState);
 
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [statusFilter, setStatusFilter] = useState("");
   const [expandedOrders, setExpandedOrders] = useState({});
 
-  const getTokenFromLocalStorage = localStorage.getItem("customer")
-    ? JSON.parse(localStorage.getItem("customer"))
-    : null;
-
-  const config2 = {
-    headers: {
-      Authorization: `Bearer ${
-        getTokenFromLocalStorage !== null ? getTokenFromLocalStorage.token : ""
-      }`,
-      Accept: "application/json",
-    },
-  };
-
   useEffect(() => {
-    dispatch(getOrders(config2));
-  }, [dispatch, config2]);
+    dispatch(getOrders());
+  }, [dispatch]);
 
   useEffect(() => {
     if (orderState) {
       setFilteredOrders(
         statusFilter
-          ? orderState.filter((order) => order.orderStatus === statusFilter)
+          ? orderState.filter((order) => order?.statusUser === statusFilter)
           : orderState
       );
     }
@@ -56,23 +41,22 @@ const Orders = () => {
 
   const getStatusStyle = (status) => {
     switch (status) {
-      case "Ordered":
+      case "CONFIRMED":
         return "badge bg-secondary";
-      case "Processed":
+      case "PREPARE":
         return "badge bg-info";
-      case "Shipped":
+      case "UNCONFIRMED":
         return "badge bg-warning";
-      case "Out for Delivery":
+      case "ON_DELIVERY":
         return "badge bg-primary";
-      case "Delivered":
+      case "DELIVERED":
         return "badge bg-success";
-      case "Cancelled":
+      case "CANCEL":
         return "badge bg-danger";
       default:
         return "badge bg-light text-dark";
     }
   };
-
 
   const handleReview = (productId) => {
     if (productId) {
@@ -81,16 +65,16 @@ const Orders = () => {
       console.error("Không tìm thấy ID sản phẩm");
     }
   };
-  
+
   const handleCancelOrder = (orderId) => {
     if (orderId) {
       // Gọi API hủy đơn hàng
-      dispatch(updateOrder({id: orderId, status:"Cancelled" }))
+      dispatch(updateOrder({ id: orderId, status: "Cancelled" }))
         .unwrap()
         .then(() => {
           toast.success("Đơn hàng đã được hủy thành công!");
-          
-          dispatch(getOrders(config2));
+
+          dispatch(getOrders());
         })
         .catch((error) => {
           console.error("Lỗi khi hủy đơn hàng:", error);
@@ -98,7 +82,6 @@ const Orders = () => {
         });
     }
   };
-  
 
   const styles = {
     orderList: {
@@ -196,23 +179,22 @@ const Orders = () => {
 
   return (
     <>
-      
       <Container class1="cart-wrapper home-wrapper-2 py-5">
-      <div className="mb-4 d-flex justify-content-end">
-        <select
-          className="form-select w-auto"
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-        >
-          <option value="">All</option>
-          <option value="Ordered">Đã đặt hàng</option>
-          <option value="Processed">Đã xử lý</option>
-          <option value="Shipped">Đang vận chuyển</option>
-          <option value="Out for Delivery">Đang giao hàng</option>
-          <option value="Delivered">Đã giao hàng</option>
-          <option value="Cancelled">Đã hủy</option>
-        </select>
-      </div>
+        <div className="mb-4 d-flex justify-content-end">
+          <select
+            className="form-select w-auto"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="">All</option>
+            <option value="UNCONFIRMED">Đơn hàng mới</option>
+            <option value="CONFIRMED">Đã xác nhận</option>
+            <option value="PREPARE">Đang chuẩn bị</option>
+            <option value="ON_DELIVERY">Đang vận chuyển</option>
+            <option value="DELIVERED">Đã giao hàng</option>
+            <option value="CANCEL">Đã hủy</option>
+          </select>
+        </div>
 
         <div className="table-responsive">
           <table className="table table-striped align-middle">
@@ -228,152 +210,177 @@ const Orders = () => {
             </thead>
             <tbody>
               {filteredOrders &&
-                filteredOrders.map((item, index) => (
-                  <React.Fragment key={index}>
-                    <tr>
-                      <td>{item?._id}</td>
-                      <td>
-                        <span className={getStatusStyle(item?.orderStatus)}>
-                          {item?.orderStatus}
-                        </span>
-                      </td>
-                      <td>{item?.totalPrice.toLocaleString("vi-VN")} ₫</td>
-                      <td>{new Date(item?.createdAt).toLocaleString()}</td>
-                      <td>
-                        {item?.totalPriceAfterDiscount.toLocaleString("vi-VN")} ₫
-                      </td>
-                      <td>
-                      <button
-                          className="btn btn-sm btn-outline-primary"
-                          onClick={() => toggleExpandOrder(item?._id)}
-                        >
-                          {expandedOrders[item?._id] ? (
-                            <FaMinus /> // Biểu tượng "-"
-                          ) : (
-                            <FaPlus /> // Biểu tượng "+"
-                          )}
-                        </button>
-                      </td>
-                    </tr>
-                    {expandedOrders[item?._id] && (
-                      <tr>
-                        <td colSpan={6}>
-                          <div className="p-3 bg-light rounded">
-                            {/* Thông tin thanh toán */}
-                            <h5>Thông tin thanh toán</h5>
-                            <p>Hình thức: {item.paymentMethod}</p>
+                filteredOrders.map((item, index) => {
+                  console.log("🚀 ~ Orders ~ item:", item);
+                  const totalReceipt = item.items.reduce(
+                    (sum, item) => sum + item.quantity * item.product.price,
+                    0
+                  );
+                  return (
+                    <>
+                      <React.Fragment key={index}>
+                        <tr>
+                          <td>{item?._id}</td>
+                          <td>
+                            <span className={getStatusStyle(item?.statusUser)}>
+                              {item?.statusUser}
+                            </span>
+                          </td>
+                          <td>{totalReceipt.toLocaleString("vi-VN")} ₫</td>
+                          <td>{new Date(item?.createdAt)?.toLocaleString()}</td>
+                          <td>{item?.total?.toLocaleString("vi-VN")} ₫</td>
+                          <td>
+                            <button
+                              className="btn btn-sm btn-outline-primary"
+                              onClick={() => toggleExpandOrder(item?._id)}
+                            >
+                              {expandedOrders[item?._id] ? (
+                                <FaMinus /> // Biểu tượng "-"
+                              ) : (
+                                <FaPlus /> // Biểu tượng "+"
+                              )}
+                            </button>
+                          </td>
+                        </tr>
+                        {expandedOrders[item?._id] && (
+                          <tr>
+                            <td colSpan={6}>
+                              <div className="p-3 bg-light rounded">
+                                {/* Thông tin thanh toán */}
+                                <h5>Thông tin thanh toán</h5>
+                                <p>Hình thức: {item.paymentMethod}</p>
 
-                            {/* Thông tin vận chuyển */}
-                            <h5>Thông tin vận chuyển</h5>
-                            <p>Tình trạng: {item.orderStatus}</p>
-                            <p>
-                              Địa chỉ: {item.shippingInfo.address}, {item.shippingInfo.city},{" "}
-                              {item.shippingInfo.state}, {item.shippingInfo.country}
-                            </p>
+                                {/* Thông tin vận chuyển */}
+                                <h5>Thông tin vận chuyển</h5>
+                                <p>Tình trạng: {item.statusUser}</p>
+                                <p>
+                                  Địa chỉ: Tỉnh/ Thành phố:{" "}
+                                  {item.address.address}, Quận/Huyện:
+                                  {item.address.province}, Phường/Xã:
+                                  {item.address.districts}, Chi tiết:
+                                  {item.address.specific}
+                                </p>
 
-                            {/* Thông tin người nhận */}
-                            <h5>Thông tin người nhận</h5>
-                            <p>
-                              Họ tên: {item.shippingInfo.firstname} {item.shippingInfo.lastname}
-                            </p>
-                            <p>Số điện thoại: {item.shippingInfo.pincode}</p>
+                                {/* Thông tin người nhận */}
+                                <h5>Thông tin người nhận</h5>
+                                <p>Họ tên: {item.address.receiver}</p>
+                                <p>
+                                  Số điện thoại:
+                                  {item.address.phone}
+                                </p>
 
-                            {(item.orderStatus === "Ordered" || item.orderStatus === "Processed" ) && (
-                              <div className="mt-3">
-                                <button
-                                  className="btn btn-sm btn-danger"
-                                   onClick={() => handleCancelOrder(item?._id)}
-                                >
-                                  Hủy Đơn Hàng
-                                </button>
-                              </div>
-                            )}
+                                {(item.orderStatus === "Ordered" ||
+                                  item.orderStatus === "Processed") && (
+                                  <div className="mt-3">
+                                    <button
+                                      className="btn btn-sm btn-danger"
+                                      onClick={() =>
+                                        handleCancelOrder(item?._id)
+                                      }
+                                    >
+                                      Hủy Đơn Hàng
+                                    </button>
+                                  </div>
+                                )}
 
-                            {/* Nếu trạng thái là "Delivered", hiển thị nút Review */}
-                            {item.orderStatus === "Delivered" && (
-                              <div className="mt-3">
-                                <button
-                                  className="btn btn-sm btn-success"
-                                  onClick={() => handleReview(item?.orderItems[0]?.product?._id)}
-                                  
-                                >
-                                 
-                                  Review Sản Phẩm
-                                </button>
-                                
-                              </div>
-                              
-                            )}
+                                {/* Nếu trạng thái là "Delivered", hiển thị nút Review */}
+                                {item.orderStatus === "Delivered" && (
+                                  <div className="mt-3">
+                                    <button
+                                      className="btn btn-sm btn-success"
+                                      onClick={() =>
+                                        handleReview(
+                                          item?.orderItems[0]?.product?._id
+                                        )
+                                      }
+                                    >
+                                      Review Sản Phẩm
+                                    </button>
+                                  </div>
+                                )}
 
-
-                            <h5>Chi Tiết Sản Phẩm</h5>
-                            <div style={styles.productHeader}>
-                              <div style={styles.productColumn}>
-                                <h6>Tên sản phẩm</h6>
-                              </div>
-                              <div style={styles.productColumn}>
-                                <h6>Hình ảnh</h6>
-                              </div>
-                              <div style={styles.productColumn}>
-                                <h6>Color</h6>
-                              </div>
-                              <div style={styles.productColumn}>
-                                <h6>Số lượng</h6>
-                              </div>
-                              <div style={styles.productColumn}>
-                                <h6>Đơn giá</h6>
-                              </div>
-                              <div style={styles.productColumn}>
-                                <h6>Tổng tiền</h6>
-                              </div>
-                            </div>
-
-                            {/* Lặp qua danh sách orderItems */}
-                            {item?.orderItems?.map((i, index) => {
-                              return (
-                                <div style={styles.productItem} key={index}>
+                                <h5>Chi Tiết Sản Phẩm</h5>
+                                <div style={styles.productHeader}>
                                   <div style={styles.productColumn}>
-                                    <p>{i?.product?.title}</p>
+                                    <h6>Tên sản phẩm</h6>
                                   </div>
                                   <div style={styles.productColumn}>
-                                    <img
-                                      src={i?.product?.images[0]?.url}
-                                      width={50}
-                                      height={50}
-                                      alt="product"
-                                      onClick={() => handleReview(i?.product?._id)}
-                                    />
+                                    <h6>Hình ảnh</h6>
                                   </div>
                                   <div style={styles.productColumn}>
-                                    <ul style={styles.colors}>
-                                      <li
-                                        style={{
-                                          ...styles.colorItem,
-                                          backgroundColor: i?.color?.title,
-                                        }}
-                                      ></li>
-                                    </ul>
+                                    <h6>Color</h6>
                                   </div>
                                   <div style={styles.productColumn}>
-                                    <p>{i?.quantity}</p>
+                                    <h6>Số lượng</h6>
                                   </div>
                                   <div style={styles.productColumn}>
-                                    <p>{i?.price.toLocaleString("vi-VN")} ₫</p>
+                                    <h6>Đơn giá</h6>
                                   </div>
                                   <div style={styles.productColumn}>
-                                    {/* Tổng tiền tính toán: Đơn giá * Số lượng */}
-                                    <p>{(i?.price * i?.quantity).toLocaleString("vi-VN")} ₫</p>
+                                    <h6>Tổng tiền</h6>
                                   </div>
                                 </div>
-                              );
-                            })}
 
-                          </div>
-                        </td>
-                      </tr>
-                    )}
-                  </React.Fragment>
-                ))}
+                                {/* Lặp qua danh sách orderItems */}
+                                {item?.items?.map((i, index) => {
+                                  return (
+                                    <div style={styles.productItem} key={index}>
+                                      <div style={styles.productColumn}>
+                                        <p>{i?.product?.name}</p>
+                                      </div>
+                                      <div style={styles.productColumn}>
+                                        <img
+                                          src={i?.product?.images[0]}
+                                          width={50}
+                                          height={50}
+                                          alt="product"
+                                          onClick={() =>
+                                            handleReview(i?.product?._id)
+                                          }
+                                        />
+                                      </div>
+                                      <div style={styles.productColumn}>
+                                        <ul style={styles.colors}>
+                                          <li
+                                            style={{
+                                              ...styles.colorItem,
+                                              backgroundColor: i?.color?.color,
+                                            }}
+                                          ></li>
+                                        </ul>
+                                      </div>
+                                      <div style={styles.productColumn}>
+                                        <p>{i?.quantity}</p>
+                                      </div>
+                                      <div style={styles.productColumn}>
+                                        <p>
+                                          {i?.product.price?.toLocaleString(
+                                            "vi-VN"
+                                          )}{" "}
+                                          ₫
+                                        </p>
+                                      </div>
+                                      <div style={styles.productColumn}>
+                                        {/* Tổng tiền tính toán: Đơn giá * Số lượng */}
+                                        <p>
+                                          {(
+                                            i?.product.price * i?.quantity
+                                          )?.toLocaleString("vi-VN")}{" "}
+                                          ₫
+                                        </p>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </React.Fragment>
+                      ;
+                    </>
+                  );
+                })}
             </tbody>
           </table>
         </div>

@@ -123,10 +123,11 @@ export const deleteUserCart = createAsyncThunk(
 export const getOrders = createAsyncThunk(
   "user/orders/get",
   async (thunkAPI) => {
-    try {
-      return await authService.getUserOrders();
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error);
+    const re = await authService.getUserOrders();
+    if (re && re.data) {
+      return re;
+    } else {
+      return thunkAPI.rejectWithValue(re);
     }
   }
 );
@@ -551,7 +552,7 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
-        state.getorderedProduct = action.payload;
+        state.getorderedProduct = action.payload.data.result;
       })
       .addCase(getOrders.rejected, (state, action) => {
         state.isLoading = false;

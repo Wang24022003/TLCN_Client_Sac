@@ -94,7 +94,7 @@ const createOrder = async (orderDetail) => {
 };
 
 const getUserOrders = async () => {
-  const response = await instance.get(`user/getmyorders`, config);
+  const response = await instance.get(`receipts/user`);
 
   if (response) {
     return response;
