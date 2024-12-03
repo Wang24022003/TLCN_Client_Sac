@@ -13,8 +13,10 @@ import {
   resetState,
 } from "../features/user/userSlice";
 import DiscountCodeModal from "../components/DiscountCodeModal"; // Corrected path
+import AddressCodeModal from "../components/AddressCodeModal";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./../Css/CssCheckout.css";
+import Address from './Address';
 
 let shippingSchema = yup.object({
   firstname: yup.string().required("First Name is Required"),
@@ -202,6 +204,14 @@ const Checkout = () => {
                 Đội ngũ nhân viên Sắc (Sac@gmail.com)
               </p>
               <h4 className="mb-3">Địa chỉ giao hàng</h4>
+              <div className="mt-2">
+                <a
+                  className="choose-discount-code-link"
+                  onClick={() => setShowModal(true)}
+                >
+                  Chọn địa chỉ
+                </a>
+              </div>
               <form
                 onSubmit={formik.handleSubmit}
                 className="d-flex gap-15 flex-wrap justify-content-between"
@@ -604,6 +614,11 @@ const Checkout = () => {
         </div>
       </Container>
       <DiscountCodeModal
+        show={showModal}
+        handleClose={() => setShowModal(false)}
+        handleSelectCode={handleSelectCode}
+      />
+      <AddressCodeModal
         show={showModal}
         handleClose={() => setShowModal(false)}
         handleSelectCode={handleSelectCode}
