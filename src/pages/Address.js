@@ -67,12 +67,12 @@ const Address = () => {
   };
   return (
     <>
-      <BreadCrumb title="Address" />
-      <Container class1="cart-wrapper home-wrapper-2 py-5">
+     
+      
         <div className="bg-white p-6 rounded-md">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-semibold">Địa chỉ của tôi</h2>
-            <Link to="/add-address" className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">
+            <Link to="/dashboard/add-address" className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">
                     + Thêm địa chỉ mới
                 </Link>
           </div>
@@ -90,7 +90,7 @@ const Address = () => {
                     </div>
                     <div className="flex items-center space-x-4">
                       <Link
-                        to={`/update-address/${addr._id}`}
+                        to={`/dashboard/update-address/${addr._id}`}
                         className="text-blue-500 hover:underline"
                       >
                         Cập nhật
@@ -131,7 +131,7 @@ const Address = () => {
             )}
           </div>
         </div>
-      </Container>
+     
     </>
   );
 };

@@ -13,7 +13,7 @@ const Color = ({ colorData, setColor }) => {
     <>
       <div className="color-selection">
         <span>
-          Color:{" "}
+          Màu:{" "}
           {selectedColor
             ? colorData.find((color) => color._id === selectedColor)?.color
             : "None"}

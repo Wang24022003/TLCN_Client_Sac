@@ -56,7 +56,7 @@ const AddAddress = () => {
       isDefault: values.isDefault,
     };
     dispatch(createAddressUser(data));
-    navigate("/Address");
+    navigate("/dashboard/address");
   };
 
   return (

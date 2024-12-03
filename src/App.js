@@ -49,55 +49,17 @@ function App() {
             <Route path="product/:id" element={<SingleProduct />} />
             <Route path="blogs" element={<Blog />} />
             <Route path="blog/:id" element={<SingleBlog />} />
-            <Route
-              path="cart"element={
+            <Route path="cart" element={
                 <PrivateRoutes>
                   <Cart />
                 </PrivateRoutes>
               }
             />
-            <Route
-              path="my-orders"
-              element={
-                <PrivateRoutes>
-                  <Orders />
-                </PrivateRoutes>
-              }
-            />
-            <Route
-              path="address"
-              element={
-                <PrivateRoutes>
-                  <Address />
-                </PrivateRoutes>
-              }
-            />
-            <Route
-              path="add-address"
-              element={
-                <PrivateRoutes>
-                  <AddAddress />
-                </PrivateRoutes>
-              }
-            />
-            <Route
-              path="update-address/:_id"
-              element={
-                <PrivateRoutes>
-                  <UpdateAddress />
-                </PrivateRoutes>
-              }
-            />
-            <Route
-              path="my-profile"
-              element={
-                <PrivateRoutes>
-                  <Profile />
-                </PrivateRoutes>
-              }
-            />
-            <Route
-              path="checkout"
+            
+            
+            
+            
+            <Route path="checkout"
               element={
                 <PrivateRoutes>
                   <Checkout />
@@ -120,14 +82,7 @@ function App() {
                 </PrivateRoutes>
               }
             />
-            <Route
-              path="product-history"
-              element={
-                <PrivateRoutes>
-                  <ProductHistory />
-                </PrivateRoutes>
-              }
-            />
+            
             <Route
               path="login"
               element={
@@ -146,6 +101,40 @@ function App() {
               }
             />
 
+              <Route path='/dashboard' element={<ProtectUser/>} >
+              
+                <Route path='' element={<Dashboard/>} >
+                <Route path='my-profile' element={<Profile/>} />
+                <Route path='my-orders' element={<Orders/>} />
+                <Route path="add-address" element={
+                    <PrivateRoutes>
+                      <AddAddress />
+                    </PrivateRoutes>
+                  }
+                />
+                <Route path="update-address/:_id" element={
+                    <PrivateRoutes>
+                      <UpdateAddress />
+                    </PrivateRoutes>
+                  }
+                />
+                <Route
+                  path="product-history"
+                  element={
+                    <PrivateRoutes>
+                      <ProductHistory />
+                    </PrivateRoutes>
+                  }
+                />
+                
+                <Route path='my-wishlist' element={<Wishlist/>} /> 
+                <Route path='history' element={<History/>} /> 
+                <Route path='address' element={<Address/>} />
+                <Route path='add-address' element={<AddAddress/>} /> 
+                <Route path='update-address/:_id' element={<UpdateAddress/>} />
+                </Route> 
+            </Route>
+
             {/* <Route path="/dashboad" element={<Dashboard />} /> */}
             <Route path="/otp/:id" element={<OTPVerification />} />
             <Route path="reset-password/:token" element={<Resetpassword />} />
@@ -157,21 +146,7 @@ function App() {
           </Route>
 
 
-          <Route path='/dashboard' element={<ProtectUser/>} >
-              <Route path='/dashboard' element={<Dashboard/>} >
-              
-              <Route path='my-orders' element={<Orders/>} />
-              <Route path='profile' element={<Profile/>} />
-              
-              <Route path='my-wishlist' element={<Wishlist/>} /> 
-              <Route path='history' element={<History/>} /> 
-              <Route path='address' element={<Address/>} />
-              <Route path='add-address' element={<AddAddress/>} /> 
-              <Route path='update-address/:_id' element={<UpdateAddress/>} />
-             
-      
-            </Route> 
-            </Route>
+          
         </Routes>
       </BrowserRouter>
     </>

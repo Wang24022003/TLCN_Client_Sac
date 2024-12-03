@@ -8,14 +8,14 @@ const SpecialProduct = (props) => {
     <>
       <div className="col-4 mb-3">
         <div className="special-product-card">
-          <div className="d-flex justify-content-between gap-3">
+          <div className="d-flex  gap-3">
             <div>
               <img
                 src={img}
                 className="img-fluid "
                 alt="watch"
-                height={300}
-                width={300}
+                height={200}
+                width={200}
               />
             </div>
             <div className="special-product-content">
@@ -30,18 +30,9 @@ const SpecialProduct = (props) => {
               />
               <p className="price">
                 <span className="red-p">{price}đ</span> &nbsp;{" "}
-                {/* <strike>$200</strike> */}
+            
               </p>
-              {/* <div className="discount-till d-flex align-items-center gap-10">
-                <p className="mb-0">
-                  <b>5 </b>days
-                </p>
-                <div className="d-flex gap-10 align-items-center">
-                  <span className="badge rounded-circle p-3 bg-danger">1</span>:
-                  <span className="badge rounded-circle p-3 bg-danger">1</span>:
-                  <span className="badge rounded-circle p-3 bg-danger">1</span>
-                </div>
-              </div> */}
+             
               <div className="prod-count my-3">
                 <p>Products: {quantity}</p>
                 <div className="progress">
@@ -56,7 +47,7 @@ const SpecialProduct = (props) => {
                 </div>
               </div>
               <Link className="button" to={"/product/" + id}>
-                View
+                Xem chi tiết
               </Link>
             </div>
           </div>

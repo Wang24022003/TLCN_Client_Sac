@@ -71,37 +71,41 @@ const Profile = () => {
 
   return (
     <>
-      <BreadCrumb title="My Profile" />
+      
       <Container class1="cart-wrapper home-wrapper-2 py-5">
         <div className="row">
           <div className="col-12">
-          <div className="col-12 text-center mb-4">
-            <img
-              src={dataProfile?.avatar || "/default-avatar.png"}
-              alt="Avatar"
-              className="rounded-circle"
-              style={{
-                width: "150px",
-                height: "150px",
-                objectFit: "cover",
-                border: "2px solid #ddd",
-              }}
-            />
-            {!edit && (
-              <div className="mt-3">
-                <label htmlFor="upload-avatar" className="btn btn-link text-primary">
-                  Thay đổi ảnh
-                </label>
-                <input
-                  type="file"
-                  id="upload-avatar"
-                  accept="image/*"
-                  style={{ display: "none" }}
-                  onChange={handleImageChange}
+          <div className="col-12 d-flex justify-content-center align-items-center mb-4" style={{ minHeight: "200px" }}>
+  
+              <div className="text-center">
+                <img
+                  src={dataProfile?.avatar || "/default-avatar.png"}
+                  alt="Avatar"
+                  className="rounded-circle"
+                  style={{
+                    width: "150px",
+                    height: "150px",
+                    objectFit: "cover",
+                    border: "2px solid #ddd",
+                  }}
                 />
+                {!edit && (
+                  <div className="mt-3">
+                    <label htmlFor="upload-avatar" className="btn btn-link text-primary">
+                      Thay đổi ảnh
+                    </label>
+                    <input
+                      type="file"
+                      id="upload-avatar"
+                      accept="image/*"
+                      style={{ display: "none" }}
+                      onChange={handleImageChange}
+                    />
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+            </div>
+
 
 
             <div className="d-flex justify-content-between align-items-center">
