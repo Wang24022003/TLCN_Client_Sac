@@ -17,6 +17,7 @@ const AddAddress = () => {
   const districts = useSelector((state) => state?.addressData?.districts || []);
   const wards = useSelector((state) => state?.addressData?.wards || []);
   const user = useSelector((state) => state?.auth?.user);
+
   useEffect(() => {
     dispatch(getProvinces());
   }, [dispatch]);

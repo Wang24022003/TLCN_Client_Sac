@@ -24,22 +24,9 @@ const Address = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [expandedOrders, setExpandedOrders] = useState({});
 
-  const getTokenFromLocalStorage = localStorage.getItem("customer")
-    ? JSON.parse(localStorage.getItem("customer"))
-    : null;
-
-  const config2 = {
-    headers: {
-      Authorization: `Bearer ${
-        getTokenFromLocalStorage !== null ? getTokenFromLocalStorage.token : ""
-      }`,
-      Accept: "application/json",
-    },
-  };
-
   useEffect(() => {
     // dispatch(getOrders(config2));
-  }, [dispatch, config2]);
+  }, [dispatch]);
   const getListAddress = () => {
     dispatch(
       getAddress(`&user=${JSON.parse(localStorage.getItem("customer"))._id}`)
@@ -72,9 +59,12 @@ const Address = () => {
         <div className="bg-white p-6 rounded-md">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-semibold">Địa chỉ của tôi</h2>
-            <Link to="/add-address" className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">
-                    + Thêm địa chỉ mới
-                </Link>
+            <Link
+              to="/add-address"
+              className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+            >
+              + Thêm địa chỉ mới
+            </Link>
           </div>
           <hr className="my-4 border-gray-300" />
           <div className="space-y-6">

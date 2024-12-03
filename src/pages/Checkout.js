@@ -9,6 +9,7 @@ import axios from "axios";
 import {
   createAnOrder,
   deleteUserCart,
+  getAddress,
   getUserCart,
   resetState,
 } from "../features/user/userSlice";
@@ -16,34 +17,76 @@ import DiscountCodeModal from "../components/DiscountCodeModal"; // Corrected pa
 import AddressCodeModal from "../components/AddressCodeModal";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./../Css/CssCheckout.css";
-import Address from './Address';
-
-let shippingSchema = yup.object({
-  firstname: yup.string().required("First Name is Required"),
-  lastname: yup.string().required("Last Name is Required"),
-  address: yup.string().required("Address Details are Required"),
-  state: yup.string().required("State is Required"),
-  city: yup.string().required("District is Required"),
-  country: yup.string().required("Country is Required"),
-  pincode: yup.number("Phone No is Required").required().positive().integer(),
-});
+import Address from "./Address";
+import {
+  createReceitpUser,
+  getAddressDefaultUser,
+  getCoupounUserAccept,
+} from "../utils/api";
+import { toast } from "react-toastify";
+import { Formik, Field, Form, ErrorMessage } from "formik";
 
 const Checkout = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const userState = useSelector((state) => state.auth.user);
+  const [stateReceiptDefaultAddress, setStateReceiptDefaultAddress] =
+    useState(null);
+  const [stateReceiptDefaultCoupon, setStateReceiptDefaultCoupon] =
+    useState(null);
+  const getAddressUser = async () => {
+    const re = await getAddressDefaultUser();
+    if (re && re.data) {
+      const { receiver, phone, province, districts, specific, wards, _id } =
+        re.data;
+      const data = {
+        _id,
+        receiver,
+        phone,
+        province,
+        districts,
+        specific,
+        wards,
+        paymentMethod,
+      };
+      setStateReceiptDefaultAddress(data);
+    } else {
+      toast.error("Địa chỉ mặc định chưa có.Vui lòng tạo một địa chỉ mới");
+      navigate("/Address");
+    }
+  };
+  const getCouponUser = async () => {
+    const re = await getCoupounUserAccept(userState._id);
+    if (re && re.data) {
+      setStateReceiptDefaultCoupon(re.data);
+    } else {
+      console.log("🚀 ~ getCouponUser ~ re:", re);
+    }
+  };
+  const addressUserState = useSelector((state) => state?.auth?.addressUser);
+  const getListAddress = () => {
+    dispatch(
+      getAddress(`&user=${JSON.parse(localStorage.getItem("customer"))._id}`)
+    );
+  };
+  useEffect(() => {
+    getAddressUser();
+    getCouponUser();
+    getListAddress();
+    return () => {};
+  }, []);
 
   const cartState = useSelector((state) => state?.auth?.cartProducts?.items);
-  console.log("🚀 ~ Checkout ~ cartState:", cartState);
   const authState = useSelector((state) => state?.auth);
   const [totalAmount, setTotalAmount] = useState(null);
   const [shippingInfo, setShippingInfo] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("VNPay");
-  const [discountCode, setDiscountCode] = useState("");
+  const [discountCode, setDiscountCode] = useState();
   const [discountAmount, setDiscountAmount] = useState(0);
-  const [showModal, setShowModal] = useState(false); // State to control modal visibility
+  const [showModalCode, setShowModalCode] = useState(false); // State to control modal visibility
+  const [showModalAddress, setShowModalAddress] = useState(false); // State to control modal visibility
   const [shippingCost, setShippingCost] = useState(0); // State to track shipping cost
   const [selectedShippingMethod, setSelectedShippingMethod] = useState(""); // State to track selected shipping method
-  const navigate = useNavigate();
 
   useEffect(() => {
     let sum = 0;
@@ -67,64 +110,43 @@ const Checkout = () => {
       navigate("/my-orders");
     }
   }, [authState, navigate, dispatch]);
+  const handleSubmit = (values) => {
+    const data = {
+      paymentMethod: values.paymentMethod,
+      items: cartState.map((item) => ({
+        product: item.product._id, // Ensure productId is sent
+        color: item.color._id,
+        quantity: item.quantity,
+        price: item.price,
+      })),
+      coupons: discountCode ? [discountCode] : [],
+      supplier: "x",
+      notes: "x",
+      address: values?._id,
+    };
 
-  const formik = useFormik({
-    initialValues: {
-      name: userState.name,
-      address: "",
-      state: "",
-      city: "",
-      pincode: "",
-      other: "",
-    },
-    validationSchema: shippingSchema,
-    onSubmit: (values) => {
-      setShippingInfo(values);
-      setTimeout(() => {
-        checkOutHandler(values);
-      }, 300);
-    },
-  });
+    setTimeout(() => {
+      checkOutHandler(data);
+    }, 300);
+  };
 
-  const checkOutHandler = async (shippingInfo) => {
-    try {
-      const result = await axios.post(
-        "http://localhost:5000/api/user/order/checkout",
-        {
-          amount: totalAmount + shippingCost - discountAmount,
-          orderInfo: "Order from A2K",
-          paymentMethod,
-          shippingInfo,
-          orderItems: cartState.map((item) => ({
-            product: item.productId, // Ensure productId is sent
-            color: item.color,
-            quantity: item.quantity,
-            price: item.price,
-          })),
-          totalPrice: totalAmount,
-          totalPriceAfterDiscount: totalAmount + shippingCost - discountAmount,
-        }
-      );
-
-      if (paymentMethod === "COD") {
-        alert("Order placed successfully with Cash on Delivery");
-        dispatch(deleteUserCart()); // Xóa giỏ hàng ngay lập tức
-        dispatch(resetState()); // Reset trạng thái giỏ hàng
-        navigate("/my-orders");
-      } else {
-        if (!result.data || !result.data.vnpUrl) {
-          throw new Error("Invalid response from server");
-        }
-
-        const { vnpUrl } = result.data;
-        window.location.href = vnpUrl;
+  const checkOutHandler = async (data) => {
+    const re = await createReceitpUser(data);
+    console.log("🚀 ~ checkOutHandler ~ re:", re);
+    if (re && re.data && re.data.paymentMethod === "COD") {
+      toast.success("Create order successful!");
+      dispatch(deleteUserCart()); // Xóa giỏ hàng ngay lập tức
+      dispatch(resetState()); // Reset trạng thái giỏ hàng
+      navigate("/my-orders");
+    }
+    if (paymentMethod === "COD") {
+      //alert("Order placed successfully with Cash on Delivery");
+    } else {
+      if (!re.data || !re.data.vnpUrl) {
+        //throw new Error("Invalid response from server");
       }
-    } catch (error) {
-      console.error("Error during checkout:", error);
-      alert(
-        "Something Went Wrong: " +
-          (error.response?.data?.message || error.message)
-      );
+      //const { vnpUrl } = re.data;
+      //window.location.href = vnpUrl;
     }
   };
 
@@ -141,17 +163,18 @@ const Checkout = () => {
     };
 
     if (discountCodes[discountCode]) {
-      setDiscountAmount(discountCodes[discountCode]);
+      //check api code
+      // setDiscountAmount(discountCodes[discountCode]);
       alert("Discount code applied successfully!");
     } else {
-      alert("Invalid discount code.");
+      // alert("Invalid discount code.");
     }
   };
 
   const handleSelectCode = (discount) => {
     setDiscountCode(discount.code);
-    setDiscountAmount(discount.amount);
-    setShowModal(false);
+    setDiscountAmount(10000);
+    setShowModalCode(false);
   };
 
   const handleShippingMethodChange = (cost, method) => {
@@ -204,147 +227,151 @@ const Checkout = () => {
               <div className="mt-2">
                 <a
                   className="choose-discount-code-link"
-                  onClick={() => setShowModal(true)}
+                  onClick={() => setShowModalAddress(true)}
                 >
                   Chọn địa chỉ
                 </a>
               </div>
-              <form
-                onSubmit={formik.handleSubmit}
-                className="d-flex gap-15 flex-wrap justify-content-between"
+              <Formik
+                initialValues={stateReceiptDefaultAddress}
+                onSubmit={handleSubmit}
+                enableReinitialize
               >
-                <div className="flex-grow-1">
-                  <input
-                    type="text"
-                    placeholder="Tên"
-                    className="form-control"
-                    name="lastname"
-                    value={formik.values.name}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                  />
-                  <div className="error ms-2 my-1">
-                    {formik.touched.lastname && formik.errors.lastname}
-                  </div>
-                </div>
-                <div className="w-100">
-                  <input
-                    type="text"
-                    placeholder="Số điện thoại"
-                    className="form-control"
-                    name="pincode"
-                    value={formik.values.pincode}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                  />
-                  <div className="error ms-2 my-1">
-                    {formik.touched.pincode && formik.errors.pincode}
-                  </div>
-                </div>
-                <div className="flex-grow-1">
-                  <input
-                    type="text"
-                    placeholder="Xã"
-                    className="form-control"
-                    name="address"
-                    value={formik.values.address}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                  />
-                  <div className="error ms-2 my-1">
-                    {formik.touched.city && formik.errors.city}
-                  </div>
-                </div>
-                <div className="flex-grow-1">
-                  <input
-                    type="text"
-                    placeholder="Quận / Huyện"
-                    className="form-control"
-                    name="city"
-                    value={formik.values.city}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                  />
-                  <div className="error ms-2 my-1">
-                    {formik.touched.address && formik.errors.address}
-                  </div>
-                </div>
-                <div className="flex-grow-1">
-                  <input
-                    type="text"
-                    placeholder="Tỉnh / Thành phố"
-                    className="form-control"
-                    name="city"
-                    value={formik.values.city}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                  />
-                  <div className="error ms-2 my-1">
-                    {formik.touched.address && formik.errors.address}
-                  </div>
-                  <div className="error ms-2 my-1">
-                    {formik.touched.state && formik.errors.state}
-                  </div>
-                </div>
+                <Form>
+                  <div className="row">
+                    <div className="col-7">
+                      <div className="checkout-left-data">
+                        <div className="mb-3">
+                          <label htmlFor="receiver">Người nhận</label>
+                          <Field
+                            type="text"
+                            name="receiver"
+                            placeholder="Người nhận"
+                            className="form-control"
+                            disabled={true}
+                          />
+                          <ErrorMessage
+                            name="receiver"
+                            component="div"
+                            className="text-danger"
+                          />
+                        </div>
 
-                <div className="w-100">
-                  <input
-                    type="text"
-                    placeholder="Địa chỉ cụ thể"
-                    className="form-control"
-                    name="other"
-                    value={formik.values.other}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                  />
-                </div>
+                        <div className="mb-3">
+                          <label htmlFor="phone">Số điện thoại</label>
+                          <Field
+                            type="text"
+                            name="phone"
+                            placeholder="Số điện thoại"
+                            className="form-control"
+                            disabled={true}
+                          />
+                          <ErrorMessage
+                            name="phone"
+                            component="div"
+                            className="text-danger"
+                          />
+                        </div>
+                        <div className="mb-3">
+                          <label htmlFor="province">Tỉnh / Thành phố</label>
+                          <Field
+                            type="text"
+                            name="province"
+                            placeholder="Tỉnh / Thành phố"
+                            className="form-control"
+                            disabled={true}
+                          />
+                          <ErrorMessage
+                            name="province"
+                            component="div"
+                            className="text-danger"
+                          />
+                        </div>
 
-                <div className="w-100">
-                  <h4 className="mb-3">Phương thức thanh toán</h4>
-                  <div className="form-check">
-                    <input
-                      className="form-check-input"
-                      type="radio"
-                      name="paymentMethod"
-                      id="vnpay"
-                      value="VNPay"
-                      checked={paymentMethod === "VNPay"}
-                      onChange={(e) => setPaymentMethod(e.target.value)}
-                    />
-                    <label className="form-check-label" htmlFor="vnpay">
-                      VNPay
-                    </label>
+                        <div className="mb-3">
+                          <label htmlFor="districts">Quận / Huyện</label>
+                          <Field
+                            type="text"
+                            name="districts"
+                            placeholder="Quận / Huyện"
+                            className="form-control"
+                            disabled={true}
+                          />
+                          <ErrorMessage
+                            name="districts"
+                            component="div"
+                            className="text-danger"
+                          />
+                        </div>
+                        <div className="mb-3">
+                          <label htmlFor="wards">Phường/Xã</label>
+                          <Field
+                            type="text"
+                            name="wards"
+                            placeholder="Phường/Xã"
+                            className="form-control"
+                            disabled={true}
+                          />
+                          <ErrorMessage
+                            name="wards"
+                            component="div"
+                            className="text-danger"
+                          />
+                        </div>
+                        <div className="mb-3">
+                          <label htmlFor="specific">Địa chỉ cụ thể</label>
+                          <Field
+                            type="text"
+                            name="specific"
+                            placeholder="Địa chỉ cụ thể"
+                            className="form-control"
+                            disabled={true}
+                          />
+                        </div>
+
+                        <div className="mb-3">
+                          <h4>Phương thức thanh toán</h4>
+                          <div className="form-check">
+                            <Field
+                              type="radio"
+                              name="paymentMethod"
+                              value="VNPay"
+                              className="form-check-input"
+                            />
+                            <label className="form-check-label">VNPay</label>
+                          </div>
+                          <div className="form-check">
+                            <Field
+                              type="radio"
+                              name="paymentMethod"
+                              value="COD"
+                              className="form-check-input"
+                            />
+                            <label className="form-check-label">
+                              Thanh toán khi nhận hàng
+                            </label>
+                          </div>
+                          <ErrorMessage
+                            name="paymentMethod"
+                            component="div"
+                            className="text-danger"
+                          />
+                        </div>
+
+                        <div className="d-flex justify-content-between align-items-center">
+                          <Link to="/cart" className="text-dark">
+                            <BiArrowBack className="me-2" />
+                            Quay lại giỏ hàng
+                          </Link>
+                          <button type="submit" className="btn btn-primary">
+                            Đặt hàng
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="form-check">
-                    <input
-                      className="form-check-input"
-                      type="radio"
-                      name="paymentMethod"
-                      id="cod"
-                      value="COD"
-                      checked={paymentMethod === "COD"}
-                      onChange={(e) => setPaymentMethod(e.target.value)}
-                    />
-                    <label className="form-check-label" htmlFor="cod">
-                      Thanh toán khi nhận hàng
-                    </label>
-                  </div>
-                </div>
-                <div className="w-100">
-                  <div className="d-flex justify-content-between align-items-center">
-                    <Link to="/cart" className="text-dark">
-                      <BiArrowBack className="me-2" />
-                      Quay lại giỏ hàng
-                    </Link>
-                    <Link to="/product" className="button">
-                      Tiếp tục mua sắm
-                    </Link>
-                    <button className="button" type="submit">
-                      Đặt hàng
-                    </button>
-                  </div>
-                </div>
-              </form>
+                </Form>
+              </Formik>
             </div>
           </div>
           <div className="col-5">
@@ -480,7 +507,7 @@ const Checkout = () => {
               <div className="mt-2">
                 <a
                   className="choose-discount-code-link"
-                  onClick={() => setShowModal(true)}
+                  onClick={() => setShowModalCode(true)}
                 >
                   Chọn mã giảm giá
                 </a>
@@ -505,14 +532,16 @@ const Checkout = () => {
         </div>
       </Container>
       <DiscountCodeModal
-        show={showModal}
-        handleClose={() => setShowModal(false)}
+        data={stateReceiptDefaultCoupon}
+        show={showModalCode}
+        handleClose={() => setShowModalCode(false)}
         handleSelectCode={handleSelectCode}
       />
       <AddressCodeModal
-        show={showModal}
-        handleClose={() => setShowModal(false)}
-        handleSelectCode={handleSelectCode}
+        data={addressUserState}
+        show={showModalAddress}
+        setStateReceiptDefaultAddress={setStateReceiptDefaultAddress}
+        handleClose={() => setShowModalAddress(false)}
       />
     </>
   );
