@@ -137,7 +137,7 @@ const Checkout = () => {
       toast.success("Create order successful!");
       dispatch(deleteUserCart()); // Xóa giỏ hàng ngay lập tức
       dispatch(resetState()); // Reset trạng thái giỏ hàng
-      navigate("/my-orders");
+      navigate("/dashboard/my-orders");
     }
     if (paymentMethod === "COD") {
       //alert("Order placed successfully with Cash on Delivery");

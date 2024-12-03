@@ -38,8 +38,8 @@ const getUserWislist = async () => {
   }
 };
 
-const getUserHistory = async (Data) => {
-  const response = await instance.post(`product/purchased`, Data);
+const getUserHistory = async () => {
+  const response = await instance.get(`products/product/purchased`);
   if (response) {
     return response;
   }

@@ -4,25 +4,25 @@ import Meta from "../components/Meta";
 import Container from "../components/Container";
 import { useDispatch, useSelector } from "react-redux";
 import { addToWishlist } from "../features/products/productSlilce";
-import { getuserProductHistory, getuserProductWishlist } from "../features/user/userSlice";
+import {
+  getuserProductHistory,
+  getuserProductWishlist,
+} from "../features/user/userSlice";
 import { useNavigate } from "react-router-dom";
 const History = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const getWishlistFromDb = () => {
+    dispatch(getuserProductHistory());
+  };
   useEffect(() => {
     getWishlistFromDb();
   }, []);
-  const getWishlistFromDb = () => {       
-    const id = localStorage.getItem("customer");
-    dispatch(getuserProductHistory({userId:JSON.parse(id)._id}));
-  };
-    
-
 
   const wishlistState = useSelector((state) => state?.auth?.history);
+  console.log("🚀 ~ History ~ wishlistState:", wishlistState);
 
-
- 
   return (
     <>
       <Meta title={"Wishlist"} />
@@ -38,12 +38,9 @@ const History = () => {
                 <div className="col-3" key={index}>
                   <div className="wishlist-card position-relative">
                     <div className="wishlist-card-image">
-                    
                       <img
                         src={
-                          item?.images[0].url
-                            ? item?.images[0].url
-                            : "images/watch.jpg"
+                          item?.images[0] ? item?.images[0] : "images/watch.jpg"
                         }
                         onClick={() => navigate("/product/" + item?._id)}
                         className="img-fluid w-100"
@@ -51,11 +48,10 @@ const History = () => {
                       />
                     </div>
                     <div className="py-3 px-3">
-                      <h5 className="title">{item?.title}</h5>
+                      <h5 className="title">{item?.name}</h5>
                       <h6 className="price">
-  {item?.price ? (item.price).toLocaleString('vi-VN') : 0}₫
-</h6>
-
+                        {item?.price ? item.price.toLocaleString("vi-VN") : 0}₫
+                      </h6>
                     </div>
                   </div>
                 </div>

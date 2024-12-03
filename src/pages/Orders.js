@@ -284,13 +284,13 @@ const Orders = () => {
                                 )}
 
                                 {/* Nếu trạng thái là "Delivered", hiển thị nút Review */}
-                                {item.orderStatus === "Delivered" && (
+                                {item.statusUser === "DELIVERED" && (
                                   <div className="mt-3">
                                     <button
                                       className="btn btn-sm btn-success"
                                       onClick={() =>
                                         handleReview(
-                                          item?.orderItems[0]?.product?._id
+                                          item?.items[0]?.product?._id
                                         )
                                       }
                                     >

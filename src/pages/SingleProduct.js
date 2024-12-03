@@ -18,7 +18,11 @@ import {
   getAllProducts,
 } from "../features/products/productSlilce";
 import { toast } from "react-toastify";
-import { addProdToCart, getUserCart, getuserProductWishlist } from "../features/user/userSlice";
+import {
+  addProdToCart,
+  getUserCart,
+  getuserProductWishlist,
+} from "../features/user/userSlice";
 import "./../Css/CssSingleProduct.css";
 
 const SingleProduct = () => {
@@ -64,7 +68,7 @@ const SingleProduct = () => {
           product: {
             _id: productState?._id,
             price: productState?.price,
-            quantity: quantity,
+            quantity: +quantity,
             color: color._id,
           },
         })
@@ -206,7 +210,6 @@ const SingleProduct = () => {
     }
   };
 
-
   const addToWish = (id) => {
     dispatch(
       addToWishlist({
@@ -221,7 +224,7 @@ const SingleProduct = () => {
       <BreadCrumb title={productState?.name} />
       <Container class1="main-product-wrapper py-5 home-wrapper-2">
         <div className="row">
-        <div className="col-2">
+          <div className="col-2">
             <div className="other-product-images d-flex flex-column gap-3 justify-content-center">
               {productState?.images.map((item, index) => (
                 <div
@@ -237,7 +240,7 @@ const SingleProduct = () => {
                 </div>
               ))}
             </div>
-        </div>
+          </div>
           <div className="col-5">
             <div className="main-product-image">
               <div className="image-container" style={{ position: "relative" }}>
@@ -263,8 +266,6 @@ const SingleProduct = () => {
                 </button>
               </div>
             </div>
-
-
           </div>
 
           <div className="col-5">
@@ -284,7 +285,7 @@ const SingleProduct = () => {
                   <ReactStars
                     count={5}
                     size={24}
-                    value={productState?.totalrating?.toString()}
+                    value={productState?.rating?.toString()}
                     edit={false}
                     activeColor="#ffd700"
                   />
@@ -326,15 +327,15 @@ const SingleProduct = () => {
                   </div>
                 )}
                 <div className="wishlist-icon ms-auto">
-                      <button
-                        className="border-0 bg-transparent"
-                        onClick={(e) => {
-                          addToWish(productState?._id);
-                        }}
-                      >
-                        <img src={wish} alt="wishlist" />
-                      </button>
-                    </div>
+                  <button
+                    className="border-0 bg-transparent"
+                    onClick={(e) => {
+                      addToWish(productState?._id);
+                    }}
+                  >
+                    <img src={wish} alt="wishlist" />
+                  </button>
+                </div>
 
                 <div className="d-flex align-items-center gap-15 flex-row mb-3">
                   <h3 className="product-heading">Số lượng :</h3>

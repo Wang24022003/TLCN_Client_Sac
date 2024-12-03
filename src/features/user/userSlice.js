@@ -75,11 +75,12 @@ export const getProductUserRecentView = createAsyncThunk(
 
 export const getuserProductHistory = createAsyncThunk(
   "user/history",
-  async (ID, thunkAPI) => {
-    try {
-      return await authService.getUserHistory(ID);
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error);
+  async (_, thunkAPI) => {
+    const re = await authService.getUserHistory();
+    if (re && re.data) {
+      return re;
+    } else {
+      return thunkAPI.rejectWithValue(re);
     }
   }
 );
@@ -441,7 +442,7 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
-        state.history = action.payload;
+        state.history = action.payload.data;
       })
       .addCase(getuserProductHistory.rejected, (state, action) => {
         state.isLoading = false;
