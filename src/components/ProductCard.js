@@ -12,6 +12,7 @@ import {
 } from "react-icons/ai";
 import ReactStars from "react-rating-stars-component";
 import { getuserProductWishlist } from "../features/user/userSlice";
+import wish from "../images/wish.svg";
 
 const ProductCard = (props) => {
   const navigate = useNavigate();
@@ -49,6 +50,17 @@ const ProductCard = (props) => {
     dispatch(toggleCompare(productId));
   };
 
+  const [hoveredProduct, setHoveredProduct] = useState(null);
+
+  const addToWish = (id) => {
+    dispatch(
+      addToWishlist({
+        _id: id,
+      })
+    );
+    dispatch(getuserProductWishlist());
+  };
+
   return (
     <>
       {data?.map((item, index) => {
@@ -60,7 +72,10 @@ const ProductCard = (props) => {
             key={index}
             className={` ${
               location.pathname === "/product" ? `gr-${grid}` : "col-3"
-            } `}
+            } `
+            }
+            onMouseEnter={() => setHoveredProduct(index)} // Khi hover, lưu chỉ số sản phẩm
+            onMouseLeave={() => setHoveredProduct(null)}
           >
             <div className="product-card position-relative">
               <div className="wishlist-icon position-absolute">
@@ -76,23 +91,28 @@ const ProductCard = (props) => {
                 </button>
               </div>
 
-              <div className="product-image">
-                <img
-                  src={item?.images[0]}
-                  alt="product"
-                  height={"250px"}
-                  width={"260px"}
-                  onClick={() => navigate("/product/" + item?._id)}
-                />
-                <img
-                  src={item?.images[0]}
-                  alt="product"
-                  height={"250px"}
-                  width={"260px"}
-
-                  onClick={() => navigate("/product/" + item?._id)}
-                />
-              </div>
+                      <div className="product-image" style={{ position: 'relative', width: '100%', height: '0', paddingBottom: '150%' }}>
+                        <img
+                          src={
+                            hoveredProduct === index && item?.images?.[1]
+                              ? item?.images[1] // Hiển thị ảnh thứ 2 khi hover
+                              : item?.images?.[0] || "/default-image.png" // Dùng ảnh mặc định nếu không có ảnh
+                          }
+                          alt="product image"
+                          height={"250px"}
+                          width={"260px"}
+                          onClick={() => navigate("/product/" + item?._id)}
+                          style={{
+                            objectFit: "cover",
+                            display: "block", // Đảm bảo ảnh hiển thị
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            width: "100%",
+                            height: "100%",
+                          }}
+                        />
+                      </div>
 
               <div className="product-details">
                 <h6 className="brand">{item?.brand}</h6>
@@ -101,6 +121,7 @@ const ProductCard = (props) => {
                     ? item?.name
                     : item?.name?.substr(0, 80) + "..."}
                 </h5>
+                <div className="d-flex align-items-center">
                 <ReactStars
                   count={5}
                   size={24}
@@ -108,6 +129,22 @@ const ProductCard = (props) => {
                   edit={false}
                   activeColor="#ffd700"
                 />
+                  <div className="wishlist-icon ms-auto">
+                    <button
+                      className="border-0 bg-transparent"
+                      onClick={(e) => {
+                        addToWish(item?._id);
+                      }}
+                    >
+                      {isWishlist ? (
+                        <AiFillHeart className="text-danger fs-5" />
+                      ) : (
+                        <AiOutlineHeart className="text-dark fs-5" />
+                      )}
+                    </button>
+                  </div>
+
+                  </div>
                 <p className="price">
                   {item?.price && `${item.price.toLocaleString("vi-VN")}đ`}
                 </p>
