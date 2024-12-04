@@ -36,7 +36,7 @@ const SingleProduct = () => {
   const productsState = useSelector((state) => state?.product?.product);
   const cartState = useSelector((state) => state?.auth?.cartProducts);
   const authState = useSelector((state) => state?.auth);
-  const wishlistState = useSelector((state) => state?.auth?.wishlist);
+  // const wishlistState = useSelector((state) => state?.auth?.wishlist);
   const getListReview = async () => {
     const re = await getRatingsUser(getProductId);
     if (re && re.data) {
@@ -228,6 +228,19 @@ const SingleProduct = () => {
     );
     dispatch(getuserProductWishlist());
   };
+
+
+  const wishlistState = useSelector((state) => state?.auth?.wishlist);
+  const handleWishlistToggle = (productId) => {
+    dispatch(addToWishlist({ _id: productId })).then(() => {
+      dispatch(getuserProductWishlist());
+    });
+  };
+
+  const isProductInWishlist = (productId) =>
+    wishlistState?.some((item) => item._id === productId);
+
+  const [hoveredProduct, setHoveredProduct] = useState(null);
   return (
     <>
       <Meta title={"Product Name"} />
@@ -282,9 +295,26 @@ const SingleProduct = () => {
 
           <div className="col-5">
             <div className="main-product-details">
-              <div className="border-bottom">
-                <h3 className="title">{productState?.name}</h3>
-              </div>
+            <div className="d-flex align-items-center border-bottom" style={{ gap: '10px' }}>
+              <h3 className="title mb-0 d-flex align-items-center" style={{ gap: '10px' }}>
+                {productState?.name}
+                <div className="wishlist-icon">
+                  <button
+                    className="border-0 bg-transparent"
+                    onClick={() => handleWishlistToggle(productState?._id)}
+                  >
+                    {isProductInWishlist(productState?._id) ? (
+                      <AiFillHeart className="fs-5 text-danger" />
+                    ) : (
+                      <AiOutlineHeart className="fs-5" />
+                    )}
+                  </button>
+                </div>
+              </h3>
+            </div>
+
+
+
               <div className="border-bottom py-3">
                 <p className="price">
                   {productState?.price
@@ -357,16 +387,7 @@ const SingleProduct = () => {
                       {error && <small className="text-danger">{error}</small>}
                     </div>
                   )}
-                  <div className="wishlist-icon ms-auto">
-                      <button
-                        className="border-0 bg-transparent"
-                        onClick={(e) => {
-                          addToWish(productState?._id);
-                        }}
-                      >
-                        <img src={wish} alt="wishlist" />
-                      </button>
-                    </div>
+                  
                   <div
                     className={
                       (alreadyAdded ? "ms-0" : "ms-5") +
@@ -494,32 +515,36 @@ const SingleProduct = () => {
                 </div>
               </div>
               <div className="reviews mt-4">
-                {/* fix */}
-                {reviews &&
-                  reviews.map((item, index) => {
-                    return (
-                      <div className="review" key={index}>
-                        <div className="d-flex gap-10 align-items-center">
-                          <h6 className="mb-0">
-                            {item?.userId._id +
-                              "  " +
-                              item?.userId.name +
-                              "  " +
-                              item?.userId.avatar}
-                          </h6>
-                          <ReactStars
-                            count={5}
-                            size={24}
-                            value={+item?.rating}
-                            edit={false}
-                            activeColor="#ffd700"
-                          />
+                  {/* fix */}
+                  {reviews &&
+                    reviews.map((item, index) => {
+                      return (
+                        <div className="review" key={index}>
+                          <div className="d-flex gap-10 align-items-center">
+                            {/* Hiển thị ảnh avatar */}
+                            <img
+                              src={item?.userId.avatar}
+                              alt={`${item?.userId.name}'s avatar`}
+                              className="rounded-circle"
+                              style={{ width: '40px', height: '40px', objectFit: 'cover' }}
+                            />
+                            <h6 className="mb-0">
+                              {item?.userId.name}
+                            </h6>
+                            <ReactStars
+                              count={5}
+                              size={24}
+                              value={+item?.rating}
+                              edit={false}
+                              activeColor="#ffd700"
+                            />
+                          </div>
+                          <p className="mt-3">{item?.comment}</p>
                         </div>
-                        <p className="mt-3">{item?.comment}</p>
-                      </div>
-                    );
-                  })}
-              </div>
+                      );
+                    })}
+                </div>
+
             </div>
           </div>
         </div>

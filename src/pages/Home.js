@@ -12,6 +12,11 @@ import { getAllProducts } from "../features/products/productSlilce";
 import ReactStars from "react-rating-stars-component";
 import { addToWishlist } from "../features/products/productSlilce";
 import { getuserProductWishlist } from "../features/user/userSlice";
+import {
+  AiFillHeart,
+  AiOutlineHeart,
+  AiOutlinePlusCircle,
+} from "react-icons/ai";
 import "./../Css/CssHome.css"
 const Home = () => {
   const blogState = useSelector((state) => state?.blog?.blog);
@@ -42,11 +47,21 @@ const Home = () => {
     dispatch(getuserProductWishlist());
   };
 
-  const [hoveredProduct, setHoveredProduct] = useState(null);
+  const wishlistState = useSelector((state) => state?.auth?.wishlist);
+  const handleWishlistToggle = (productId) => {
+    dispatch(addToWishlist({ _id: productId })).then(() => {
+      dispatch(getuserProductWishlist());
+    });
+  };
 
+  const isProductInWishlist = (productId) =>
+    wishlistState?.some((item) => item._id === productId);
+
+  const [hoveredProduct, setHoveredProduct] = useState(null);
 
   return (
     <>
+    
       <Container className="home-wrapper-1 py-5">
         <div
           style={{
@@ -295,33 +310,35 @@ const Home = () => {
 
 
                       <div className="product-details">
-                  <h6 className="brand">{item?.brand}</h6>
-                  <h5 className="product-title">
-                    {item?.name?.substr(0, 70) + "..."}
-                  </h5>
-                  <div className="d-flex align-items-center">
-                    <ReactStars
-                      count={5}
-                      size={24}
-                      value={item?.rating.toString()}
-                      edit={false}
-                      activeColor="#ffd700"
-                    />
-                    <div className="wishlist-icon ms-auto">
-                      <button
-                        className="border-0 bg-transparent"
-                        onClick={(e) => {
-                          addToWish(item?._id);
-                        }}
-                      >
-                        <img src={wish} alt="wishlist" />
-                      </button>
-                    </div>
-                  </div>
-                  <p className="price">
-                    {item?.price ? item.price.toLocaleString("vi-VN") : 0}₫
-                  </p>
-                </div>
+                        <h6 className="brand">{item?.brand}</h6>
+                        <h5 className="product-title">
+                          {item?.name?.substr(0, 70) + "..."}
+                        </h5>
+                        <div className="d-flex align-items-center">
+                          <ReactStars
+                            count={5}
+                            size={24}
+                            value={item?.rating.toString()}
+                            edit={false}
+                            activeColor="#ffd700"
+                          />
+                          <div className="wishlist-icon ms-auto">
+                            <button
+                              className="border-0 bg-transparent"
+                              onClick={() => handleWishlistToggle(item?._id)}
+                            >
+                              {isProductInWishlist(item?._id) ? (
+                                  <AiFillHeart className="fs-5 text-danger" />
+                                ) : (
+                                  <AiOutlineHeart className="fs-5" />
+                                )}
+                            </button>
+                          </div>
+                        </div>
+                        <p className="price">
+                          {item?.price ? item.price.toLocaleString("vi-VN") : 0}₫
+                        </p>
+                      </div>
                     </div>
                   </div>
                 );
@@ -542,15 +559,17 @@ const Home = () => {
                           activeColor="#ffd700"
                         />
                         <div className="wishlist-icon ms-auto">
-                          <button
-                            className="border-0 bg-transparent"
-                            onClick={(e) => {
-                              addToWish(item?._id);
-                            }}
-                          >
-                            <img src={wish} alt="wishlist" />
-                          </button>
-                        </div>
+                            <button
+                              className="border-0 bg-transparent"
+                              onClick={() => handleWishlistToggle(item?._id)}
+                            >
+                              {isProductInWishlist(item?._id) ? (
+                                  <AiFillHeart className="fs-5 text-danger" />
+                                ) : (
+                                  <AiOutlineHeart className="fs-5" />
+                                )}
+                            </button>
+                          </div>
                         </div>
                         <p className="price">
                           {item?.price ? item.price.toLocaleString("vi-VN") : 0}

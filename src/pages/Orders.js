@@ -116,6 +116,7 @@ const Orders = () => {
     productHeader: {
       display: "flex",
       justifyContent: "space-between",
+      alignItems: "center",
       padding: "10px 0",
       borderBottom: "1px solid #ccc",
     },
@@ -127,7 +128,10 @@ const Orders = () => {
     },
     productColumn: {
       flex: 1,
-      textAlign: "center",
+      textAlign: "center", // Căn giữa tất cả nội dung
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center", // Đảm bảo căn giữa cả chiều dọc
     },
     colors: {
       listStyle: "none",
@@ -174,6 +178,11 @@ const Orders = () => {
       alignItems: "center",
       justifyContent: "center",
     },
+    image: {
+    width: "50px", // Kích thước cố định cho ảnh
+    height: "50px",
+    objectFit: "cover", // Đảm bảo không bị méo hình
+  },
   };
 
   return (
@@ -252,11 +261,8 @@ const Orders = () => {
                                 <h5>Thông tin vận chuyển</h5>
                                 <p>Tình trạng: {item.statusUser}</p>
                                 <p>
-                                  Địa chỉ: Tỉnh/ Thành phố:{" "}
-                                  {item.address.address}, Quận/Huyện:
-                                  {item.address.province}, Phường/Xã:
-                                  {item.address.districts}, Chi tiết:
-                                  {item.address.specific}
+                                  Địa chỉ: {item.address.specific}, {item.address.wards}, {item.address.districts},  {item.address.province}
+                                 
                                 </p>
 
                                 {/* Thông tin người nhận */}
@@ -375,7 +381,7 @@ const Orders = () => {
                           </tr>
                         )}
                       </React.Fragment>
-                      ;
+                      
                     </>
                   );
                 })}
@@ -386,5 +392,7 @@ const Orders = () => {
     </>
   );
 };
+
+
 
 export default Orders;

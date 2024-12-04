@@ -19,6 +19,7 @@ import { authService } from "../features/user/userService";
 import { toast } from "react-toastify";
 import Dashboard from "./../pages/Dashboard";
 const Header = () => {
+  const userState = useSelector((state) => state.auth.user);
   const [showPopup, setShowPopup] = useState(false);
   const [selected, setSelected] = useState([]);
 
@@ -335,9 +336,8 @@ const Header = () => {
                     onMouseLeave={() => setIsHovered(false)}
                     style={{ position: "relative" }} // Đảm bảo phần tử chứa có vị trí relative
                   >
-                    <Link
+                   <Link
                       to={authState?.user === null ? "/login" : "/dashboard/my-profile"}
-                      // to={"/my-profile"}
                       className="d-flex align-items-center gap-10 text-white"
                       style={{
                         position: "relative",
@@ -348,34 +348,33 @@ const Header = () => {
                         textDecoration: "none",
                       }}
                     >
-                      <FiUser
-                        size={24}
-                        style={{ color: "black", strokeWidth: 2.5 }}
-                      />
-                      <p
-                        style={{
-                          position: "absolute",
-                          color: "black",
-                          marginBottom: 0,
-                          fontSize: "14px",
-                          marginTop: "55px",
-                          left: "50%",
-                          transform: "translateX(-50%)",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {authState?.user === null
-                          ? ""
-                          : `Welcome ${authState?.user?.name}`}
-                      </p>
+                      {/* Nếu người dùng đã đăng nhập và có avatar, hiển thị avatar, nếu không hiển thị icon mặc định */}
+                      {userState?.avatar ? (
+                        <img
+                          src={userState?.avatar}
+                          alt="Avatar"
+                          style={{
+                            width: "30px",              // Đảm bảo chiều rộng là 24px
+                            height: "30px",             // Đảm bảo chiều cao là 24px
+                            borderRadius: "50%",       // Để ảnh thành hình tròn
+                            objectFit: "cover",        // Đảm bảo ảnh không bị méo
+                            overflow: "hidden",        // Giúp đảm bảo không bị tràn
+                          }}
+                        />
+                      ) : (
+                        <FiUser size={24} style={{ color: "black", strokeWidth: 2.5 }} />
+                      )}
                     </Link>
+
+
+
 
                     {isHovered && authState?.user !== null && (
                       <div
                         className="dropdown-menu"
                         style={{
                           position: "absolute",
-                          top: "120%",
+                          top: "100%",
                           left: "50%",
                           transform: "translateX(-50%)",
                           backgroundColor: "#fff",
@@ -388,7 +387,7 @@ const Header = () => {
                         }}
                       >
                         <Link
-                          to="/my-profile"
+                          to="/dashboard/my-profile"
                           className="dropdown-item"
                           style={{
                             display: "block",
@@ -400,7 +399,7 @@ const Header = () => {
                           Tài khoản của tôi
                         </Link>
                         <Link
-                          to="/my-orders"
+                          to="/dashboard/my-orders"
                           className="dropdown-item"
                           style={{
                             display: "block",
@@ -411,42 +410,9 @@ const Header = () => {
                         >
                           Đơn mua
                         </Link>
-                        <Link
-                          to="/history"
-                          className="dropdown-item"
-                          style={{
-                            display: "block",
-                            padding: "8px 16px",
-                            textDecoration: "none",
-                            color: "#333",
-                          }}
-                        >
-                          Sản phẩm đã mua
-                        </Link>
-                        <Link
-                          to="/product-history"
-                          className="dropdown-item"
-                          style={{
-                            display: "block",
-                            padding: "8px 16px",
-                            textDecoration: "none",
-                            color: "#333",
-                          }}
-                        >
-                          Sản phẩm đã xem gần đây
-                        </Link>
-                        <Link
-                          to="/Address"
-                          className="dropdown-item"
-                          style={{
-                            display: "block",
-                            padding: "8px 16px",
-                            textDecoration: "none",
-                            color: "#333",
-                          }}
-                        >
-                          Địa chỉ
-                        </Link>
+                        
+                        
+                       
                         {authState?.user !== null && (
                           <button
                             className="dropdown-item border-0 bg-transparent"

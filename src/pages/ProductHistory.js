@@ -25,7 +25,7 @@ const ProductHistory = () => {
 
   const wishlistState = useSelector((state) => state?.auth?.recentView);
 
-  console.log("🚀 ~ file: ProductHistory.js:28 ~ ProductHistory ~ wishlistState:", wishlistState);
+
 
 
   const [hoveredProduct, setHoveredProduct] = useState(null);

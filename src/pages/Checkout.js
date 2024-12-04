@@ -222,6 +222,7 @@ const Checkout = () => {
                 Đội ngũ nhân viên Sắc (Sac@gmail.com)
               </p>
               <h4 className="mb-3">Địa chỉ giao hàng</h4>
+              <div className="col-11">
               <div className="mt-2">
                 <a
                   className="choose-discount-code-link"
@@ -230,6 +231,8 @@ const Checkout = () => {
                   Chọn địa chỉ
                 </a>
               </div>
+              </div>
+             
               <Formik
                 initialValues={stateReceiptDefaultAddress}
                 onSubmit={handleSubmit}
@@ -237,85 +240,96 @@ const Checkout = () => {
               >
                 <Form>
                   <div className="row">
-                    <div className="col-7">
+                    <div className="col-11">
                       <div className="checkout-left-data">
-                        <div className="mb-3">
-                          <label htmlFor="receiver">Người nhận</label>
-                          <Field
-                            type="text"
-                            name="receiver"
-                            placeholder="Người nhận"
-                            className="form-control"
-                            disabled={true}
-                          />
-                          <ErrorMessage
-                            name="receiver"
-                            component="div"
-                            className="text-danger"
-                          />
+                      <div className="mb-3">
+                        <div className="d-flex justify-content-between gap-3">
+                          <div className="flex-grow-1">
+                            <label htmlFor="receiver">Người nhận</label>
+                            <Field
+                              type="text"
+                              name="receiver"
+                              placeholder="Người nhận"
+                              className="form-control"
+                              disabled={true}
+                            />
+                            <ErrorMessage
+                              name="receiver"
+                              component="div"
+                              className="text-danger"
+                            />
+                          </div>
+
+                          <div className="flex-grow-1">
+                            <label htmlFor="phone">Số điện thoại</label>
+                            <Field
+                              type="text"
+                              name="phone"
+                              placeholder="Số điện thoại"
+                              className="form-control"
+                              disabled={true}
+                            />
+                            <ErrorMessage
+                              name="phone"
+                              component="div"
+                              className="text-danger"
+                            />
+                          </div>
                         </div>
+                      </div>
 
                         <div className="mb-3">
-                          <label htmlFor="phone">Số điện thoại</label>
-                          <Field
-                            type="text"
-                            name="phone"
-                            placeholder="Số điện thoại"
-                            className="form-control"
-                            disabled={true}
-                          />
-                          <ErrorMessage
-                            name="phone"
-                            component="div"
-                            className="text-danger"
-                          />
-                        </div>
-                        <div className="mb-3">
-                          <label htmlFor="province">Tỉnh / Thành phố</label>
-                          <Field
-                            type="text"
-                            name="province"
-                            placeholder="Tỉnh / Thành phố"
-                            className="form-control"
-                            disabled={true}
-                          />
-                          <ErrorMessage
-                            name="province"
-                            component="div"
-                            className="text-danger"
-                          />
+                          <div className="d-flex justify-content-between gap-3">
+                            <div className="flex-grow-1">
+                              <label htmlFor="province">Tỉnh / Thành phố</label>
+                              <Field
+                                type="text"
+                                name="province"
+                                placeholder="Tỉnh / Thành phố"
+                                className="form-control"
+                                disabled={true}
+                              />
+                              <ErrorMessage
+                                name="province"
+                                component="div"
+                                className="text-danger"
+                              />
+                            </div>
+
+                            <div className="flex-grow-1">
+                              <label htmlFor="districts">Quận / Huyện</label>
+                              <Field
+                                type="text"
+                                name="districts"
+                                placeholder="Quận / Huyện"
+                                className="form-control"
+                                disabled={true}
+                              />
+                              <ErrorMessage
+                                name="districts"
+                                component="div"
+                                className="text-danger"
+                              />
+                            </div>
+
+                            <div className="flex-grow-1">
+                              <label htmlFor="wards">Phường / Xã</label>
+                              <Field
+                                type="text"
+                                name="wards"
+                                placeholder="Phường / Xã"
+                                className="form-control"
+                                disabled={true}
+                              />
+                              <ErrorMessage
+                                name="wards"
+                                component="div"
+                                className="text-danger"
+                              />
+                            </div>
+                          </div>
                         </div>
 
-                        <div className="mb-3">
-                          <label htmlFor="districts">Quận / Huyện</label>
-                          <Field
-                            type="text"
-                            name="districts"
-                            placeholder="Quận / Huyện"
-                            className="form-control"
-                            disabled={true}
-                          />
-                          <ErrorMessage
-                            name="districts"
-                            component="div"
-                            className="text-danger"
-                          />
-                        </div>
-                        <div className="mb-3">
-                          <label htmlFor="wards">Phường/Xã</label>
-                          <Field
-                            type="text"
-                            name="wards"
-                            placeholder="Phường/Xã"
-                            className="form-control"
-                            disabled={true}
-                          />
-                          <ErrorMessage
-                            name="wards"
-                            component="div"
-                            className="text-danger"
-                          />
-                        </div>
                         <div className="mb-3">
                           <label htmlFor="specific">Địa chỉ cụ thể</label>
                           <Field
@@ -356,15 +370,21 @@ const Checkout = () => {
                           />
                         </div>
 
-                        <div className="d-flex justify-content-between align-items-center">
-                          <Link to="/cart" className="text-dark">
-                            <BiArrowBack className="me-2" />
-                            Quay lại giỏ hàng
-                          </Link>
-                          <button type="submit" className="btn btn-primary">
-                            Đặt hàng
-                          </button>
+                        <div className="w-100">
+                          <div className="d-flex justify-content-between align-items-center">
+                            <Link to="/cart" className="d-flex align-items-center text-dark">
+                              <BiArrowBack className="me-2" />
+                              <span>Quay lại giỏ hàng</span>
+                            </Link>
+                            <Link to="/product" className="button">
+                              Tiếp tục mua sắm
+                            </Link>
+                            <button className="button" type="submit">
+                              Đặt hàng
+                            </button>
+                          </div>
                         </div>
+
                       </div>
                     </div>
                   </div>
