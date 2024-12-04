@@ -12,7 +12,6 @@ const Orders = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const orderState = useSelector((state) => state?.auth?.getorderedProduct);
-  console.log("🚀 ~ Orders ~ orderState:", orderState);
 
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [statusFilter, setStatusFilter] = useState("");
@@ -211,7 +210,6 @@ const Orders = () => {
             <tbody>
               {filteredOrders &&
                 filteredOrders.map((item, index) => {
-                  console.log("🚀 ~ Orders ~ item:", item);
                   const totalReceipt = item.items.reduce(
                     (sum, item) => sum + item.quantity * item.product.price,
                     0

@@ -24,11 +24,13 @@ import {
   getuserProductWishlist,
 } from "../features/user/userSlice";
 import "./../Css/CssSingleProduct.css";
+import { getRatingsUser } from "../utils/api";
 
 const SingleProduct = () => {
   const [color, setColor] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [alreadyAdded, setAlreadyAdded] = useState(false);
+  const [reviews, setReviews] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const getProductId = location.pathname.split("/")[2];
@@ -39,7 +41,12 @@ const SingleProduct = () => {
   const cartState = useSelector((state) => state?.auth?.cartProducts);
   const authState = useSelector((state) => state?.auth);
   const wishlistState = useSelector((state) => state?.auth?.wishlist);
-
+  const getListReview = async () => {
+    const re = await getRatingsUser(getProductId);
+    if (re && re.data) {
+      setReviews(re.data.result);
+    }
+  };
   useEffect(() => {
     if (authState.user) {
       dispatch(getAProduct({ id: getProductId, isLogin: true }));
@@ -48,6 +55,7 @@ const SingleProduct = () => {
     }
     dispatch(getUserCart());
     dispatch(getAllProducts());
+    getListReview();
   }, [dispatch, getProductId]);
   useEffect(() => {
     dispatch(getAProduct({ id: getProductId }));
@@ -139,10 +147,6 @@ const SingleProduct = () => {
           rating: +star,
           comment: comment,
         })
-      );
-      console.log(
-        "🚀 ~ addRatingToProduct ~ getProductId:",
-        productState?._idroductId
       );
 
       setTimeout(() => {
@@ -490,16 +494,23 @@ const SingleProduct = () => {
                 </div>
               </div>
               <div className="reviews mt-4">
-                {productState &&
-                  productState.ratings?.map((item, index) => {
+                {/* fix */}
+                {reviews &&
+                  reviews.map((item, index) => {
                     return (
                       <div className="review" key={index}>
                         <div className="d-flex gap-10 align-items-center">
-                          <h6 className="mb-0">{item?.postedby}</h6>
+                          <h6 className="mb-0">
+                            {item?.userId._id +
+                              "  " +
+                              item?.userId.name +
+                              "  " +
+                              item?.userId.avatar}
+                          </h6>
                           <ReactStars
                             count={5}
                             size={24}
-                            value={item?.star}
+                            value={+item?.rating}
                             edit={false}
                             activeColor="#ffd700"
                           />
