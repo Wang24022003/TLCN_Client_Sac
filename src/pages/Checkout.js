@@ -52,7 +52,7 @@ const Checkout = () => {
       setStateReceiptDefaultAddress(data);
     } else {
       toast.error("Địa chỉ mặc định chưa có.Vui lòng tạo một địa chỉ mới");
-      navigate("/Address");
+      navigate("/dashboard/address");
     }
   };
   const getCouponUser = async () => {
