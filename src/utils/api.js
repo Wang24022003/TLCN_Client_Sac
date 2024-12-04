@@ -9,3 +9,16 @@ export const getCoupounUserAccept = (idUser) => {
 export const createReceitpUser = (data) => {
   return instance.post(`receipts`, data);
 };
+export const getRatingsUser = (id) => {
+  return instance.get(`reviews?productId=${id}`);
+};
+export const uploadImg = async (data) => {
+  const formData = new FormData();
+  formData.append("files", data);
+  const response = await instance.patch(`files/files`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response;
+};

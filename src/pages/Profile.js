@@ -6,6 +6,7 @@ import { getNewProfile, updateProfile } from "../features/user/userSlice";
 import BreadCrumb from "../components/BreadCrumb";
 import Container from "../components/Container";
 import { FiEdit } from "react-icons/fi";
+import { uploadImg } from "../utils/api";
 
 const TYPE_GENDER = {
   FEMALE: "FEMALE",
@@ -28,6 +29,7 @@ const Profile = () => {
   const userState = useSelector((state) => state.auth.user);
   const [edit, setEdit] = useState(true);
   const [dataProfile, setdataProfile] = useState();
+  const [profilebase64, setprofilebase64] = useState();
   useEffect(() => {
     setdataProfile({
       name: userState?.name || "",
@@ -35,32 +37,39 @@ const Profile = () => {
       gender: userState?.gender || TYPE_GENDER.OTHER,
       email: userState?.email || "",
       point: userState?.point || 0,
+      avatar: userState?.avatar,
     });
+
     return () => {};
   }, [userState]);
 
   const handleSubmit = (values) => {
-    console.log("🚀 ~ handleSubmit ~ values:", values);
     dispatch(
       updateProfile({
         name: values.name,
         age: values.age,
         gender: values.gender,
+        avatar: values.avatar,
       })
     );
     dispatch(getNewProfile());
     setEdit(true); // Đóng chế độ chỉnh sửa sau khi cập nhật
   };
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const file = e.target.files[0]; // Lấy file được chọn
     if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
+      const re = await uploadImg(file);
+      if (re && re.data) {
         setdataProfile((prevState) => ({
           ...prevState,
-          avatar: reader.result, // Lưu URL base64 vào state
+          avatar: re.data[0], // Lưu URL base64 vào state
         }));
+      }
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        setprofilebase64(reader.result);
       };
       reader.readAsDataURL(file); // Đọc file và chuyển sang base64
     }
@@ -77,7 +86,7 @@ const Profile = () => {
             >
               <div className="text-center">
                 <img
-                  src={dataProfile?.avatar || "/default-avatar.png"}
+                  src={profilebase64 || dataProfile?.avatar}
                   alt="Avatar"
                   className="rounded-circle"
                   style={{

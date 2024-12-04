@@ -80,7 +80,7 @@ const Checkout = () => {
   const authState = useSelector((state) => state?.auth);
   const [totalAmount, setTotalAmount] = useState(null);
   const [shippingInfo, setShippingInfo] = useState(null);
-  const [paymentMethod, setPaymentMethod] = useState("VNPay");
+  const [paymentMethod, setPaymentMethod] = useState("VNPAY");
   const [discountCode, setDiscountCode] = useState();
   const [discountAmount, setDiscountAmount] = useState(0);
   const [showModalCode, setShowModalCode] = useState(false); // State to control modal visibility
@@ -132,7 +132,6 @@ const Checkout = () => {
 
   const checkOutHandler = async (data) => {
     const re = await createReceitpUser(data);
-    console.log("🚀 ~ checkOutHandler ~ re:", re);
     if (re && re.data && re.data.paymentMethod === "COD") {
       toast.success("Create order successful!");
       dispatch(deleteUserCart()); // Xóa giỏ hàng ngay lập tức
@@ -142,11 +141,10 @@ const Checkout = () => {
     if (paymentMethod === "COD") {
       //alert("Order placed successfully with Cash on Delivery");
     } else {
-      if (!re.data || !re.data.vnpUrl) {
-        //throw new Error("Invalid response from server");
+      if (!re.data) {
+        throw new Error("Invalid response from server");
       }
-      //const { vnpUrl } = re.data;
-      //window.location.href = vnpUrl;
+      window.location.href = re.data;
     }
   };
 
@@ -335,10 +333,10 @@ const Checkout = () => {
                             <Field
                               type="radio"
                               name="paymentMethod"
-                              value="VNPay"
+                              value="VNPAY"
                               className="form-check-input"
                             />
-                            <label className="form-check-label">VNPay</label>
+                            <label className="form-check-label">VNPAY</label>
                           </div>
                           <div className="form-check">
                             <Field

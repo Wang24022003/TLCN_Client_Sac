@@ -21,7 +21,6 @@ const History = () => {
   }, []);
 
   const wishlistState = useSelector((state) => state?.auth?.history);
-  console.log("🚀 ~ History ~ wishlistState:", wishlistState);
 
   return (
     <>
