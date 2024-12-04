@@ -56,10 +56,11 @@ export const removeToWishlist = createAsyncThunk(
 export const addRating = createAsyncThunk(
   "product/rating",
   async (data, thunkAPI) => {
-    try {
-      return await productSevice.rateProduct(data);
-    } catch (error) {
-      return thunkAPI.rejectWithValue(error);
+    const re = await productSevice.rateProduct(data);
+    if (re && re.data) {
+      return re;
+    } else {
+      return thunkAPI.rejectWithValue(re);
     }
   }
 );
@@ -81,6 +82,7 @@ const productState = {
   singleproduct: null,
   addToWishlist: null,
   rating: null,
+  isReload: false,
   isError: false,
   isSuccess: false,
   isLoading: false,
@@ -116,6 +118,7 @@ export const productSlice = createSlice({
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
+        state.isReload = false;
         state.product = action.payload.data.result;
       })
       .addCase(getAllProducts.rejected, (state, action) => {
@@ -131,6 +134,7 @@ export const productSlice = createSlice({
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
+
         state.addToWishlist = action.payload;
         state.message = "Product Added to Wishlist!";
       })
@@ -147,6 +151,7 @@ export const productSlice = createSlice({
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
+
         state.removeToWishlist = action.payload;
         state.message = "Product Added to Wishlist!";
       })
@@ -164,6 +169,8 @@ export const productSlice = createSlice({
         state.isError = false;
         state.isSuccess = true;
         state.singleproduct = action.payload.data;
+        state.isReload = false;
+
         state.message = "Product Fetched Successfully";
       })
       .addCase(getAProduct.rejected, (state, action) => {
@@ -179,13 +186,17 @@ export const productSlice = createSlice({
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
-        state.rating = action.payload;
+        state.isReload = true;
+        state.rating = action.payload.data;
         state.message = "Rating Added Successfully";
         if (state.isSuccess) {
           toast.success("Rating Added Successfully");
         }
       })
       .addCase(addRating.rejected, (state, action) => {
+        if (state.isError) {
+          toast.error(action.payload.message);
+        }
         state.isError = true;
         state.isLoading = false;
         state.isSuccess = false;

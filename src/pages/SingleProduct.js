@@ -30,6 +30,7 @@ const SingleProduct = () => {
   const getProductId = location.pathname.split("/")[2];
   const dispatch = useDispatch();
   const productState = useSelector((state) => state?.product?.singleproduct);
+  const isReload = useSelector((state) => state?.isReload);
   const productsState = useSelector((state) => state?.product?.product);
   const cartState = useSelector((state) => state?.auth?.cartProducts);
   const authState = useSelector((state) => state?.auth);
@@ -44,6 +45,10 @@ const SingleProduct = () => {
     dispatch(getUserCart());
     dispatch(getAllProducts());
   }, [dispatch, getProductId]);
+  useEffect(() => {
+    dispatch(getAProduct({ id: getProductId }));
+    return () => {};
+  }, [isReload]);
 
   useEffect(() => {
     for (let index = 0; index < cartState?.length; index++) {
@@ -68,12 +73,6 @@ const SingleProduct = () => {
             color: color._id,
           },
         })
-        // addProdToCart({
-        //   productId: productState?._id,
-        //   quantity,
-        //   color: color._id,
-        //   price: productState?.price,
-        // })
       );
       navigate("/cart");
     }
@@ -130,10 +129,20 @@ const SingleProduct = () => {
       return false;
     } else {
       dispatch(
-        addRating({ star: star, comment: comment, prodId: getProductId })
+        addRating({
+          userId: authState.user._id,
+          productId: productState?._id,
+          rating: +star,
+          comment: comment,
+        })
       );
+      console.log(
+        "🚀 ~ addRatingToProduct ~ getProductId:",
+        productState?._idroductId
+      );
+
       setTimeout(() => {
-        dispatch(getAProduct(getProductId));
+        dispatch(getAProduct(productState?._id));
       }, 100);
     }
     return false;
@@ -425,12 +434,12 @@ const SingleProduct = () => {
                     <ReactStars
                       count={5}
                       size={24}
-                      value={productState?.totalrating?.toString()}
+                      value={productState?.rating?.toString()}
                       edit={false}
                       activeColor="#ffd700"
                     />
                     <p className="mb-0">
-                      Dựa trên {productState?.ratings?.length} đánh giá
+                      Dựa trên {productState?.quantityComments} đánh giá
                     </p>
                   </div>
                 </div>
