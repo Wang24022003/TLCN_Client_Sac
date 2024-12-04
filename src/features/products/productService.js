@@ -33,11 +33,7 @@ const removeToWishlist = async (prodId) => {
 };
 
 const rateProduct = async (data) => {
-  const response = await instance.put(
-    `${base_url}product/rating`,
-    data,
-    config
-  );
+  const response = await instance.post(`reviews`, data);
   if (response) {
     return response;
   }
