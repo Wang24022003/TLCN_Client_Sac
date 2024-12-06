@@ -267,7 +267,7 @@ const Home = () => {
       </Container>
 
 
-      <Container class1="featured-wrapper py-5 home-wrapper-2">
+      {/* <Container class1="featured-wrapper py-5 home-wrapper-2">
         <div className="row">
           <div className="col-12">
             <h3 className="section-heading">Bộ sưu tập nổi bật</h3>
@@ -345,8 +345,96 @@ const Home = () => {
               }
             })}
         </div>
-      </Container>;
+      </Container>; */}
 
+      <Container class1="featured-wrapper py-5 home-wrapper-2">
+        <div className="row">
+          <div className="col-12">
+            <h3 className="section-heading">Bộ sưu tập nổi bật</h3>
+          </div>
+          {productState &&
+            [...productState] // Tạo bản sao của mảng để không thay đổi trạng thái ban đầu
+              .reverse() // Đảo ngược thứ tự mảng
+              .map((item, index) => {
+                if (item.tags === "featured") {
+                  return (
+                    <div
+                      key={index}
+                      className="col-3 my-4"
+                      onMouseEnter={() => setHoveredProduct(index)} // Khi hover, lưu chỉ số sản phẩm
+                      onMouseLeave={() => setHoveredProduct(null)} // Khi rời chuột, reset trạng thái
+                    >
+                      <div className="product-card position-relative">
+                        <div
+                          className="product-image"
+                          style={{
+                            position: "relative",
+                            width: "100%",
+                            height: "0",
+                            paddingBottom: "150%",
+                          }}
+                        >
+                          <img
+                            src={
+                              hoveredProduct === index && item?.images?.[1]
+                                ? item?.images[1] // Hiển thị ảnh thứ 2 khi hover
+                                : item?.images?.[0] || "/default-image.png" // Dùng ảnh mặc định nếu không có ảnh
+                            }
+                            alt="product image"
+                            height={"250px"}
+                            width={"260px"}
+                            onClick={() => navigate("/product/" + item?._id)}
+                            style={{
+                              objectFit: "cover",
+                              display: "block", // Đảm bảo ảnh hiển thị
+                              position: "absolute",
+                              top: 0,
+                              left: 0,
+                              width: "100%",
+                              height: "100%",
+                            }}
+                          />
+                        </div>
+                        <div className="product-details">
+                          <h6 className="brand">{item?.brand}</h6>
+                          <h5 className="product-title">
+                            {item?.name?.substr(0, 70) + "..."}
+                          </h5>
+                          <div className="d-flex align-items-center">
+                            <ReactStars
+                              count={5}
+                              size={24}
+                              value={item?.rating.toString()}
+                              edit={false}
+                              activeColor="#ffd700"
+                            />
+                            <div className="wishlist-icon ms-auto">
+                              <button
+                                className="border-0 bg-transparent"
+                                onClick={() => handleWishlistToggle(item?._id)}
+                              >
+                                {isProductInWishlist(item?._id) ? (
+                                  <AiFillHeart className="fs-5 text-danger" />
+                                ) : (
+                                  <AiOutlineHeart className="fs-5" />
+                                )}
+                              </button>
+                            </div>
+                          </div>
+                          <p className="price">
+                            {item?.price
+                              ? item.price.toLocaleString("vi-VN")
+                              : 0}
+                            ₫
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+              })}
+        </div>
+      </Container>
 
 
 
