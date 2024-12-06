@@ -18,7 +18,11 @@ import {
   getAllProducts,
 } from "../features/products/productSlilce";
 import { toast } from "react-toastify";
-import { addProdToCart, getUserCart, getuserProductWishlist } from "../features/user/userSlice";
+import {
+  addProdToCart,
+  getUserCart,
+  getuserProductWishlist,
+} from "../features/user/userSlice";
 import "./../Css/CssSingleProduct.css";
 import { getRatingsUser } from "../utils/api";
 
@@ -77,7 +81,7 @@ const SingleProduct = () => {
           product: {
             _id: productState?._id,
             price: productState?.price,
-            quantity: quantity,
+            quantity: +quantity,
             color: color._id,
           },
         })
@@ -219,7 +223,6 @@ const SingleProduct = () => {
     }
   };
 
-
   const addToWish = (id) => {
     dispatch(
       addToWishlist({
@@ -228,7 +231,6 @@ const SingleProduct = () => {
     );
     dispatch(getuserProductWishlist());
   };
-
 
   const wishlistState = useSelector((state) => state?.auth?.wishlist);
   const handleWishlistToggle = (productId) => {
@@ -247,7 +249,7 @@ const SingleProduct = () => {
       <BreadCrumb title={productState?.name} />
       <Container class1="main-product-wrapper py-5 home-wrapper-2">
         <div className="row">
-        <div className="col-2">
+          <div className="col-2">
             <div className="other-product-images d-flex flex-column gap-3 justify-content-center">
               {productState?.images.map((item, index) => (
                 <div
@@ -263,7 +265,7 @@ const SingleProduct = () => {
                 </div>
               ))}
             </div>
-        </div>
+          </div>
           <div className="col-5">
             <div className="main-product-image">
               <div className="image-container" style={{ position: "relative" }}>
@@ -289,31 +291,33 @@ const SingleProduct = () => {
                 </button>
               </div>
             </div>
-
-
           </div>
 
           <div className="col-5">
             <div className="main-product-details">
-            <div className="d-flex align-items-center border-bottom" style={{ gap: '10px' }}>
-              <h3 className="title mb-0 d-flex align-items-center" style={{ gap: '10px' }}>
-                {productState?.name}
-                <div className="wishlist-icon">
-                  <button
-                    className="border-0 bg-transparent"
-                    onClick={() => handleWishlistToggle(productState?._id)}
-                  >
-                    {isProductInWishlist(productState?._id) ? (
-                      <AiFillHeart className="fs-5 text-danger" />
-                    ) : (
-                      <AiOutlineHeart className="fs-5" />
-                    )}
-                  </button>
-                </div>
-              </h3>
-            </div>
-
-
+              <div
+                className="d-flex align-items-center border-bottom"
+                style={{ gap: "10px" }}
+              >
+                <h3
+                  className="title mb-0 d-flex align-items-center"
+                  style={{ gap: "10px" }}
+                >
+                  {productState?.name}
+                  <div className="wishlist-icon">
+                    <button
+                      className="border-0 bg-transparent"
+                      onClick={() => handleWishlistToggle(productState?._id)}
+                    >
+                      {isProductInWishlist(productState?._id) ? (
+                        <AiFillHeart className="fs-5 text-danger" />
+                      ) : (
+                        <AiOutlineHeart className="fs-5" />
+                      )}
+                    </button>
+                  </div>
+                </h3>
+              </div>
 
               <div className="border-bottom py-3">
                 <p className="price">
@@ -368,7 +372,6 @@ const SingleProduct = () => {
                     />
                   </div>
                 )}
-                  
 
                 <div className="d-flex align-items-center gap-15 flex-row mb-3">
                   <h3 className="product-heading">Số lượng :</h3>
@@ -387,7 +390,7 @@ const SingleProduct = () => {
                       {error && <small className="text-danger">{error}</small>}
                     </div>
                   )}
-                  
+
                   <div
                     className={
                       (alreadyAdded ? "ms-0" : "ms-5") +
@@ -515,36 +518,37 @@ const SingleProduct = () => {
                 </div>
               </div>
               <div className="reviews mt-4">
-                  {/* fix */}
-                  {reviews &&
-                    reviews.map((item, index) => {
-                      return (
-                        <div className="review" key={index}>
-                          <div className="d-flex gap-10 align-items-center">
-                            {/* Hiển thị ảnh avatar */}
-                            <img
-                              src={item?.userId.avatar}
-                              alt={`${item?.userId.name}'s avatar`}
-                              className="rounded-circle"
-                              style={{ width: '40px', height: '40px', objectFit: 'cover' }}
-                            />
-                            <h6 className="mb-0">
-                              {item?.userId.name}
-                            </h6>
-                            <ReactStars
-                              count={5}
-                              size={24}
-                              value={+item?.rating}
-                              edit={false}
-                              activeColor="#ffd700"
-                            />
-                          </div>
-                          <p className="mt-3">{item?.comment}</p>
+                {/* fix */}
+                {reviews &&
+                  reviews.map((item, index) => {
+                    return (
+                      <div className="review" key={index}>
+                        <div className="d-flex gap-10 align-items-center">
+                          {/* Hiển thị ảnh avatar */}
+                          <img
+                            src={item?.userId.avatar}
+                            alt={`${item?.userId.name}'s avatar`}
+                            className="rounded-circle"
+                            style={{
+                              width: "40px",
+                              height: "40px",
+                              objectFit: "cover",
+                            }}
+                          />
+                          <h6 className="mb-0">{item?.userId.name}</h6>
+                          <ReactStars
+                            count={5}
+                            size={24}
+                            value={+item?.rating}
+                            edit={false}
+                            activeColor="#ffd700"
+                          />
                         </div>
-                      );
-                    })}
-                </div>
-
+                        <p className="mt-3">{item?.comment}</p>
+                      </div>
+                    );
+                  })}
+              </div>
             </div>
           </div>
         </div>

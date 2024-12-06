@@ -132,19 +132,21 @@ const Checkout = () => {
 
   const checkOutHandler = async (data) => {
     const re = await createReceitpUser(data);
+    console.log("🚀 ~ checkOutHandler ~ re:", re);
     if (re && re.data && re.data.paymentMethod === "COD") {
       toast.success("Create order successful!");
       dispatch(deleteUserCart()); // Xóa giỏ hàng ngay lập tức
       dispatch(resetState()); // Reset trạng thái giỏ hàng
       navigate("/dashboard/my-orders");
-    }
-    if (paymentMethod === "COD") {
+    } else if (re && re.data) {
       //alert("Order placed successfully with Cash on Delivery");
+      dispatch(deleteUserCart()); // Xóa giỏ hàng ngay lập tức
+      dispatch(resetState()); // Reset trạng thái giỏ hàng
+      window.location.href = re.data;
     } else {
       if (!re.data) {
         throw new Error("Invalid response from server");
       }
-      window.location.href = re.data;
     }
   };
 
@@ -223,16 +225,16 @@ const Checkout = () => {
               </p>
               <h4 className="mb-3">Địa chỉ giao hàng</h4>
               <div className="col-11">
-              <div className="mt-2">
-                <a
-                  className="choose-discount-code-link"
-                  onClick={() => setShowModalAddress(true)}
-                >
-                  Chọn địa chỉ
-                </a>
+                <div className="mt-2">
+                  <a
+                    className="choose-discount-code-link"
+                    onClick={() => setShowModalAddress(true)}
+                  >
+                    Chọn địa chỉ
+                  </a>
+                </div>
               </div>
-              </div>
-             
+
               <Formik
                 initialValues={stateReceiptDefaultAddress}
                 onSubmit={handleSubmit}
@@ -242,41 +244,41 @@ const Checkout = () => {
                   <div className="row">
                     <div className="col-11">
                       <div className="checkout-left-data">
-                      <div className="mb-3">
-                        <div className="d-flex justify-content-between gap-3">
-                          <div className="flex-grow-1">
-                            <label htmlFor="receiver">Người nhận</label>
-                            <Field
-                              type="text"
-                              name="receiver"
-                              placeholder="Người nhận"
-                              className="form-control"
-                              disabled={true}
-                            />
-                            <ErrorMessage
-                              name="receiver"
-                              component="div"
-                              className="text-danger"
-                            />
-                          </div>
+                        <div className="mb-3">
+                          <div className="d-flex justify-content-between gap-3">
+                            <div className="flex-grow-1">
+                              <label htmlFor="receiver">Người nhận</label>
+                              <Field
+                                type="text"
+                                name="receiver"
+                                placeholder="Người nhận"
+                                className="form-control"
+                                disabled={true}
+                              />
+                              <ErrorMessage
+                                name="receiver"
+                                component="div"
+                                className="text-danger"
+                              />
+                            </div>
 
-                          <div className="flex-grow-1">
-                            <label htmlFor="phone">Số điện thoại</label>
-                            <Field
-                              type="text"
-                              name="phone"
-                              placeholder="Số điện thoại"
-                              className="form-control"
-                              disabled={true}
-                            />
-                            <ErrorMessage
-                              name="phone"
-                              component="div"
-                              className="text-danger"
-                            />
+                            <div className="flex-grow-1">
+                              <label htmlFor="phone">Số điện thoại</label>
+                              <Field
+                                type="text"
+                                name="phone"
+                                placeholder="Số điện thoại"
+                                className="form-control"
+                                disabled={true}
+                              />
+                              <ErrorMessage
+                                name="phone"
+                                component="div"
+                                className="text-danger"
+                              />
+                            </div>
                           </div>
                         </div>
-                      </div>
 
                         <div className="mb-3">
                           <div className="d-flex justify-content-between gap-3">
@@ -372,7 +374,10 @@ const Checkout = () => {
 
                         <div className="w-100">
                           <div className="d-flex justify-content-between align-items-center">
-                            <Link to="/cart" className="d-flex align-items-center text-dark">
+                            <Link
+                              to="/cart"
+                              className="d-flex align-items-center text-dark"
+                            >
                               <BiArrowBack className="me-2" />
                               <span>Quay lại giỏ hàng</span>
                             </Link>
@@ -384,7 +389,6 @@ const Checkout = () => {
                             </button>
                           </div>
                         </div>
-
                       </div>
                     </div>
                   </div>
