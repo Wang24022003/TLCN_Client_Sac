@@ -24,8 +24,8 @@ const History = () => {
 
   return (
     <>
-      <Meta title={"Wishlist"} />
-      <BreadCrumb title="Sản phẩm đã mua" />
+      {/* <Meta title={"Wishlist"} />
+      <BreadCrumb title="Sản phẩm đã mua" /> */}
       <Container class1="wishlist-wrapper home-wrapper-2 py-5">
         <div className="row">
           {wishlistState && wishlistState.length === 0 && (

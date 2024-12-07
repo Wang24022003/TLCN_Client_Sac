@@ -121,7 +121,11 @@ const Contact = () => {
                   </div>
                   
                   <div>
-                    <button className="button border-0"> <FaPaperPlane />Gửi</button>
+                  <button className="button border-0 d-flex align-items-center">
+                    <FaPaperPlane />
+                    <span style={{ marginLeft: '5px' }}>Gửi</span>
+                  </button>
+
                   </div>
                 </form>
               </div>

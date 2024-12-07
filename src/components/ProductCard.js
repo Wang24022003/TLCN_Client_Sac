@@ -79,7 +79,7 @@ const ProductCard = (props) => {
           >
             <div className="product-card position-relative">
               <div className="wishlist-icon position-absolute">
-                <button
+                {/* <button
                   className="border-0 bg-transparent"
                   onClick={() => handleWishlistToggle(item?._id)}
                 >
@@ -88,7 +88,7 @@ const ProductCard = (props) => {
                   ) : (
                     <AiOutlineHeart className="fs-5 me-1" />
                   )}
-                </button>
+                </button> */}
               </div>
 
                       <div className="product-image" style={{ position: 'relative', width: '100%', height: '0', paddingBottom: '150%' }}>
