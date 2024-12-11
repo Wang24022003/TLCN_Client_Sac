@@ -329,9 +329,9 @@ const SingleProduct = () => {
 
                 <div className="d-flex align-items-center gap-10">
                   <ReactStars
-                    count={5}
+                    count={+5}
                     size={24}
-                    value={productState?.totalrating?.toString()}
+                    value={+productState?.totalrating?.toString()}
                     edit={false}
                     activeColor="#ffd700"
                   />
@@ -460,9 +460,9 @@ const SingleProduct = () => {
                   <h4 className="mb-2">Đánh giá của khách hàng</h4>
                   <div className="d-flex align-items-center gap-10">
                     <ReactStars
-                      count={5}
+                      count={+5}
                       size={24}
-                      value={productState?.rating?.toString()}
+                      value={+productState?.rating?.toString()}
                       edit={false}
                       activeColor="#ffd700"
                     />
@@ -484,9 +484,9 @@ const SingleProduct = () => {
 
                 <div>
                   <ReactStars
-                    count={5}
+                    count={+5}
                     size={24}
-                    value={0}
+                    value={+0}
                     edit={true}
                     activeColor="#ffd700"
                     onChange={(e) => {
@@ -537,7 +537,7 @@ const SingleProduct = () => {
                           />
                           <h6 className="mb-0">{item?.userId.name}</h6>
                           <ReactStars
-                            count={5}
+                            count={+5}
                             size={24}
                             value={+item?.rating}
                             edit={false}

@@ -51,9 +51,9 @@ const Compare = () => {
               {compareList.map((product) => (
                 <td key={product._id}>
                   <ReactStars
-                    count={5}
+                    count={+5}
                     size={24}
-                    value={product.totalrating}
+                    value={+product?.totalrating}
                     edit={false}
                     activeColor="#ffd700"
                   />

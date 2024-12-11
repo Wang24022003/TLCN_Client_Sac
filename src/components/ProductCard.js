@@ -123,9 +123,9 @@ const ProductCard = (props) => {
                 </h5>
                 <div className="d-flex align-items-center">
                 <ReactStars
-                  count={5}
+                  count={+5}
                   size={24}
-                  value={item?.totalrating}
+                  value={+item?.totalrating}
                   edit={false}
                   activeColor="#ffd700"
                 />

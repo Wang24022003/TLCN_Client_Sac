@@ -17,7 +17,7 @@ import {
   AiOutlineHeart,
   AiOutlinePlusCircle,
 } from "react-icons/ai";
-import "./../Css/CssHome.css"
+import "./../Css/CssHome.css";
 const Home = () => {
   const blogState = useSelector((state) => state?.blog?.blog);
   const productState = useSelector((state) => state?.product?.product);
@@ -61,7 +61,6 @@ const Home = () => {
 
   return (
     <>
-    
       <Container className="home-wrapper-1 py-5">
         <div
           style={{
@@ -266,7 +265,6 @@ const Home = () => {
         </div>
       </Container>
 
-
       {/* <Container class1="featured-wrapper py-5 home-wrapper-2">
         <div className="row">
           <div className="col-12">
@@ -402,9 +400,9 @@ const Home = () => {
                           </h5>
                           <div className="d-flex align-items-center">
                             <ReactStars
-                              count={5}
+                              count={+5}
                               size={24}
-                              value={item?.rating.toString()}
+                              value={+item?.rating?.toString()}
                               edit={false}
                               activeColor="#ffd700"
                             />
@@ -435,8 +433,6 @@ const Home = () => {
               })}
         </div>
       </Container>
-
-
 
       <Container class1="famous-wrapper py-1 home-wrapper-2">
         <div className="row">
@@ -607,10 +603,15 @@ const Home = () => {
                     onMouseLeave={() => setHoveredProduct(null)} // Khi rời chuột, reset trạng thái
                   >
                     <div className="product-card position-relative">
-
-                      
-
-                      <div className="product-image" style={{ position: 'relative', width: '100%', height: '0', paddingBottom: '150%' }}>
+                      <div
+                        className="product-image"
+                        style={{
+                          position: "relative",
+                          width: "100%",
+                          height: "0",
+                          paddingBottom: "150%",
+                        }}
+                      >
                         <img
                           src={
                             hoveredProduct === index && item?.images?.[1]
@@ -639,23 +640,23 @@ const Home = () => {
                           {item?.name?.substr(0, 70) + "..."}
                         </h5>
                         <div className="d-flex align-items-center">
-                        <ReactStars
-                          count={5}
-                          size={24}
-                          value={item?.rating.toString()}
-                          edit={false}
-                          activeColor="#ffd700"
-                        />
-                        <div className="wishlist-icon ms-auto">
+                          <ReactStars
+                            count={+5}
+                            size={24}
+                            value={+item?.rating?.toString()}
+                            edit={false}
+                            activeColor="#ffd700"
+                          />
+                          <div className="wishlist-icon ms-auto">
                             <button
                               className="border-0 bg-transparent"
                               onClick={() => handleWishlistToggle(item?._id)}
                             >
                               {isProductInWishlist(item?._id) ? (
-                                  <AiFillHeart className="fs-5 text-danger" />
-                                ) : (
-                                  <AiOutlineHeart className="fs-5" />
-                                )}
+                                <AiFillHeart className="fs-5 text-danger" />
+                              ) : (
+                                <AiOutlineHeart className="fs-5" />
+                              )}
                             </button>
                           </div>
                         </div>

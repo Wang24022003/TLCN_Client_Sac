@@ -12,6 +12,13 @@ export const createReceitpUser = (data) => {
 export const getRatingsUser = (id) => {
   return instance.get(`reviews?productId=${id}`);
 };
+export const getNotificationsUser = () => {
+  return instance.get(`notifications/user`);
+};
+export const makeAsReadNotification = (id) => {
+  return instance.patch(`notifications/mark-as-read/${id}`);
+};
+
 export const uploadImg = async (data) => {
   const formData = new FormData();
   formData.append("files", data);

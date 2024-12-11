@@ -22,9 +22,9 @@ const SpecialProduct = (props) => {
               <h5 className="brand">{brand}</h5>
               <h6 className="title">{title?.substr(0, 20) + "..."}</h6>
               <ReactStars
-                count={5}
+                count={+5}
                 size={24}
-                value={totalrating}
+                value={+totalrating}
                 edit={false}
                 activeColor="#ffd700"
               />
