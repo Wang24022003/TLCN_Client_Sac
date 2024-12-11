@@ -34,6 +34,7 @@ import UpdateAddress from "./pages/UpdateAddress";
 import ProductHistory from "./pages/ProductHistory";
 import Dashboard from "./pages/Dashboard";
 import ProtectUser from "./utils/ProtectUser";
+import Notifications from "./pages/Notifications";
 
 function App() {
   return (
@@ -55,10 +56,6 @@ function App() {
                 </PrivateRoutes>
               }
             />
-            
-            
-            
-            
             <Route path="checkout"
               element={
                 <PrivateRoutes>
@@ -126,7 +123,7 @@ function App() {
                     </PrivateRoutes>
                   }
                 />
-                
+                <Route path='notifications' element={<Notifications/>} /> 
                 <Route path='my-wishlist' element={<Wishlist/>} /> 
                 <Route path='history' element={<History/>} /> 
                 <Route path='address' element={<Address/>} />
