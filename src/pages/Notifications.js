@@ -1,10 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { format, formatDistanceToNow, parseISO } from "date-fns";
-import { getNotificationsUser, makeAsReadNotification } from "../utils/api";
+import {
+  getNotificationsUser,
+  makeAllAsReadNotification,
+  makeAsReadNotification,
+} from "../utils/api";
 
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState();
+  const callMakeAllAsReadNotification = async () => {
+    const re = await makeAllAsReadNotification();
+    if (re && re.data) {
+      fetchNotifications();
+    }
+  };
   const callMakeAsReadNotification = async (id) => {
     const re = await makeAsReadNotification(id);
     if (re && re.data) {
@@ -31,12 +41,7 @@ const Notifications = () => {
   }, [notifications]);
 
   const markAllAsRead = () => {
-    setNotifications((prevNotifications) =>
-      prevNotifications.map((notification) => ({
-        ...notification,
-        isRead: true,
-      }))
-    );
+    callMakeAllAsReadNotification();
   };
 
   const handleNotificationClick = (notification) => {

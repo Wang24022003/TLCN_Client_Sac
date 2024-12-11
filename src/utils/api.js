@@ -18,6 +18,9 @@ export const getNotificationsUser = () => {
 export const makeAsReadNotification = (id) => {
   return instance.patch(`notifications/mark-as-read/${id}`);
 };
+export const makeAllAsReadNotification = () => {
+  return instance.post(`notifications/mark-all-as-read`);
+};
 
 export const uploadImg = async (data) => {
   const formData = new FormData();
