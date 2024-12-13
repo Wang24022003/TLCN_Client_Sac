@@ -476,6 +476,7 @@ export const authSlice = createSlice({
         state.isError = false;
         state.isSuccess = true;
         state.cartProducts = action.payload.data;
+        state.isReload = false;
       })
       .addCase(getUserCart.rejected, (state, action) => {
         state.isLoading = false;

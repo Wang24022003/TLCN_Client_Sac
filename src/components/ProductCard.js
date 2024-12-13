@@ -114,13 +114,19 @@ const ProductCard = (props) => {
                         />
                       </div>
 
-              <div className="product-details">
+              <div className="product-details" style={{
+                          padding:"15px",
+                        }}>
                 <h6 className="brand">{item?.brand}</h6>
                 <h5 className="product-title">
+                  {item?.name?.length > 35 ? item.name.substr(0, 35) + "..." : item?.name}
+                </h5>
+
+                {/* <h5 className="product-title">
                   {grid === 12 || grid === 6
                     ? item?.name
                     : item?.name?.substr(0, 80) + "..."}
-                </h5>
+                </h5> */}
                 <div className="d-flex align-items-center">
                 <ReactStars
                   count={+5}

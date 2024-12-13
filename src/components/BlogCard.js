@@ -1,10 +1,16 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const BlogCard = (props) => {
   const { id, title, description, image, date } = props;
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    navigate("/blog/" + id);
+  };
+
   return (
-    <div className="blog-card">
+    <div className="blog-card" onClick={handleCardClick} style={{ cursor: "pointer" }}>
       <div className="card-image">
         <img
           src={image ? image : "images/blog-1.jpg"}
@@ -21,9 +27,6 @@ const BlogCard = (props) => {
             __html: description?.substr(0, 70) + "...",
           }}
         ></p>
-        <Link to={"/blog/" + id} className="button">
-          Xem chi tiết
-        </Link>
       </div>
     </div>
   );

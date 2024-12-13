@@ -12,7 +12,7 @@ import {
   check_active_account,
   loginUser,
 } from "../features/user/userSlice";
-import logo from "../assets/Remove-bg.ai_1720413887960.png"; // Adjust the path according to your project structure
+// Adjust the path according to your project structure
 import "./../Css/CssLogin.css";
 import { toast } from "react-toastify";
 

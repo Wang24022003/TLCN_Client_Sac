@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, Link, useNavigate } from "react-router-dom";
 import { IoMdSearch } from "react-icons/io";
-import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { FaBell, FaHeart, FaRegBell, FaRegHeart } from "react-icons/fa";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { FiUser } from "react-icons/fi";
 import compare from "../images/compare.svg";
@@ -18,7 +18,30 @@ import "./../Css/CssHeader.css";
 import { authService } from "../features/user/userService";
 import { toast } from "react-toastify";
 import Dashboard from "./../pages/Dashboard";
+import { getNotificationsUser, makeAllAsReadNotification, makeAsReadNotification } from "../utils/api";
 const Header = () => {
+
+  const [isHidden, setIsHidden] = useState(false); // Trạng thái ẩn/hiện
+  const [lastScrollY, setLastScrollY] = useState(0); // Vị trí cuộn trước đó
+
+  const handleScroll = () => {
+    if (window.scrollY > lastScrollY) {
+      setIsHidden(true); // Ẩn header khi cuộn xuống
+    } else {
+      setIsHidden(false); // Hiện header khi cuộn lên
+    }
+    setLastScrollY(window.scrollY); // Cập nhật vị trí cuộn
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll); // Dọn sạch sự kiện khi component unmount
+    };
+  }, [lastScrollY]); // Chạy lại effect khi `lastScrollY` thay đổi
+
+
+
   const userState = useSelector((state) => state.auth.user);
   const [showPopup, setShowPopup] = useState(false);
   const [selected, setSelected] = useState([]);
@@ -124,8 +147,56 @@ const Header = () => {
     };
   }, []);
 
+
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState();
+  const callMakeAllAsReadNotification = async () => {
+    const re = await makeAllAsReadNotification();
+    if (re && re.data) {
+      fetchNotifications();
+    }
+  };
+  const callMakeAsReadNotification = async (id) => {
+    const re = await makeAsReadNotification(id);
+    if (re && re.data) {
+      fetchNotifications();
+    }
+  };
+  const fetchNotifications = async () => {
+    const re = await getNotificationsUser();
+    if (re && re.data) {
+      setNotifications(re.data);
+    }
+  };
+  // Load dữ liệu cứng vào state khi component được mount
+  useEffect(() => {
+    fetchNotifications();
+    //setNotifications(staticNotifications);
+  }, []);
+  useEffect(() => {
+    setUnreadCount(
+      notifications.filter((notification) => !notification.isRead).length
+    );
+
+    return () => {};
+  }, [notifications]);
+
+  const markAllAsRead = () => {
+    callMakeAllAsReadNotification();
+  };
+
+  const handleNotificationClick = (notification) => {
+    if (!notification.isRead) {
+      callMakeAsReadNotification(notification._id);
+    }
+
+    if (notification.navigate) {
+      window.open(notification.navigate, "_blank");
+    }
+  };
+
   return (
-    <div className="header">
+    <div className={`header ${isHidden ? "hidden" : ""}`}>
       <>
         <header className="header-top-strip py-3">
           <div className="container-xxl">
@@ -213,7 +284,7 @@ const Header = () => {
 
               <div className="col-9">
                 <div
-                  className="header-upper-links d-flex align-items-center justify-content-end gap-5"
+                  className="header-upper-links d-flex align-items-center justify-content-end gap-4"
                   style={{
                     display: "flex",
                     justifyContent: "flex-end",
@@ -301,6 +372,39 @@ const Header = () => {
 
                   <div>
                     <Link
+                      to="/dashboard/notifications" // Đường dẫn đến trang thông báo
+                      className="d-flex align-items-center gap-10 text-white"
+                      style={{ color: "#000", transition: "color 0.3s ease" }}
+                    >
+                      <div style={{ position: "relative" }}>
+                        <span
+                          style={{
+                            backgroundColor: "#807F7FFF",
+                            color: "#fffefe",
+                            borderRadius: "50%",
+                            width: "24px",
+                            height: "24px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            fontWeight: "bold",
+                            fontSize: "14px",
+                            position: "absolute",
+                            bottom: "22px",
+                            right: "-14px",
+                          }}
+                        >
+                          {/* {notificationState?.length ? notificationState?.length : 0}  */}
+                          {unreadCount}
+                        </span>
+                        <FaRegBell size={24} style={{ color: "black" }} /> {/* Sử dụng biểu tượng thông báo */}
+                      </div>
+                    </Link>
+                  </div>
+                  
+
+                  <div>
+                    <Link
                       to="/wishlist"
                       className="d-flex align-items-center gap-10 text-white"
                       style={{ color: "#000", transition: "color 0.3s ease" }}
@@ -319,8 +423,8 @@ const Header = () => {
                             fontWeight: "bold",
                             fontSize: "14px",
                             position: "absolute",
-                            bottom: "24px",
-                            right: "-23px",
+                            bottom: "22px",
+                            right: "-14px",
                           }}
                         >
                           {wishlistState?.length ? wishlistState?.length : 0}
@@ -446,6 +550,7 @@ const Header = () => {
                       {/* Biểu tượng giỏ hàng */}
                       <div className="d-flex flex-column gap-10">
                         <span
+                          
                           style={{
                             backgroundColor: "#807F7FFF",
                             color: "#fffefe",
@@ -457,6 +562,7 @@ const Header = () => {
                             justifyContent: "center",
                             fontWeight: "bold",
                             fontSize: "14px",
+                           
                           }}
                         >
                           {userCartState?.length ? userCartState?.length : 0}
