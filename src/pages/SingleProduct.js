@@ -86,7 +86,8 @@ const SingleProduct = () => {
           },
         })
       );
-      navigate("/cart");
+      dispatch(getUserCart());
+      // window.location.href = "/cart";
     }
   };
 
@@ -401,7 +402,16 @@ const SingleProduct = () => {
                       className="button border-0"
                       type="button"
                       onClick={() => {
-                        alreadyAdded ? navigate("/cart") : uploadCart();
+                        if (alreadyAdded) {
+                          navigate("/cart");
+                        } else {
+                          uploadCart();
+                          console.log(
+                            "🚀 ~ SingleProduct ~ uploadCart:",
+                            111111
+                          );
+                          navigate("/cart");
+                        }
                       }}
                     >
                       {alreadyAdded

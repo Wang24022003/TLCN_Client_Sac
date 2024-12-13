@@ -22,7 +22,9 @@ const Cart = () => {
   );
 
   useEffect(() => {
-    dispatch(getUserCart());
+    setTimeout(() => {
+      dispatch(getUserCart());
+    }, 2000);
   }, []);
 
   useEffect(() => {
