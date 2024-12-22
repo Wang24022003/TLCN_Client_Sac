@@ -172,8 +172,11 @@ const Checkout = () => {
   };
 
   const handleSelectCode = (discount) => {
+
+    console.log("🚀 ~ file: Checkout.js:176 ~ handleSelectCode ~ discount:", discount);
+
     setDiscountCode(discount.code);
-    setDiscountAmount(10000);
+    setDiscountAmount(discount.code);
     setShowModalCode(false);
   };
 
@@ -545,6 +548,13 @@ const Checkout = () => {
                 <button
                   className="button apply-discount-btn w-100 w-md-auto"
                   onClick={handleDiscountCode}
+                  style={{
+      
+                    justifyContent: "center",
+                    alignItems: "center",
+                    textAlign: "center",
+                   
+                  }}
                 >
                   Áp dụng mã giảm giá
                 </button>

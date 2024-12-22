@@ -1,0 +1,19 @@
+.button {
+  text-decoration: none; /* Bỏ dấu gạch chân */
+  display: inline-flex;  /* Để căn chỉnh mũi tên và văn bản */
+  align-items: center;   /* Căn giữa văn bản và mũi tên */
+  font-size: 16px;        /* Cỡ chữ */
+}
+
+.button2 {
+  transition: all 0.3s ease; /* Thêm hiệu ứng chuyển động cho nút */
+}
+
+.arrow {
+  margin-right: 8px;      /* Khoảng cách giữa mũi tên và văn bản */
+  transition: transform 0.3s ease; /* Thêm hiệu ứng chuyển động cho mũi tên */
+}
+
+.button2:hover .arrow {
+  transform: translateX(-10px); /* Di chuyển mũi tên sang trái khi hover */
+}

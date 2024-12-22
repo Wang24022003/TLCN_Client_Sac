@@ -56,19 +56,29 @@ const OTPVerification = () => {
   const handleOtpSubmit = async (e) => {
     e.preventDefault();
     const otpCode = otp.join("");
-
+  
     try {
       // Gửi yêu cầu kiểm tra OTP
       dispatch(check_active_account({ email: id, code: otpCode }));
-
+  
       // Nếu OTP đúng, điều hướng hoặc thực hiện hành động tiếp theo
-      //toast.success("Mã OTP hợp lệ!");
+      // toast.success("Mã OTP hợp lệ!");
     } catch (error) {
-      // Nếu OTP sai, thông báo lỗi và xóa hết các số trong ô nhập
+      // Nếu OTP sai, thông báo lỗi
       toast.error("Mã OTP không hợp lệ hoặc đã hết hạn. Vui lòng thử lại!");
-      setOtp(new Array(6).fill("")); // Reset lại các ô nhập OTP
+  
+      // Reset các ô nhập OTP ngay lập tức
+      setOtp(new Array(6).fill(""));
+  
+      // Chờ state cập nhật xong rồi focus
+      const firstInput = document.getElementById("otp-input-0");
+    if (firstInput) {
+      firstInput.focus();
+    }
     }
   };
+  
+
 
   useEffect(() => {
     if (authState.user !== null && authState.isError === false) {
@@ -107,6 +117,15 @@ const OTPVerification = () => {
 
     //     setIsNavigate(false)
   };
+
+  useEffect(() => {
+    const firstInput = document.getElementById("otp-input-0");
+    if (otp[0] === "" && firstInput) {
+      firstInput.focus(); // Đảm bảo ô đầu tiên được focus ngay khi OTP bị reset
+    }
+  }, [otp]);  // Theo dõi sự thay đổi của otp
+  
+  
   return (
     <div>
       <div style={styles.container}>

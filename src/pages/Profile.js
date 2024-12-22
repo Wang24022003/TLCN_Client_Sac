@@ -207,9 +207,14 @@ const Profile = () => {
                     />
                   </div>
                   {!edit && (
-                    <button type="submit" className="btn btn-primary">
+                    <button
+                      type="submit"
+                      className="btn"
+                      style={{ backgroundColor: "green", borderColor: "green", color: "white" }}
+                    >
                       Lưu thay đổi
                     </button>
+
                   )}
                 </Form>
               )}

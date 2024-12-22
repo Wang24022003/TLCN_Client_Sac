@@ -21,15 +21,29 @@ const Orders = () => {
     dispatch(getOrders());
   }, [dispatch]);
 
+  // useEffect(() => {
+  //   if (orderState) {
+  //     setFilteredOrders(
+  //       statusFilter
+  //         ? orderState.filter((order) => order?.statusUser === statusFilter)
+  //         : orderState
+  //     );
+  //   }
+  // }, [orderState, statusFilter]);
   useEffect(() => {
     if (orderState) {
+      const sortedOrders = [...orderState].sort((a, b) => {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
+  
       setFilteredOrders(
         statusFilter
-          ? orderState.filter((order) => order?.statusUser === statusFilter)
-          : orderState
+          ? sortedOrders.filter((order) => order?.statusUser === statusFilter)
+          : sortedOrders
       );
     }
   }, [orderState, statusFilter]);
+  
 
   const toggleExpandOrder = (orderId) => {
     setExpandedOrders((prevState) => ({

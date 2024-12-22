@@ -10,14 +10,14 @@ const Color = ({ colorData, setColor }) => {
 
   return (
     <>
-      <div className="color-selection">
-        <span>
+      <div className="color-selection" style={{ display: "flex", alignItems: "center" }}>
+        <span style={{ marginRight: "10px" }}>
           Màu:{" "}
           {selectedColor
             ? colorData.find((color) => color._id === selectedColor)?.color
             : "None"}
         </span>
-        <ul className="colors ps-0">
+        <ul className="colors" style={{ display: "flex", padding: 0, margin: 0 }}>
           {colorData &&
             colorData.map((item, index) => (
               <li
@@ -26,13 +26,14 @@ const Color = ({ colorData, setColor }) => {
                 style={{
                   backgroundColor: item.color,
                   border:
-                    selectedColor === item._id ? "2px solid black" : "none",
+                    selectedColor === item._id ? "2px solid black" : "1px solid #ccc",
                   borderRadius: "50%",
                   width: "24px",
                   height: "24px",
-                  display: "inline-block",
                   cursor: "pointer",
                   margin: "0 5px",
+                  boxShadow:
+                    selectedColor === item._id ? "0 0 5px rgba(0, 0, 0, 0.5)" : "none",
                 }}
               ></li>
             ))}
@@ -43,6 +44,19 @@ const Color = ({ colorData, setColor }) => {
               setSelectedColor(null);
               setColor(null);
             }}
+            style={{
+              marginLeft: "10px",
+              backgroundColor: "#f44336",
+              color: "#fff",
+              border: "none",
+              borderRadius: "4px",
+              padding: "5px 10px",
+              cursor: "pointer",
+              fontSize: "14px",
+              transition: "background-color 0.3s",
+            }}
+            onMouseOver={(e) => (e.target.style.backgroundColor = "#d32f2f")}
+            onMouseOut={(e) => (e.target.style.backgroundColor = "#f44336")}
           >
             × Clear
           </button>

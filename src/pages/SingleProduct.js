@@ -74,7 +74,7 @@ const SingleProduct = () => {
     if (color === null) {
       toast.error("Please choose Color");
     } else if (quantity > productState?.quantity) {
-      toast.error("Selected quantity exceeds available stock");
+      toast.error("Số lượng được chọn vượt quá số lượng hàng có sẵn.");
     } else {
       dispatch(
         addProdToCart({
@@ -87,6 +87,7 @@ const SingleProduct = () => {
         })
       );
       dispatch(getUserCart());
+      navigate("/cart");
       // window.location.href = "/cart";
     }
   };
@@ -337,7 +338,7 @@ const SingleProduct = () => {
                     activeColor="#ffd700"
                   />
                   <p className="mb-0 t-review">
-                    ( {productState?.ratings?.length} Đánh giá )
+                    ( {productState?.quantityComments} Đánh giá )
                   </p>
                 </div>
                 <a className="review-btn" href="#review">
@@ -404,20 +405,16 @@ const SingleProduct = () => {
                       onClick={() => {
                         if (alreadyAdded) {
                           navigate("/cart");
+                        } else if (color === null) {
+                          toast.error("Vui lòng chọn màu sắc");
                         } else {
                           uploadCart();
-                          console.log(
-                            "🚀 ~ SingleProduct ~ uploadCart:",
-                            111111
-                          );
-                          navigate("/cart");
                         }
                       }}
                     >
-                      {alreadyAdded
-                        ? "sản phẩm vào giỏ hàng"
-                        : "Thêm sản phẩm vào giỏ hàng "}
+                      {alreadyAdded ? "sản phẩm vào giỏ hàng" : "Mua ngay "}
                     </button>
+
                   </div>
                 </div>
                 <div className="d-flex align-items-center gap-15">
@@ -448,7 +445,7 @@ const SingleProduct = () => {
           </div>
         </div>
       </Container>
-      <Container class1="description-wrapper py-4 home-wrapper-2">
+      <Container class1="description-wrapper py-2 home-wrapper-2">
         <div className="row">
           <div className="col-12">
             <h4>Mô tả</h4>
@@ -472,7 +469,7 @@ const SingleProduct = () => {
                     <ReactStars
                       count={+5}
                       size={24}
-                      value={+productState?.rating?.toString()}
+                      value={+productState?.totalrating?.toString()}
                       edit={false}
                       activeColor="#ffd700"
                     />
@@ -481,6 +478,7 @@ const SingleProduct = () => {
                     </p>
                   </div>
                 </div>
+                
                 {orderedProduct && (
                   <div>
                     <a className="text-dark text-decoration-underline" href="">
@@ -573,7 +571,7 @@ const SingleProduct = () => {
           <ProductCard data={relatedByBrand} />
         </div>
       </Container>
-      <Container class1="popular-wrapper py-5 home-wrapper-2">
+      <Container class1="popular-wrapper py-3 home-wrapper-2">
         <div className="row">
           <div className="col-12">
             <h3 className="section-heading">Sản phẩm phổ biến</h3>
@@ -584,7 +582,7 @@ const SingleProduct = () => {
         </div>
       </Container>
 
-      <Container class1="related-wrapper py-5 home-wrapper-2">
+      <Container class1="related-wrapper py-3 home-wrapper-2">
         <div className="row">
           <div className="col-12">
             <h3 className="section-heading">Sản phẩm nổi bật</h3>

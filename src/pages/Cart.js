@@ -12,6 +12,8 @@ import {
   updateCartProduct,
   deleteUserCart,
 } from "../features/user/userSlice";
+import "./../Css/CssCart.css";
+import { FaArrowLeft } from "react-icons/fa";
 
 const Cart = () => {
   const dispatch = useDispatch();
@@ -162,9 +164,10 @@ const Cart = () => {
 
           <div className="col-12 py-2 mt-4">
             <div className="d-flex justify-content-between align-items-baseline">
-              <Link to="/product" className="button">
-                Tiếp tục mua sắm
-              </Link>
+            <Link to="/product" className="button2 button">
+              <FaArrowLeft style={{ fontSize: '20px', marginRight: '8px' }} />
+              Tiếp tục mua sắm
+            </Link>
               <button className="button danger" onClick={deleteAllCartProduct}>
                 Hủy đơn hàng
               </button>

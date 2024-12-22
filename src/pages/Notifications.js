@@ -9,6 +9,9 @@ import {
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState();
+
+  console.log("🚀 ~ file: Notifications.js:13 ~ Notifications ~ unreadCount:", unreadCount);
+
   const callMakeAllAsReadNotification = async () => {
     const re = await makeAllAsReadNotification();
     if (re && re.data) {
