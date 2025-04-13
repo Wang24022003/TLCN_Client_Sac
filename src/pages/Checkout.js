@@ -176,7 +176,7 @@ const Checkout = () => {
     console.log("🚀 ~ file: Checkout.js:176 ~ handleSelectCode ~ discount:", discount);
 
     setDiscountCode(discount.code);
-    setDiscountAmount(discount.code);
+    setDiscountAmount(10000);
     setShowModalCode(false);
   };
 

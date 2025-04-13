@@ -167,6 +167,7 @@ const Header = () => {
     if (re && re.data) {
       setNotifications(re.data);
     }
+    
   };
   // Load dữ liệu cứng vào state khi component được mount
   useEffect(() => {
