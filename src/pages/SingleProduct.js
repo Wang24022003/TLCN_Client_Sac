@@ -12,6 +12,10 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import Container from "../components/Container";
 import { addToWishlist } from "../features/products/productSlilce";
 import { useDispatch, useSelector } from "react-redux";
+import { FaMinus, FaPlus, FaRulerHorizontal } from "react-icons/fa";
+import { BsShield } from "react-icons/bs";
+import { IoColorPaletteOutline } from "react-icons/io5";
+import { HiOutlineMail } from "react-icons/hi";
 import {
   addRating,
   getAProduct,
@@ -25,8 +29,13 @@ import {
 } from "../features/user/userSlice";
 import "./../Css/CssSingleProduct.css";
 import { getRatingsUser } from "../utils/api";
+import SizeSelect from "../components/SizeSelect";
+import { getAProductCategory } from "../features/pcategory/pcategorySlice";
+import { FiHeart, FiLayers } from "react-icons/fi";
+import { AiOutlineShareAlt } from "react-icons/ai";
 
 const SingleProduct = () => {
+  const { categoryName } = useSelector((state) => state.pCategory);
   const [color, setColor] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [alreadyAdded, setAlreadyAdded] = useState(false);
@@ -47,6 +56,7 @@ const SingleProduct = () => {
       setReviews(re.data.result);
     }
   };
+
   useEffect(() => {
     if (authState.user) {
       dispatch(getAProduct({ id: getProductId, isLogin: true }));
@@ -70,28 +80,77 @@ const SingleProduct = () => {
     }
   }, [cartState, getProductId]);
 
-  const uploadCart = () => {
-    if (color === null) {
-      toast.error("Please choose Color");
-    } else if (quantity > productState?.quantity) {
-      toast.error("Số lượng được chọn vượt quá số lượng hàng có sẵn.");
-    } else {
-      dispatch(
-        addProdToCart({
-          product: {
-            _id: productState?._id,
-            price: productState?.price,
-            quantity: +quantity,
-            color: color._id,
-          },
-        })
-      );
-      dispatch(getUserCart());
+  const uploadCart = async () => {
+    const hasColor = features.includes("color");
+    const hasSize = features.includes("size");
+  
+    if (hasColor && hasSize && (!selectedColor || !selectedSize)) {
+      toast.error("Vui lòng chọn cả màu và kích thước");
+      return;
+    }
+  
+    if (hasColor && !hasSize && !selectedColor) {
+      toast.error("Vui lòng chọn màu sắc");
+      return;
+    }
+  
+    if (!hasColor && hasSize && !selectedSize) {
+      toast.error("Vui lòng chọn kích thước");
+      return;
+    }
+  
+    if (quantity > getSelectedVariantStock()) {
+      toast.error("Số lượng vượt quá tồn kho");
+      return;
+    }
+  
+    const productPayload = {
+      _id: productState?._id,
+      price: getSelectedVariantPriceValue(),
+      quantity: +quantity,
+    };
+  
+    if (hasColor) productPayload.color = selectedColor;
+    if (hasSize) productPayload.size = selectedSize;
+  
+    try {
+      await dispatch(addProdToCart({ product: productPayload })).unwrap(); // đợi xong thêm
+      await dispatch(getUserCart()).unwrap(); // đảm bảo đã cập nhật giỏ hàng
       navigate("/cart");
-      // window.location.href = "/cart";
+    } catch (err) {
+      toast.error("Thêm vào giỏ hàng thất bại");
     }
   };
+  
+  
+  
 
+  const getSelectedVariantPriceValue = () => {
+    const variants = productState?.inventory?.productInventory?.productVariants;
+    if (!variants || variants.length === 0) return 0;
+  
+    let matchedVariant;
+  
+    if (selectedColor && selectedSize) {
+      matchedVariant = variants.find(
+        (v) =>
+          v.attributes.color === selectedColor &&
+          v.attributes.size === selectedSize
+      );
+    } else if (selectedColor) {
+      matchedVariant = variants.find(
+        (v) => v.attributes.color === selectedColor
+      );
+    } else if (selectedSize) {
+      matchedVariant = variants.find(
+        (v) => v.attributes.size === selectedSize
+      );
+    }
+  
+    return matchedVariant?.sellPrice || 0;
+  };
+
+  
   const props = {
     width: 594,
     height: 600,
@@ -245,204 +304,515 @@ const SingleProduct = () => {
     wishlistState?.some((item) => item._id === productId);
 
   const [hoveredProduct, setHoveredProduct] = useState(null);
+
+  //--------------------------Xử lý màu sắc và size-----------------------------------------
+  const variants = productState?.variants || [];
+  const features = productState?.features || [];
+  
+  const [selectedColor, setSelectedColor] = useState(null);
+  const [selectedSize, setSelectedSize] = useState(null);
+  
+  // Tạo danh sách unique
+  const allColors = Array.from(new Set(variants.map(v => v.attributes.color.name)));
+  const allSizes = Array.from(new Set(variants.map(v => v.attributes.size.name)));
+  
+  // Tạo bản đồ kiểm tra
+  const colorToSizes = {};
+  const sizeToColors = {};
+  
+  variants.forEach(variant => {
+    const color = variant.attributes.color.name;
+    const size = variant.attributes.size.name;
+  
+    if (!colorToSizes[color]) colorToSizes[color] = new Set();
+    if (!sizeToColors[size]) sizeToColors[size] = new Set();
+  
+    colorToSizes[color].add(size);
+    sizeToColors[size].add(color);
+  });
+  
+
+  useEffect(() => {
+    if (productState?.category) {
+      dispatch(getAProductCategory(productState.category));
+    }
+  }, [dispatch, productState?.category]);
+  
+  //------------tìm khoảng giá----------------
+  const getPriceRange = () => {
+    const variants = productState?.inventory?.productInventory?.productVariants;
+    if (!variants || !Array.isArray(variants) || variants.length === 0) {
+      return "Đang cập nhật giá";
+    }
+    
+    const prices = variants.map(v => v.sellPrice);
+    const min = Math.min(...prices);
+    const max = Math.max(...prices);
+  
+    return min === max
+      ? `${min.toLocaleString("vi-VN")} ₫`
+      : `${min.toLocaleString("vi-VN")} ₫ - ${max.toLocaleString("vi-VN")} ₫`;
+  };
+  
+
+  const getSelectedVariantPrice = () => {
+    const variants = productState?.inventory?.productInventory?.productVariants;
+    if (!variants || !Array.isArray(variants) || variants.length === 0) {
+      return "Đang cập nhật giá";
+    }
+  
+    let matchedVariant;
+  
+    // Nếu có cả màu và size
+    if (selectedColor && selectedSize) {
+      matchedVariant = variants.find(
+        (v) =>
+          v.attributes.color === selectedColor &&
+          v.attributes.size === selectedSize
+      );
+    }
+    // Nếu chỉ có màu
+    else if (selectedColor) {
+      matchedVariant = variants.find(
+        (v) => v.attributes.color === selectedColor
+      );
+    }
+    // Nếu chỉ có size
+    else if (selectedSize) {
+      matchedVariant = variants.find(
+        (v) => v.attributes.size === selectedSize
+      );
+    }
+  
+    if (matchedVariant && matchedVariant.sellPrice !== undefined) {
+      return `${matchedVariant.sellPrice.toLocaleString("vi-VN")} ₫`;
+    }
+  
+    // Trường hợp chưa chọn gì hoặc không khớp → trả về khoảng giá
+    return getPriceRange();
+  };
+  
+
+  const getSelectedVariantStock = () => {
+    const inventory = productState?.inventory?.productInventory;
+    const variants = inventory?.productVariants;
+  
+    // Nếu đã chọn cả màu và size → tìm đúng biến thể
+    if (
+      selectedColor &&
+      selectedSize &&
+      variants &&
+      Array.isArray(variants)
+    ) {
+      const matchedVariant = variants.find(
+        (v) =>
+          v.attributes.color === selectedColor &&
+          v.attributes.size === selectedSize
+      );
+  
+      if (matchedVariant) {
+        return matchedVariant.stock;
+      }
+    }
+  
+    // Nếu chưa chọn đủ → hiển thị tổng tồn kho
+    return inventory?.totalQuantity ?? "Đang cập nhật";
+  };
+  
+  
+
+  //----------------tạo mảng ảnh------------------
+  const colorImageMap = productState?.variants?.reduce((acc, variant) => {
+    const colorName = variant.attributes.color.name;
+    const imgUrl = variant.attributes.color.desc;
+  
+    // Tránh trùng lặp màu
+    if (!acc[colorName]) {
+      acc[colorName] = imgUrl;
+    }
+  
+    return acc;
+  }, {});
+
+  const [currentImage, setCurrentImage] = useState(null); // ảnh chính từ màu
+
+  const defaultImages = productState?.images || [];
+
+  const colorImages = productState?.variants?.reduce((acc, variant) => {
+    const colorName = variant.attributes?.color?.name;
+    const colorUrl = variant.attributes?.color?.desc;
+    if (colorUrl && !acc.find((i) => i.url === colorUrl)) {
+      acc.push({ url: colorUrl, color: colorName });
+    }
+    return acc;
+  }, []);
+  
+  const allThumbnails = [
+    ...defaultImages.map((img) => ({ url: img, color: null })),
+    ...(colorImages || []),
+  ];
+  
+  
   return (
     <>
       <Meta title={"Product Name"} />
       <BreadCrumb title={productState?.name} />
       <Container class1="main-product-wrapper py-5 home-wrapper-2">
         <div className="row">
-          <div className="col-2">
-            <div className="other-product-images d-flex flex-column gap-3 justify-content-center">
-              {productState?.images.map((item, index) => (
-                <div
-                  key={index}
-                  className="image-thumbnail"
-                  onClick={() => setCurrentImageIndex(index)}
-                >
-                  <img
-                    src={item}
-                    className="img-fluid thumbnail-img"
-                    alt={`Product Thumbnail ${index + 1}`}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="col-5">
-            <div className="main-product-image">
-              <div className="image-container" style={{ position: "relative" }}>
-                {productState?.images[currentImageIndex] && (
-                  <ReactImageZoom
-                    {...props}
-                    img={productState?.images[currentImageIndex]}
-                  />
-                )}
-                <button
-                  className="prev-button"
-                  onClick={prevImage}
-                  // style={prevButtonStyle}
-                >
-                  &#10094;
-                </button>
-                <button
-                  className="next-button"
-                  onClick={nextImage}
-                  //style={nextButtonStyle}
-                >
-                  &#10095;
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div className="col-5">
-            <div className="main-product-details">
-              <div
-                className="d-flex align-items-center border-bottom"
-                style={{ gap: "10px" }}
-              >
-                <h3
-                  className="title mb-0 d-flex align-items-center"
-                  style={{ gap: "10px" }}
-                >
-                  {productState?.name}
-                  <div className="wishlist-icon">
-                    <button
-                      className="border-0 bg-transparent"
-                      onClick={() => handleWishlistToggle(productState?._id)}
-                    >
-                      {isProductInWishlist(productState?._id) ? (
-                        <AiFillHeart className="fs-5 text-danger" />
-                      ) : (
-                        <AiOutlineHeart className="fs-5" />
-                      )}
-                    </button>
-                  </div>
-                </h3>
-              </div>
-
-              <div className="border-bottom py-3">
-                <p className="price">
-                  {productState?.price
-                    ? productState.price.toLocaleString("vi-VN")
-                    : 0}
-                  ₫
-                </p>
-
-                <div className="d-flex align-items-center gap-10">
-                  <ReactStars
-                    count={+5}
-                    size={24}
-                    value={+productState?.totalrating?.toString()}
-                    edit={false}
-                    activeColor="#ffd700"
-                  />
-                  <p className="mb-0 t-review">
-                    ( {productState?.quantityComments} Đánh giá )
-                  </p>
-                </div>
-                <a className="review-btn" href="#review">
-                  Viết đánh giá
-                </a>
-              </div>
-              <div className="py-3">
-                <div className="d-flex gap-10 align-items-center my-2">
-                  <h3 className="product-heading">Loại :</h3>
-                  <p className="product-data">{productState?.category}</p>
-                </div>
-                <div className="d-flex gap-10 align-items-center my-2">
-                  <h3 className="product-heading">Thương hiệu :</h3>
-                  <p className="product-data">{productState?.brand}</p>
-                </div>
-                <div className="d-flex gap-10 align-items-center my-2">
-                  <h3 className="product-heading">Danh mục :</h3>
-                  <p className="product-data">{productState?.category}</p>
-                </div>
-                <div className="d-flex gap-10 align-items-center my-2">
-                  <h3 className="product-heading">Tags :</h3>
-                  <p className="product-data">{productState?.tags}</p>
-                </div>
-                <div className="d-flex gap-10 align-items-center my-2">
-                  <h3 className="product-heading">Tình trạng hàng sẳn có :</h3>
-                  <p className="product-data">{productState?.quantity}</p>
-                </div>
-                {alreadyAdded === false && (
-                  <div className="d-flex gap-10 flex-column mt-2 mb-3">
-                    <Color
-                      setColor={setColor}
-                      colorData={productState?.colors}
-                    />
-                  </div>
-                )}
-
-                <div className="d-flex align-items-center gap-15 flex-row mb-3">
-                  <h3 className="product-heading">Số lượng :</h3>
-                  {alreadyAdded === false && (
-                    <div className="">
-                      <input
-                        type="number"
-                        min={1}
-                        max={10}
-                        className="form-control"
-                        style={{ width: "70px" }}
-                        // onChange={(e) => setQuantity(e.target.value)}
-                        onChange={handleQuantityChange}
-                        value={quantity}
-                      />
-                      {error && <small className="text-danger">{error}</small>}
-                    </div>
-                  )}
-
+          <div className="col-12">
+            <div className="product-wrapper-box flex flex-wrap gap-3 w-full">
+              <div className="w-[16.666%]">
+                <div className="other-product-images scrollable-thumbnails">
+                {allThumbnails.map((item, index) => (
                   <div
-                    className={
-                      (alreadyAdded ? "ms-0" : "ms-5") +
-                      " d-flex align-items-center gap-30"
-                    }
-                  >
-                    <button
-                      className="button border-0"
-                      type="button"
-                      onClick={() => {
-                        if (alreadyAdded) {
-                          navigate("/cart");
-                        } else if (color === null) {
-                          toast.error("Vui lòng chọn màu sắc");
-                        } else {
-                          uploadCart();
-                        }
-                      }}
-                    >
-                      {alreadyAdded ? "sản phẩm vào giỏ hàng" : "Mua ngay "}
-                    </button>
-
-                  </div>
-                </div>
-                <div className="d-flex align-items-center gap-15">
-                  <div></div>
-                </div>
-                <div className="d-flex gap-10 flex-column  my-3">
-                  <h3 className="product-heading">Vận chuyển & Đổi trả :</h3>
-                  <p className="product-data">
-                    Miễn phí vận chuyển và đổi trả cho tất cả các đơn hàng!{" "}
-                    <br /> Chúng tôi sẽ giao tất cả các đơn hàng nội địa Việt
-                    Nam trong vòng
-                    <b> 5-10 ngày làm việc!</b>
-                  </p>
-                </div>
-                <div className="d-flex gap-10 align-items-center my-3">
-                  <h3 className="product-heading">Link sản phẩm:</h3>
-                  <a
-                    href="javascript:void(0);"
+                    key={index}
+                    className={`image-thumbnail ${
+                      item.url === currentImage ? "active-thumbnail" : ""
+                    }`}
                     onClick={() => {
-                      copyToClipboard(window.location.href);
+                      setCurrentImage(item.url);
+                      setCurrentImageIndex(index);
+
+                      if (item.color) {
+                        setSelectedColor(item.color);
+                        // Optionally reset size nếu size không hợp với màu mới
+                        if (
+                          selectedSize &&
+                          !colorToSizes[item.color]?.has(selectedSize)
+                        ) {
+                          setSelectedSize(null);
+                        }
+                      }
                     }}
                   >
-                    Sao chép Link sản phẩm
-                  </a>
+                    <img
+                      src={item.url}
+                      className="img-fluid thumbnail-img"
+                      alt={`Thumbnail ${index + 1}`}
+                    />
+                  </div>
+                ))}
+
+                </div>
+              </div>
+
+              <div className="w-[33.333%]">
+                <div className="main-product-image">
+                  <div className="image-container">
+                    {currentImage ? (
+                      <img
+                        src={currentImage}
+                        alt="Main Product by Color"
+                        className="img-fluid"
+                      />
+                    ) : productState?.images[currentImageIndex] ? (
+                      <img
+                        src={productState?.images[currentImageIndex]}
+                        alt="Main Product"
+                        className="img-fluid"
+                      />
+                    ) : null}
+
+                    <button className="prev-button" onClick={() => {
+                      setCurrentImageIndex(prev =>
+                        prev === 0
+                          ? productState.images.length - 1
+                          : prev - 1
+                      );
+                      setCurrentImage(null);
+                    }}>
+                      &#10094;
+                    </button>
+
+                    <button className="next-button" onClick={() => {
+                      setCurrentImageIndex(prev =>
+                        prev === productState.images.length - 1
+                          ? 0
+                          : prev + 1
+                      );
+                      setCurrentImage(null);
+                    }}>
+                      &#10095;
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="w-[47%]">
+                <div className="main-product-details">
+                  <div
+                    className="d-flex align-items-center border-bottom"
+                    style={{ gap: "10px" }}
+                  >
+                    <h2
+                      className="title mb-0 d-flex align-items-center"
+                      style={{ gap: "10px" }}
+                    >
+                      {productState?.name}
+                      <div className="wishlist-icon">
+                        <button
+                          className="border-0 bg-transparent"
+                          onClick={() => handleWishlistToggle(productState?._id)}
+                        >
+                          {isProductInWishlist(productState?._id) ? (
+                            <AiFillHeart className="fs-5 text-danger" />
+                          ) : (
+                            <AiOutlineHeart className="fs-5" />
+                          )}
+                        </button>
+                      </div>
+                    </h2>
+                  </div>
+
+                  <div className="border-bottom py-3">
+                  <div className="w-full bg-red-100 px-4 py-3 rounded-lg mb-4">
+                    <p className="text-red-600 text-2xl font-bold m-0">
+                      {getSelectedVariantPrice()}
+                    </p>
+                  </div>
+
+                    <div className="d-flex align-items-center gap-10">
+                      <ReactStars
+                        count={+5}
+                        size={24}
+                        value={+productState?.totalrating?.toString()}
+                        edit={false}
+                        activeColor="#ffd700"
+                      />
+                      <p className="mb-0 t-review">
+                        ( {productState?.quantityComments} Đánh giá )
+                      </p>
+                    </div>
+                    <a className="review-btn" href="#review">
+                      Viết đánh giá
+                    </a>
+                  </div>
+                  <div className="py-3">
+                    {/* <div className="d-flex gap-10 align-items-center my-2">
+                      <h3 className="product-heading">Loại :</h3>
+                      <p className="product-data">{productState?.category}</p>
+                    </div> */}
+                    <div className="d-flex gap-10 align-items-center my-2">
+                      <h3 className="product-heading">Thương hiệu :</h3>
+                      <p className="product-data">{productState?.brand}</p>
+                    </div>
+                    <div className="d-flex gap-10 align-items-center my-2">
+                      <h3 className="product-heading">Danh mục :</h3>
+                      <p className="product-data">{categoryName}</p>
+                    </div>
+                    <div className="d-flex gap-10 align-items-center my-2">
+                      <h3 className="product-heading">Tags :</h3>
+                      <p className="product-data">{productState?.tags}</p>
+                    </div>
+                    {features.includes("color") && (
+                      <div className="mb-3">
+                        <strong>Màu:</strong>
+                        <div style={{ display: "flex", gap: "10px", marginTop: "5px" }}>
+                          {allColors.map((colorCode, idx) => {
+                            const isDisabled = selectedSize
+                              ? !sizeToColors[selectedSize].has(colorCode)
+                              : false;
+                            const isSelected = selectedColor === colorCode;
+
+                            return (
+                              <div
+                                key={idx}
+                                onClick={() => {
+                                  if (!isDisabled) {
+                                    setSelectedColor(colorCode === selectedColor ? null : colorCode);
+                                    setCurrentImage(
+                                      colorImageMap[colorCode === selectedColor ? null : colorCode]
+                                    );
+                                  }
+                                }}
+                                style={{
+                                  backgroundColor: colorCode,
+                                  border: isSelected ? "2px solid black" : "1px solid #ccc",
+                                  opacity: isDisabled ? 0.4 : 1,
+                                  borderRadius: "50%",
+                                  width: "24px",
+                                  height: "24px",
+                                  cursor: isDisabled ? "not-allowed" : "pointer",
+                                }}
+                              ></div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {features.includes("size") && (
+                      <div className="mb-3">
+                        <strong>Kích thước:</strong>
+                        <div style={{ display: "flex", gap: "10px", marginTop: "5px" }}>
+                          {allSizes.map((sizeName, idx) => {
+                            const isDisabled = selectedColor
+                              ? !colorToSizes[selectedColor]?.has(sizeName)
+                              : false;
+                            const isSelected = selectedSize === sizeName;
+
+                            return (
+                              <button
+                                key={idx}
+                                onClick={() => {
+                                  if (!isDisabled) {
+                                    setSelectedSize(sizeName === selectedSize ? null : sizeName);
+                                  }
+                                }}
+                                style={{
+                                  padding: "5px 10px",
+                                  border: isSelected ? "2px solid black" : "1px solid #ccc",
+                                  backgroundColor: isSelected ? "#000" : "#fff",
+                                  color: isSelected ? "#fff" : "#000",
+                                  opacity: isDisabled ? 0.4 : 1,
+                                  cursor: isDisabled ? "not-allowed" : "pointer",
+                                }}
+                              >
+                                {sizeName.toUpperCase()}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="flex gap-14 my-3">
+                      <h6 className="shrink-0 font-bold text-#000000-600">Số lượng:</h6>
+
+                      <div className="-ms-2 flex items-center gap-5">
+                        <div className="flex items-center border rounded overflow-hidden">
+                          <button
+                            onClick={() => {
+                              if (quantity > 1) setQuantity(quantity - 1);
+                            }}
+                            className="px-4 py-2 text-gray-700 hover:bg-gray-100"
+                          >
+                            <FaMinus />
+                          </button>
+
+                          <input
+                            type="number"
+                            value={quantity}
+                            onChange={(e) => {
+                              const val = Number(e.target.value);
+                              setQuantity(val);
+                            }}
+                            onBlur={() => {
+                              if (quantity < 1) setQuantity(1);
+                              else if (quantity > getSelectedVariantStock()) {
+                                setQuantity(getSelectedVariantStock());
+                                toast.error("Số lượng trong kho không đủ");
+                              }
+                            }}
+                            className="w-16 text-center text-lg outline-none border-l border-r py-1"
+                          />
+
+                          <button
+                            onClick={() => {
+                              if (quantity < getSelectedVariantStock()) {
+                                setQuantity(quantity + 1);
+                              } else {
+                                toast.error("Số lượng trong kho không đủ");
+                              }
+                            }}
+                            className="px-4 py-2 text-gray-700 hover:bg-gray-100"
+                          >
+                            <FaPlus />
+                          </button>
+                        </div>
+                        <div>
+                          <p className="text-blue-500">{getSelectedVariantStock()} sản phẩm có sẵn</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mb-3">
+                      <div className="d-flex align-items-center">
+                        <button
+                          className="button border-0"
+                          type="button"
+                          onClick={() => {
+                            if (alreadyAdded) {
+                              navigate("/cart");      
+                            } else {
+                              uploadCart();
+                            }
+                          }}
+                        >
+                          {alreadyAdded ? "Sản phẩm vào giỏ hàng" : "Mua ngay"}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="border-bottom d-flex align-items-center gap-15">
+                      <div></div>
+                    </div>
+
+                    <div className="flex flex-col md:flex-row border-b py-1 text-sm">
+                      <div className="flex cursor-pointer gap-1 p-3 items-center leading-none">
+                        <FaRulerHorizontal className="text-sm" />
+                        Kích thước
+                      </div>
+                      <div className="flex cursor-pointer gap-1 p-3 items-center leading-none">
+                        <BsShield className="text-sm" />
+                        Vận chuyển & trả hàng
+                      </div>
+                      <div className="flex cursor-pointer gap-1 p-3 items-center leading-none">
+                        <IoColorPaletteOutline className="text-sm" />
+                        Màu sắc
+                      </div>
+                      <div className="flex cursor-pointer gap-1 p-3 items-center leading-none">
+                        <HiOutlineMail className="text-sm" />
+                        Hỗ trợ
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col md:flex-row justify-between border-b py-1 text-sm">
+                      <div className="flex flex-col md:flex-row">
+                        <div className="flex cursor-pointer gap-1 p-3 items-center leading-none">
+                          <FiHeart className="text-sm" />
+                          Thêm vào yêu thích
+                        </div>
+                        <div className="flex cursor-pointer gap-1 p-3 items-center leading-none">
+                          <FiLayers className="text-sm" />
+                          So sánh
+                        </div>
+                      </div>
+                      
+                      <div className="flex cursor-pointer gap-1 p-3 items-center leading-none ml-auto">
+                        <AiOutlineShareAlt className="text-sm" />
+                        Share
+                      </div>
+                    </div>
+
+
+                    
+
+                    <div className="d-flex gap-10 flex-column  my-3">
+                      <h3 className="product-heading">Vận chuyển & Đổi trả :</h3>
+                      <p className="product-data">
+                        Miễn phí vận chuyển và đổi trả cho tất cả các đơn hàng!{" "}
+                        <br /> Chúng tôi sẽ giao tất cả các đơn hàng nội địa Việt
+                        Nam trong vòng
+                        <b> 5-10 ngày làm việc!</b>
+                      </p>
+                    </div>
+                    <div className="d-flex gap-10 align-items-center my-3">
+                      <h3 className="product-heading">Link sản phẩm:</h3>
+                      <a
+                        href="javascript:void(0);"
+                        onClick={() => {
+                          copyToClipboard(window.location.href);
+                        }}
+                      >
+                        Sao chép Link sản phẩm
+                      </a>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+          
         </div>
       </Container>
       <Container class1="description-wrapper py-2 home-wrapper-2">

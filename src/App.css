@@ -637,21 +637,44 @@ footer .input-group-text {
   border-radius: 10px;
 }
 .main-product-image > div {
-  border: 1px solid rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.25);
 }
 .main-product-image img {
   width: 100% !important;
   height: 100% !important;
   object-fit: cover;
 }
+
 .other-product-images {
   background-color: white;
-  padding: 20px;
-  display: flex;                /* Sử dụng Flexbox */
-  justify-content: center;      /* Căn giữa các phần tử con theo chiều ngang */
-  align-items: center;          /* Căn giữa các phần tử con theo chiều dọc */
-  flex-wrap: wrap;              /* Cho phép các phần tử con xuống dòng khi không đủ không gian */
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;       /* Sắp xếp theo chiều dọc */
+  align-items: center;          /* Căn giữa theo chiều ngang */
+  gap: 10px;                    /* Khoảng cách giữa các thumbnail */
+  max-height: 600px;            /* Giới hạn chiều cao */
+  overflow-y: scroll;           /* Cho phép cuộn dọc nhưng không hiển thị thanh cuộn */
+  scrollbar-width: none;        /* Ẩn scrollbar trên các trình duyệt hỗ trợ */
+
 }
+
+/* Ẩn thanh cuộn trong các trình duyệt Webkit */
+.other-product-images::-webkit-scrollbar {
+  display: none;                /* Ẩn thanh cuộn */
+}
+/* Keyframes cho hiệu ứng trượt theo chiều dọc */
+@keyframes slideInY {
+  from {
+    transform: translateY(-50%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+
 
 .other-product-images > div {
   width: 75%;

@@ -168,7 +168,11 @@ export const productSlice = createSlice({
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
-        state.singleproduct = action.payload.data;
+        state.singleproduct = {
+          ...action.payload.data.product,
+          quantityComments: action.payload.data.quantityComments,
+          inventory: action.payload.data.inventory,
+        };
         state.isReload = false;
 
         state.message = "Product Fetched Successfully";

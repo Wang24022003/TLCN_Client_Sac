@@ -1,11 +1,18 @@
 /* Main product image container */
 .main-product-image {
-     position: relative;
-     width: 100%;
-     overflow: hidden;
-     border-radius: 8px;
-     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-   }
+  position: relative;
+  width: 100%;
+  background-color: #f5f5f7;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.image-container img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
    
    .image-container {
      position: relative;
@@ -19,19 +26,19 @@
      position: absolute;
      top: 50%;
      transform: translateY(-50%);
-     background: none;
-     color: rgb(0, 0, 0);
+     background-color: rgba(0, 0, 0, 0.3);
+     color: #fff;
      border: none;
      font-size: 24px;
-     padding: 8px;
+     padding: 8px 12px;
      cursor: pointer;
-     z-index: 10;
-     transition: color 0.3s ease;
+     border-radius: 50%;
+     transition: background-color 0.3s ease;
    }
    
    .prev-button:hover,
    .next-button:hover {
-     background: rgba(0, 0, 0, 0.7);
+     background-color: rgba(0, 0, 0, 0.7);
    }
    
    .prev-button {
@@ -42,35 +49,43 @@
      right: 10px;
    }
    
+   
    /* Thumbnail images */
    .other-product-images {
-     
-     display: flex;
-     gap: 10px;
-     justify-content: center;
-   }
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 500px;
+    overflow-y: auto;
+    padding-right: 5px;
+  }
    
-   .image-thumbnail {
-     flex: 0 0 20%;
-     margin: 0 5px;
-     border-radius: 8px;
-     overflow: hidden;
-     cursor: pointer;
-     position: relative;
-     transition: transform 0.3s ease, box-shadow 0.3s ease;
-   }
-   
-   .thumbnail-img {
-     width: 100%;
-     height: auto;
-     border-radius: 8px;
-     transition: transform 0.3s ease, box-shadow 0.3s ease;
-   }
-   
-   .image-thumbnail:hover .thumbnail-img {
-     transform: scale(1.1); /* Enlarges the thumbnail */
-     box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Shadow effect on hover */
-   }
+  .image-thumbnail {
+    width: 100%;
+    cursor: pointer;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+  }
+  
+  .image-thumbnail:hover .thumbnail-img,
+  .active-thumbnail .thumbnail-img {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .active-thumbnail {
+    border-color: #3b4149; /* Đậm hơn khi được chọn */
+  }
+  
+  .thumbnail-img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
    
    /* Add smooth slide-in effect */
    .other-product-images {
@@ -91,13 +106,65 @@
    
    /* Responsive design for smaller screens */
    @media (max-width: 768px) {
-     .other-product-images {
-       flex-direction: column;
-     }
+    .other-product-images {
+      flex-direction: row;
+      overflow-x: auto;
+      max-height: none;
+      padding-bottom: 10px;
+    }
+  
+    .image-thumbnail {
+      flex: 0 0 auto;
+      width: 80px;
+      margin-right: 10px;
+    }
+  
+    .main-product-image {
+      margin-top: 20px;
+    }
+  
+    .prev-button,
+    .next-button {
+      font-size: 20px;
+      padding: 6px 10px;
+    }
+  }
+  
    
-     .image-thumbnail {
-       flex: 0 0 30%;
-       margin: 5px;
-     }
-   }
+
+   .product-wrapper-box {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    flex-wrap: wrap;
+  }
+  
+  @media (max-width: 768px) {
+    .product-wrapper-box {
+      flex-direction: column;
+    }
+  
+    .col-2,
+    .col-5 {
+      width: 100%;
+      padding: 10px 0;
+    }
+  }
+  
+  .scrollable-thumbnails::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  .scrollable-thumbnails::-webkit-scrollbar-thumb {
+    background-color: #999;
+    border-radius: 10px;
+  }
+  
+  .scrollable-thumbnails {
+    max-height: 800px;
+    overflow-y: auto;
+  }
+  
+
    

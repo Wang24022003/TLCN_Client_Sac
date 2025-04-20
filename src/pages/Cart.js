@@ -14,6 +14,7 @@ import {
 } from "../features/user/userSlice";
 import "./../Css/CssCart.css";
 import { FaArrowLeft } from "react-icons/fa";
+import { useLocation } from "react-router-dom";
 
 const Cart = () => {
   const dispatch = useDispatch();
@@ -23,11 +24,11 @@ const Cart = () => {
     (state) => state?.auth?.cartProducts?.items
   );
 
+  const location = useLocation();
+
   useEffect(() => {
-    setTimeout(() => {
-      dispatch(getUserCart());
-    }, 2000);
-  }, []);
+    dispatch(getUserCart());
+  }, [location.pathname]);
 
   useEffect(() => {
     if (productupdateDetail !== null) {
