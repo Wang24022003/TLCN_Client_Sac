@@ -13,8 +13,9 @@ import {
   deleteUserCart,
 } from "../features/user/userSlice";
 import "./../Css/CssCart.css";
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft, FaMinus, FaPlus, FaShippingFast } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
+
 
 const Cart = () => {
   const dispatch = useDispatch();
@@ -62,136 +63,216 @@ const Cart = () => {
     }, 200);
   };
 
+  const discountTarget = 500000; // Mức chi tiêu để được miễn phí ship
+
+
   return (
     <>
       <Meta title={"Cart"} />
       <BreadCrumb title="Cart" />
       <Container class1="cart-wrapper home-wrapper-2 py-5">
         <div className="row">
-          <div className="col-12">
-            <div className="cart-header py-3 d-flex justify-content-between align-items-center">
-              <h4 className="cart-col-1">Sản phẩm</h4>
-              <h4 className="cart-col-2">Giá</h4>
-              <h4 className="cart-col-3">Số lượng</h4>
-              <h4 className="cart-col-4">Tổng</h4>
+          {/* Bảng sản phẩm - Bên trái */}
+          <div className="col-md-8">
+            {/* Header bảng */}
+            <div className="cart-header py-3 px-4 flex justify-between items-center border bg-gray-100 rounded-md shadow-sm">
+              <h4 className="w-2/5 text-center font-semibold">Sản phẩm</h4>
+              <h4 className="w-1/5 hidden md:block text-center font-semibold">Giá</h4>
+              <h4 className="w-1/5 text-center font-semibold">Số lượng</h4>
+              <h4 className="w-[100px] text-center font-semibold">Tổng</h4>
+              <h4 className="w-[50px] text-center font-semibold"></h4>
             </div>
-            {userCartState &&
-              userCartState.map((item, index) => {
-                return (
-                  <div
-                    key={index}
-                    className="cart-data py-3 mb-2 d-flex justify-content-between align-items-center"
-                    style={{
-                      borderBottom: "1px solid #e0e0e0",
-                      paddingBottom: "20px",
-                    }}
-                  >
-                    <div className="cart-col-1 gap-15 d-flex align-items-center">
-                      <div className="w-25">
-                        <img
-                          src={
-                            item?.product?.images?.[0] || "default-image-url"
-                          }
-                          className="img-fluid"
-                          alt="product image"
-                          style={{
-                            borderRadius: "8px",
-                            transition: "transform 0.3s ease",
-                          }}
-                        />
+
+            {userCartState?.map((item, index) => (
+              <div
+                key={index}
+               className="flex flex-wrap md:flex-nowrap justify-between items-center border rounded-md shadow-sm py-4 px-4 bg-white"
+              >
+              {/* Cột 1: Sản phẩm */}
+              <div className="w-full md:w-2/5 flex gap-4 items-start mb-4 md:mb-0">
+                <img
+                  src={item?.product?.images?.[0]}
+                  alt="product"
+                  className="w-16 h-16 object-cover rounded"
+                />
+                <div className="flex flex-col">
+                  <p className="text-sm font-medium">{item?.product?.name}</p>
+                  <div className="flex gap-3 text-xs text-gray-600 mt-1">
+                    {item.color && (
+                      <div className="flex items-center gap-1">
+                        <span>Màu:</span>
+                        <span
+                          className="w-4 h-4 rounded-full border"
+                          style={{ backgroundColor: item.color }}
+                        ></span>
                       </div>
-                      <div className="w-75">
-                        <p>{item?.productId?.title}</p>
-                        <p className="d-flex gap-3">
-                          Color:
-                          <ul className="colors ps-0">
-                            <li
-                              style={{ backgroundColor: item?.color?.color }}
-                            ></li>
-                          </ul>
-                        </p>
-                      </div>
-                    </div>
-                    <div className="cart-col-2">
-                      <h5 className="price">
-                        {item?.price ? item.price.toLocaleString("vi-VN") : 0}₫
-                      </h5>
-                    </div>
-                    <div className="cart-col-3 d-flex align-items-center gap-15">
+                    )}
+                    {item.size && (
                       <div>
-                        <input
-                          className="form-control"
-                          type="number"
-                          name={"quantity" + item?._id}
-                          min={1}
-                          max={10}
-                          id={"card" + item?._id}
-                          value={item?.quantity}
-                          onChange={(e) => {
-                            setProductupdateDetail({
-                              product: {
-                                _id: item.product._id,
-                                price: item.product.price,
-                                quantity: +e.target.value,
-                                color: item.color._id,
-                              },
-                            });
-                          }}
-                        />
+                        <span>Kích thước: {item.size.toUpperCase()}</span>
                       </div>
-                      <div>
-                        <AiFillDelete
-                          onClick={() => deleteACartProduct(item?._id)}
-                          className="text-danger cursor-pointer"
-                          style={{
-                            fontSize: "20px",
-                            transition: "color 0.3s",
-                          }}
-                        />
-                      </div>
-                    </div>
-                    <div className="cart-col-4">
-                      <h5 className="price">
-                        {item?.quantity && item?.price
-                          ? (item.quantity * item.price).toLocaleString("vi-VN")
-                          : 0}
-                        ₫
-                      </h5>
-                    </div>
+                    )}
                   </div>
-                );
-              })}
+                </div>
+              </div>
+
+              {/* Cột 2: Giá */}
+              <div className="w-1/5 text-sm font-medium text-gray-700 hidden md:block text-center">
+                {item?.price?.toLocaleString("vi-VN")}₫
+              </div>
+
+              {/* Cột 3: Số lượng với nút +/- */}
+              <div className="w-full md:w-1/5 flex items-center gap-2 justify-center mb-4 md:mb-0">
+                <button
+                  className="px-2 py-1 border rounded hover:bg-gray-100"
+                  onClick={() => {
+                    if (item.quantity > 1) {
+                      setProductupdateDetail({
+                        product: {
+                          _id: item.product._id,
+                          price: item.price,
+                          quantity: item.quantity - 1,
+                          ...(item.color && { color: item.color }),
+                          ...(item.size && { size: item.size }),
+                        },
+                      });
+                    }
+                  }}
+                >
+                  <FaMinus />
+                </button>
+
+                <input
+                  type="number"
+                  value={item.quantity}
+                  min={1}
+                  max={99}
+                  className="w-14 text-center border border-gray-300 rounded"
+                  onChange={(e) => {
+                    const val = +e.target.value;
+                    if (val >= 1) {
+                      setProductupdateDetail({
+                        product: {
+                          _id: item.product._id,
+                          price: item.price,
+                          quantity: val,
+                          ...(item.color && { color: item.color }),
+                          ...(item.size && { size: item.size }),
+                        },
+                      });
+                    }
+                  }}
+                />
+
+                <button
+                  className="px-2 py-1 border rounded hover:bg-gray-100"
+                  onClick={() => {
+                    setProductupdateDetail({
+                      product: {
+                        _id: item.product._id,
+                        price: item.price,
+                        quantity: item.quantity + 1,
+                        ...(item.color && { color: item.color }),
+                        ...(item.size && { size: item.size }),
+                      },
+                    });
+                  }}
+                >
+                  <FaPlus />
+                </button>
+              </div>
+
+              {/* Cột 4: Tổng tiền */}
+              <div className="w-1/2 md:w-[100px] text-center font-semibold text-gray-800 text-sm">
+                {(item.quantity * item.price).toLocaleString("vi-VN")}₫
+              </div>
+
+              {/* Cột 5: Xoá */}
+              <div className="w-1/2 md:w-[50px] flex justify-center items-center">
+                <button
+                  onClick={() => deleteACartProduct(item?._id)}
+                  className="text-red-500 hover:text-red-700 transition"
+                >
+                  <AiFillDelete className="text-xl" />
+                </button>
+              </div>
+            </div>
+            ))}
+            {/* Nút tiếp tục mua sắm & hủy đơn hàng */}
+            <div className="d-flex justify-content-between align-items-center mt-4">
+              <Link to="/product" className="button2 button">
+                <FaArrowLeft style={{ fontSize: "20px", marginRight: "8px" }} />
+                Tiếp tục mua sắm
+              </Link>
+              <button className="button danger" onClick={deleteAllCartProduct}>
+                Xóa giỏ hàng
+              </button>
+            </div>
           </div>
 
-          <div className="col-12 py-2 mt-4">
-            <div className="d-flex justify-content-between align-items-baseline">
-            <Link to="/product" className="button2 button">
-              <FaArrowLeft style={{ fontSize: '20px', marginRight: '8px' }} />
-              Tiếp tục mua sắm
-            </Link>
-              <button className="button danger" onClick={deleteAllCartProduct}>
-                Hủy đơn hàng
-              </button>
-              {totalAmount !== null && totalAmount !== 0 && (
-                <div className="d-flex flex-column align-items-end">
-                  <h4>
-                    Tổng hóa đơn:
-                    {!userCartState?.length
-                      ? 0
-                      : totalAmount
-                      ? totalAmount.toLocaleString("vi-VN")
-                      : 0}
-                    ₫
-                  </h4>
-                  <p>Thuế và phí vận chuyển sẽ được tính khi thanh toán</p>
-                  <Link to="/checkout" className="button">
-                    Thanh toán
-                  </Link>
-                </div>
-              )}
+          {/* Tổng hóa đơn - Bên phải */}
+          <div className="col-md-4 mt-4 mt-md-0">
+            <div className="border p-5 rounded-xl shadow-md bg-white sticky top-[90px]">
+
+              {/* Thanh tiến trình miễn phí vận chuyển */}
+              <div className="relative mb-5 bg-gray-300 h-[6px] ">
+                <div
+                  style={{
+                    width:
+                      (totalAmount / discountTarget) * 100 >= 100
+                        ? "100%"
+                        : (totalAmount / discountTarget) * 100 + "%",
+                  }}
+                  className="h-[6px] bg-red-500 rounded-md transition-all"
+                ></div>
+                <span className="absolute right-0 -top-[10px] flex items-center justify-center z-20 w-7 h-7 bg-red-500 rounded-full text-white text-sm">
+                  <FaShippingFast />
+                </span>
+
+              </div>
+
+              {/* Thông báo miễn phí vận chuyển */}
+              <p className="mt-5 text-[12px]">
+                {discountTarget - totalAmount <= 0 ? (
+                  <>Chúc mừng! Bạn đã được</>
+                ) : (
+                  <>
+                    Tiêu thêm {(discountTarget - totalAmount).toLocaleString("vi-VN")}₫ để nhận được
+                  </>
+                )}
+                <span className="text-red-600"> Miễn phí vận chuyển!</span>
+              </p>
+
+
+              {/* Chi tiết tổng hóa đơn */}
+              <h4 className="mb-3 font-semibold text-lg">Tổng hóa đơn</h4>
+              <hr className="mb-3" />
+              <div className="flex justify-between mb-2 text-sm">
+                <span>Tạm tính:</span>
+                <span>{totalAmount.toLocaleString("vi-VN")}₫</span>
+              </div>
+              <div className="flex justify-between mb-2 text-sm">
+                <span>Phí vận chuyển:</span>
+                <span>Miễn phí</span>
+              </div>
+              <div className="flex justify-between font-bold text-base mb-5">
+                <span>Thành tiền:</span>
+                <span>{totalAmount.toLocaleString("vi-VN")}₫</span>
+              </div>
+
+              {/* Nút thanh toán */}
+              <Link
+                to="/checkout"
+                className="w-full block text-center py-3 px-5 bg-blue-500 text-white rounded-full uppercase font-bold hover:bg-blue-600 transition"
+              >
+                Thanh toán
+              </Link>
             </div>
           </div>
+
         </div>
+
+
       </Container>
     </>
   );

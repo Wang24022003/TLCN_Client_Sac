@@ -59,6 +59,27 @@ const Home = () => {
 
   const [hoveredProduct, setHoveredProduct] = useState(null);
 
+
+  const getPriceRangeFromVariants = (product) => {
+    const variants = product?.inventory?.productInventory?.productVariants;
+  
+    if (!variants || !Array.isArray(variants) || variants.length === 0) {
+      return "Đang cập nhật giá";
+    }
+  
+    const prices = variants.map((v) => v.sellPrice).filter((p) => p !== undefined && p !== null);
+    if (prices.length === 0) return "Đang cập nhật giá";
+  
+    const min = Math.min(...prices);
+    const max = Math.max(...prices);
+  
+    return min === max
+      ? `${min.toLocaleString("vi-VN")} ₫`
+      : `${min.toLocaleString("vi-VN")} ₫ - ${max.toLocaleString("vi-VN")} ₫`;
+  };
+  
+
+  
   return (
     <>
       <Container className="home-wrapper-1 py-5">
@@ -374,12 +395,7 @@ const Home = () => {
                                 </button>
                               </div>
                             </div>
-                            <p className="price">
-                              {item?.price
-                                ? item.price.toLocaleString("vi-VN")
-                                : 0}
-                              ₫
-                            </p>
+                            <p className="price">{getPriceRangeFromVariants(item)}</p>
                           </div>
                         </div>
                       </div>

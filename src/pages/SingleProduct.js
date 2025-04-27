@@ -724,8 +724,29 @@ const SingleProduct = () => {
                           <p className="text-blue-500">{getSelectedVariantStock()} sản phẩm có sẵn</p>
                         </div>
                       </div>
+
+                     
                     </div>
-                    <div className="mb-3">
+                    {getSelectedVariantStock() < 100 ? (
+                        <div className="mt-5">
+                          <p>
+                            Nhanh lên! Chỉ còn{" "}
+                            <span className="text-lg px-2 text-red-500">{getSelectedVariantStock()}</span>{" "}
+                            sản phẩm
+                          </p>
+                          <div
+                            className={`h-1 mt-2 relative before:content-[''] overflow-hidden bg-gray-200 rounded-full`}
+                          >
+                            <span
+                              style={{ width: `${getSelectedVariantStock()}%` }}
+                              className="h-1 bg-red-400 absolute top-0 left-0 bottom-0"
+                            ></span>
+                          </div>
+                        </div>
+                      ) : null}
+                      
+                      
+                    <div className="mt-4 mb-3">
                       <div className="d-flex align-items-center">
                         <button
                           className="button border-0"
