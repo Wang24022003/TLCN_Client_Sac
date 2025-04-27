@@ -83,36 +83,36 @@ const SingleProduct = () => {
   const uploadCart = async () => {
     const hasColor = features.includes("color");
     const hasSize = features.includes("size");
-  
+
     if (hasColor && hasSize && (!selectedColor || !selectedSize)) {
       toast.error("Vui lòng chọn cả màu và kích thước");
       return;
     }
-  
+
     if (hasColor && !hasSize && !selectedColor) {
       toast.error("Vui lòng chọn màu sắc");
       return;
     }
-  
+
     if (!hasColor && hasSize && !selectedSize) {
       toast.error("Vui lòng chọn kích thước");
       return;
     }
-  
+
     if (quantity > getSelectedVariantStock()) {
       toast.error("Số lượng vượt quá tồn kho");
       return;
     }
-  
+
     const productPayload = {
       _id: productState?._id,
       price: getSelectedVariantPriceValue(),
       quantity: +quantity,
     };
-  
+
     if (hasColor) productPayload.color = selectedColor;
     if (hasSize) productPayload.size = selectedSize;
-  
+
     try {
       await dispatch(addProdToCart({ product: productPayload })).unwrap(); // đợi xong thêm
       await dispatch(getUserCart()).unwrap(); // đảm bảo đã cập nhật giỏ hàng
@@ -121,16 +121,13 @@ const SingleProduct = () => {
       toast.error("Thêm vào giỏ hàng thất bại");
     }
   };
-  
-  
-  
 
   const getSelectedVariantPriceValue = () => {
     const variants = productState?.inventory?.productInventory?.productVariants;
     if (!variants || variants.length === 0) return 0;
-  
+
     let matchedVariant;
-  
+
     if (selectedColor && selectedSize) {
       matchedVariant = variants.find(
         (v) =>
@@ -142,15 +139,12 @@ const SingleProduct = () => {
         (v) => v.attributes.color === selectedColor
       );
     } else if (selectedSize) {
-      matchedVariant = variants.find(
-        (v) => v.attributes.size === selectedSize
-      );
+      matchedVariant = variants.find((v) => v.attributes.size === selectedSize);
     }
-  
+
     return matchedVariant?.sellPrice || 0;
   };
 
-  
   const props = {
     width: 594,
     height: 600,
@@ -308,61 +302,63 @@ const SingleProduct = () => {
   //--------------------------Xử lý màu sắc và size-----------------------------------------
   const variants = productState?.variants || [];
   const features = productState?.features || [];
-  
+
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
-  
+
   // Tạo danh sách unique
-  const allColors = Array.from(new Set(variants.map(v => v.attributes.color.name)));
-  const allSizes = Array.from(new Set(variants.map(v => v.attributes.size.name)));
-  
+  const allColors = Array.from(
+    new Set(variants.map((v) => v.attributes.color.name))
+  );
+  const allSizes = Array.from(
+    new Set(variants.map((v) => v.attributes.size.name))
+  );
+
   // Tạo bản đồ kiểm tra
   const colorToSizes = {};
   const sizeToColors = {};
-  
-  variants.forEach(variant => {
+
+  variants.forEach((variant) => {
     const color = variant.attributes.color.name;
     const size = variant.attributes.size.name;
-  
+
     if (!colorToSizes[color]) colorToSizes[color] = new Set();
     if (!sizeToColors[size]) sizeToColors[size] = new Set();
-  
+
     colorToSizes[color].add(size);
     sizeToColors[size].add(color);
   });
-  
 
   useEffect(() => {
     if (productState?.category) {
       dispatch(getAProductCategory(productState.category));
     }
   }, [dispatch, productState?.category]);
-  
+
   //------------tìm khoảng giá----------------
   const getPriceRange = () => {
     const variants = productState?.inventory?.productInventory?.productVariants;
     if (!variants || !Array.isArray(variants) || variants.length === 0) {
       return "Đang cập nhật giá";
     }
-    
-    const prices = variants.map(v => v.sellPrice);
+
+    const prices = variants.map((v) => v.sellPrice);
     const min = Math.min(...prices);
     const max = Math.max(...prices);
-  
+
     return min === max
       ? `${min.toLocaleString("vi-VN")} ₫`
       : `${min.toLocaleString("vi-VN")} ₫ - ${max.toLocaleString("vi-VN")} ₫`;
   };
-  
 
   const getSelectedVariantPrice = () => {
     const variants = productState?.inventory?.productInventory?.productVariants;
     if (!variants || !Array.isArray(variants) || variants.length === 0) {
       return "Đang cập nhật giá";
     }
-  
+
     let matchedVariant;
-  
+
     // Nếu có cả màu và size
     if (selectedColor && selectedSize) {
       matchedVariant = variants.find(
@@ -379,58 +375,48 @@ const SingleProduct = () => {
     }
     // Nếu chỉ có size
     else if (selectedSize) {
-      matchedVariant = variants.find(
-        (v) => v.attributes.size === selectedSize
-      );
+      matchedVariant = variants.find((v) => v.attributes.size === selectedSize);
     }
-  
+
     if (matchedVariant && matchedVariant.sellPrice !== undefined) {
       return `${matchedVariant.sellPrice.toLocaleString("vi-VN")} ₫`;
     }
-  
+
     // Trường hợp chưa chọn gì hoặc không khớp → trả về khoảng giá
     return getPriceRange();
   };
-  
 
   const getSelectedVariantStock = () => {
     const inventory = productState?.inventory?.productInventory;
     const variants = inventory?.productVariants;
-  
+
     // Nếu đã chọn cả màu và size → tìm đúng biến thể
-    if (
-      selectedColor &&
-      selectedSize &&
-      variants &&
-      Array.isArray(variants)
-    ) {
+    if (selectedColor && selectedSize && variants && Array.isArray(variants)) {
       const matchedVariant = variants.find(
         (v) =>
           v.attributes.color === selectedColor &&
           v.attributes.size === selectedSize
       );
-  
+
       if (matchedVariant) {
         return matchedVariant.stock;
       }
     }
-  
+
     // Nếu chưa chọn đủ → hiển thị tổng tồn kho
     return inventory?.totalQuantity ?? "Đang cập nhật";
   };
-  
-  
 
   //----------------tạo mảng ảnh------------------
   const colorImageMap = productState?.variants?.reduce((acc, variant) => {
     const colorName = variant.attributes.color.name;
     const imgUrl = variant.attributes.color.desc;
-  
+
     // Tránh trùng lặp màu
     if (!acc[colorName]) {
       acc[colorName] = imgUrl;
     }
-  
+
     return acc;
   }, {});
 
@@ -446,13 +432,12 @@ const SingleProduct = () => {
     }
     return acc;
   }, []);
-  
+
   const allThumbnails = [
     ...defaultImages.map((img) => ({ url: img, color: null })),
     ...(colorImages || []),
   ];
-  
-  
+
   return (
     <>
       <Meta title={"Product Name"} />
@@ -463,36 +448,35 @@ const SingleProduct = () => {
             <div className="product-wrapper-box flex flex-wrap gap-3 w-full">
               <div className="w-[16.666%]">
                 <div className="other-product-images scrollable-thumbnails">
-                {allThumbnails.map((item, index) => (
-                  <div
-                    key={index}
-                    className={`image-thumbnail ${
-                      item.url === currentImage ? "active-thumbnail" : ""
-                    }`}
-                    onClick={() => {
-                      setCurrentImage(item.url);
-                      setCurrentImageIndex(index);
+                  {allThumbnails.map((item, index) => (
+                    <div
+                      key={index}
+                      className={`image-thumbnail ${
+                        item.url === currentImage ? "active-thumbnail" : ""
+                      }`}
+                      onClick={() => {
+                        setCurrentImage(item.url);
+                        setCurrentImageIndex(index);
 
-                      if (item.color) {
-                        setSelectedColor(item.color);
-                        // Optionally reset size nếu size không hợp với màu mới
-                        if (
-                          selectedSize &&
-                          !colorToSizes[item.color]?.has(selectedSize)
-                        ) {
-                          setSelectedSize(null);
+                        if (item.color) {
+                          setSelectedColor(item.color);
+                          // Optionally reset size nếu size không hợp với màu mới
+                          if (
+                            selectedSize &&
+                            !colorToSizes[item.color]?.has(selectedSize)
+                          ) {
+                            setSelectedSize(null);
+                          }
                         }
-                      }
-                    }}
-                  >
-                    <img
-                      src={item.url}
-                      className="img-fluid thumbnail-img"
-                      alt={`Thumbnail ${index + 1}`}
-                    />
-                  </div>
-                ))}
-
+                      }}
+                    >
+                      <img
+                        src={item.url}
+                        className="img-fluid thumbnail-img"
+                        alt={`Thumbnail ${index + 1}`}
+                      />
+                    </div>
+                  ))}
                 </div>
               </div>
 
@@ -513,25 +497,27 @@ const SingleProduct = () => {
                       />
                     ) : null}
 
-                    <button className="prev-button" onClick={() => {
-                      setCurrentImageIndex(prev =>
-                        prev === 0
-                          ? productState.images.length - 1
-                          : prev - 1
-                      );
-                      setCurrentImage(null);
-                    }}>
+                    <button
+                      className="prev-button"
+                      onClick={() => {
+                        setCurrentImageIndex((prev) =>
+                          prev === 0 ? productState.images.length - 1 : prev - 1
+                        );
+                        setCurrentImage(null);
+                      }}
+                    >
                       &#10094;
                     </button>
 
-                    <button className="next-button" onClick={() => {
-                      setCurrentImageIndex(prev =>
-                        prev === productState.images.length - 1
-                          ? 0
-                          : prev + 1
-                      );
-                      setCurrentImage(null);
-                    }}>
+                    <button
+                      className="next-button"
+                      onClick={() => {
+                        setCurrentImageIndex((prev) =>
+                          prev === productState.images.length - 1 ? 0 : prev + 1
+                        );
+                        setCurrentImage(null);
+                      }}
+                    >
                       &#10095;
                     </button>
                   </div>
@@ -552,7 +538,9 @@ const SingleProduct = () => {
                       <div className="wishlist-icon">
                         <button
                           className="border-0 bg-transparent"
-                          onClick={() => handleWishlistToggle(productState?._id)}
+                          onClick={() =>
+                            handleWishlistToggle(productState?._id)
+                          }
                         >
                           {isProductInWishlist(productState?._id) ? (
                             <AiFillHeart className="fs-5 text-danger" />
@@ -565,11 +553,11 @@ const SingleProduct = () => {
                   </div>
 
                   <div className="border-bottom py-3">
-                  <div className="w-full bg-red-100 px-4 py-3 rounded-lg mb-4">
-                    <p className="text-red-600 text-2xl font-bold m-0">
-                      {getSelectedVariantPrice()}
-                    </p>
-                  </div>
+                    <div className="w-full bg-red-100 px-4 py-3 rounded-lg mb-4">
+                      <p className="text-red-600 text-2xl font-bold m-0">
+                        {getSelectedVariantPrice()}
+                      </p>
+                    </div>
 
                     <div className="d-flex align-items-center gap-10">
                       <ReactStars
@@ -598,7 +586,9 @@ const SingleProduct = () => {
                     </div>
                     <div className="d-flex gap-10 align-items-center my-2">
                       <h3 className="product-heading">Danh mục :</h3>
-                      <p className="product-data">{categoryName}</p>
+                      <p className="product-data">
+                        {productState?.category?.name}
+                      </p>
                     </div>
                     <div className="d-flex gap-10 align-items-center my-2">
                       <h3 className="product-heading">Tags :</h3>
@@ -607,7 +597,13 @@ const SingleProduct = () => {
                     {features.includes("color") && (
                       <div className="mb-3">
                         <strong>Màu:</strong>
-                        <div style={{ display: "flex", gap: "10px", marginTop: "5px" }}>
+                        <div
+                          style={{
+                            display: "flex",
+                            gap: "10px",
+                            marginTop: "5px",
+                          }}
+                        >
                           {allColors.map((colorCode, idx) => {
                             const isDisabled = selectedSize
                               ? !sizeToColors[selectedSize].has(colorCode)
@@ -619,20 +615,32 @@ const SingleProduct = () => {
                                 key={idx}
                                 onClick={() => {
                                   if (!isDisabled) {
-                                    setSelectedColor(colorCode === selectedColor ? null : colorCode);
+                                    setSelectedColor(
+                                      colorCode === selectedColor
+                                        ? null
+                                        : colorCode
+                                    );
                                     setCurrentImage(
-                                      colorImageMap[colorCode === selectedColor ? null : colorCode]
+                                      colorImageMap[
+                                        colorCode === selectedColor
+                                          ? null
+                                          : colorCode
+                                      ]
                                     );
                                   }
                                 }}
                                 style={{
                                   backgroundColor: colorCode,
-                                  border: isSelected ? "2px solid black" : "1px solid #ccc",
+                                  border: isSelected
+                                    ? "2px solid black"
+                                    : "1px solid #ccc",
                                   opacity: isDisabled ? 0.4 : 1,
                                   borderRadius: "50%",
                                   width: "24px",
                                   height: "24px",
-                                  cursor: isDisabled ? "not-allowed" : "pointer",
+                                  cursor: isDisabled
+                                    ? "not-allowed"
+                                    : "pointer",
                                 }}
                               ></div>
                             );
@@ -644,7 +652,13 @@ const SingleProduct = () => {
                     {features.includes("size") && (
                       <div className="mb-3">
                         <strong>Kích thước:</strong>
-                        <div style={{ display: "flex", gap: "10px", marginTop: "5px" }}>
+                        <div
+                          style={{
+                            display: "flex",
+                            gap: "10px",
+                            marginTop: "5px",
+                          }}
+                        >
                           {allSizes.map((sizeName, idx) => {
                             const isDisabled = selectedColor
                               ? !colorToSizes[selectedColor]?.has(sizeName)
@@ -656,16 +670,24 @@ const SingleProduct = () => {
                                 key={idx}
                                 onClick={() => {
                                   if (!isDisabled) {
-                                    setSelectedSize(sizeName === selectedSize ? null : sizeName);
+                                    setSelectedSize(
+                                      sizeName === selectedSize
+                                        ? null
+                                        : sizeName
+                                    );
                                   }
                                 }}
                                 style={{
                                   padding: "5px 10px",
-                                  border: isSelected ? "2px solid black" : "1px solid #ccc",
+                                  border: isSelected
+                                    ? "2px solid black"
+                                    : "1px solid #ccc",
                                   backgroundColor: isSelected ? "#000" : "#fff",
                                   color: isSelected ? "#fff" : "#000",
                                   opacity: isDisabled ? 0.4 : 1,
-                                  cursor: isDisabled ? "not-allowed" : "pointer",
+                                  cursor: isDisabled
+                                    ? "not-allowed"
+                                    : "pointer",
                                 }}
                               >
                                 {sizeName.toUpperCase()}
@@ -677,7 +699,9 @@ const SingleProduct = () => {
                     )}
 
                     <div className="flex gap-14 my-3">
-                      <h6 className="shrink-0 font-bold text-#000000-600">Số lượng:</h6>
+                      <h6 className="shrink-0 font-bold text-#000000-600">
+                        Số lượng:
+                      </h6>
 
                       <div className="-ms-2 flex items-center gap-5">
                         <div className="flex items-center border rounded overflow-hidden">
@@ -721,31 +745,32 @@ const SingleProduct = () => {
                           </button>
                         </div>
                         <div>
-                          <p className="text-blue-500">{getSelectedVariantStock()} sản phẩm có sẵn</p>
+                          <p className="text-blue-500">
+                            {getSelectedVariantStock()} sản phẩm có sẵn
+                          </p>
                         </div>
                       </div>
-
-                     
                     </div>
                     {getSelectedVariantStock() < 100 ? (
-                        <div className="mt-5">
-                          <p>
-                            Nhanh lên! Chỉ còn{" "}
-                            <span className="text-lg px-2 text-red-500">{getSelectedVariantStock()}</span>{" "}
-                            sản phẩm
-                          </p>
-                          <div
-                            className={`h-1 mt-2 relative before:content-[''] overflow-hidden bg-gray-200 rounded-full`}
-                          >
-                            <span
-                              style={{ width: `${getSelectedVariantStock()}%` }}
-                              className="h-1 bg-red-400 absolute top-0 left-0 bottom-0"
-                            ></span>
-                          </div>
+                      <div className="mt-5">
+                        <p>
+                          Nhanh lên! Chỉ còn{" "}
+                          <span className="text-lg px-2 text-red-500">
+                            {getSelectedVariantStock()}
+                          </span>{" "}
+                          sản phẩm
+                        </p>
+                        <div
+                          className={`h-1 mt-2 relative before:content-[''] overflow-hidden bg-gray-200 rounded-full`}
+                        >
+                          <span
+                            style={{ width: `${getSelectedVariantStock()}%` }}
+                            className="h-1 bg-red-400 absolute top-0 left-0 bottom-0"
+                          ></span>
                         </div>
-                      ) : null}
-                      
-                      
+                      </div>
+                    ) : null}
+
                     <div className="mt-4 mb-3">
                       <div className="d-flex align-items-center">
                         <button
@@ -753,7 +778,7 @@ const SingleProduct = () => {
                           type="button"
                           onClick={() => {
                             if (alreadyAdded) {
-                              navigate("/cart");      
+                              navigate("/cart");
                             } else {
                               uploadCart();
                             }
@@ -798,22 +823,21 @@ const SingleProduct = () => {
                           So sánh
                         </div>
                       </div>
-                      
+
                       <div className="flex cursor-pointer gap-1 p-3 items-center leading-none ml-auto">
                         <AiOutlineShareAlt className="text-sm" />
                         Share
                       </div>
                     </div>
 
-
-                    
-
                     <div className="d-flex gap-10 flex-column  my-3">
-                      <h3 className="product-heading">Vận chuyển & Đổi trả :</h3>
+                      <h3 className="product-heading">
+                        Vận chuyển & Đổi trả :
+                      </h3>
                       <p className="product-data">
                         Miễn phí vận chuyển và đổi trả cho tất cả các đơn hàng!{" "}
-                        <br /> Chúng tôi sẽ giao tất cả các đơn hàng nội địa Việt
-                        Nam trong vòng
+                        <br /> Chúng tôi sẽ giao tất cả các đơn hàng nội địa
+                        Việt Nam trong vòng
                         <b> 5-10 ngày làm việc!</b>
                       </p>
                     </div>
@@ -833,7 +857,6 @@ const SingleProduct = () => {
               </div>
             </div>
           </div>
-          
         </div>
       </Container>
       <Container class1="description-wrapper py-2 home-wrapper-2">
@@ -869,7 +892,7 @@ const SingleProduct = () => {
                     </p>
                   </div>
                 </div>
-                
+
                 {orderedProduct && (
                   <div>
                     <a className="text-dark text-decoration-underline" href="">

@@ -35,7 +35,7 @@ const OurStore = () => {
     for (let index = 0; index < productState?.length; index++) {
       const element = productState[index];
       newBrands.push(element.brand);
-      category.push(element.category);
+      category.push(element?.category?.name);
       newtags.push(element.tags);
     }
     setBrands(newBrands);

@@ -2,6 +2,7 @@ import axios from "axios";
 import { base_url, config } from "../../utils/axiosConfig";
 import instance from "../../utils/axios-customize";
 const getProducts = async (query = "") => {
+  query += '&populate=category'
   const response = await instance.get(`products?${query}`);
   return response;
 };
