@@ -37,6 +37,12 @@
    .choose-discount-code-link:hover {
      color: red; /* Màu chữ khi hover */
    }
+
+   .test{
+     background-color: #000000;
+     color: white;
+     border: none;
+   }
    
 
 
