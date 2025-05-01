@@ -8,7 +8,7 @@ import wish from "../images/wish.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllBlogs } from "../features/blogs/blogSlice";
 import moment from "moment";
-import { getAllProducts } from "../features/products/productSlilce";
+import { getAllProducts, removeToWishlist } from "../features/products/productSlilce";
 import ReactStars from "react-rating-stars-component";
 import { addToWishlist } from "../features/products/productSlilce";
 import { getuserProductWishlist } from "../features/user/userSlice";
@@ -49,10 +49,17 @@ const Home = () => {
 
   const wishlistState = useSelector((state) => state?.auth?.wishlist);
   const handleWishlistToggle = (productId) => {
-    dispatch(addToWishlist({ _id: productId })).then(() => {
-      dispatch(getuserProductWishlist());
-    });
+    if (isProductInWishlist(productId)) {
+      dispatch(removeToWishlist(productId)).then(() => {
+        dispatch(getuserProductWishlist());
+      });
+    } else {
+      dispatch(addToWishlist({ _id: productId })).then(() => {
+        dispatch(getuserProductWishlist());
+      });
+    }
   };
+  
 
   const isProductInWishlist = (productId) =>
     wishlistState?.some((item) => item._id === productId);
@@ -61,13 +68,17 @@ const Home = () => {
 
 
   const getPriceRangeFromVariants = (product) => {
-    const variants = product?.inventory?.productInventory?.productVariants;
+  
+    const variants = product?.inventory?.productVariants;
   
     if (!variants || !Array.isArray(variants) || variants.length === 0) {
       return "Đang cập nhật giá";
     }
   
-    const prices = variants.map((v) => v.sellPrice).filter((p) => p !== undefined && p !== null);
+    const prices = variants
+      .map((v) => v.sellPrice)
+      .filter((p) => p !== undefined && p !== null);
+ 
     if (prices.length === 0) return "Đang cập nhật giá";
   
     const min = Math.min(...prices);
@@ -77,6 +88,7 @@ const Home = () => {
       ? `${min.toLocaleString("vi-VN")} ₫`
       : `${min.toLocaleString("vi-VN")} ₫ - ${max.toLocaleString("vi-VN")} ₫`;
   };
+  
   
 
   
@@ -395,7 +407,7 @@ const Home = () => {
                                 </button>
                               </div>
                             </div>
-                            <p className="price">{getPriceRangeFromVariants(item)}</p>
+                            <p className="price" style={{ color: 'red' }}>{getPriceRangeFromVariants(item)}</p>
                           </div>
                         </div>
                       </div>
@@ -560,7 +572,7 @@ const Home = () => {
                     title={item?.name}
                     brand={item?.brand}
                     totalrating={item?.rating.toString()}
-                    price={item?.price ? item.price.toLocaleString("vi-VN") : 0}
+                    price={getPriceRangeFromVariants(item)}
                     img={item?.images[0]}
                     sold={item?.sold}
                     quantity={item?.quantity}
@@ -678,12 +690,7 @@ const Home = () => {
                                 </button>
                               </div>
                             </div>
-                            <p className="price">
-                              {item?.price
-                                ? item.price.toLocaleString("vi-VN")
-                                : 0}
-                              ₫
-                            </p>
+                            <p className="price" style={{ color: 'red' }}>{getPriceRangeFromVariants(item)}</p>
                           </div>
                         </div>
                       </div>

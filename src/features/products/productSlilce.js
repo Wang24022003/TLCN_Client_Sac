@@ -119,8 +119,15 @@ export const productSlice = createSlice({
         state.isError = false;
         state.isSuccess = true;
         state.isReload = false;
-        state.product = action.payload.data.result;
-      })
+      
+        const result = action.payload.data.result;
+      
+        // Đảm bảo inventory không bị mất trong map/redux
+        state.product = result.map((item) => ({
+          ...item,
+          inventory: item.inventory,
+        }));
+      })      
       .addCase(getAllProducts.rejected, (state, action) => {
         state.isError = true;
         state.isLoading = false;
