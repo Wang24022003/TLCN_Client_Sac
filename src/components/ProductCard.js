@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addToWishlist,
+  removeToWishlist,
   toggleCompare,
 } from "../features/products/productSlilce";
 import {
@@ -42,9 +43,17 @@ const ProductCard = (props) => {
     compareList.some((item) => item._id === productId);
 
   const handleWishlistToggle = (productId) => {
-    dispatch(addToWishlist(productId));
-    dispatch(getuserProductWishlist());
+    if (isProductInWishlist(productId)) {
+      dispatch(removeToWishlist(productId)).then(() => {
+        dispatch(getuserProductWishlist());
+      });
+    } else {
+      dispatch(addToWishlist({ _id: productId })).then(() => {
+        dispatch(getuserProductWishlist());
+      });
+    }
   };
+  
 
   const addToCompare = (productId) => {
     dispatch(toggleCompare(productId));
@@ -60,6 +69,28 @@ const ProductCard = (props) => {
     );
     dispatch(getuserProductWishlist());
   };
+
+  const getPriceRangeFromVariants = (product) => {
+    const variants = product?.inventory?.productVariants;
+  
+    if (!variants || !Array.isArray(variants) || variants.length === 0) {
+      return "Đang cập nhật giá";
+    }
+  
+    const prices = variants
+      .map((v) => v.sellPrice)
+      .filter((p) => p !== undefined && p !== null);
+  
+    if (prices.length === 0) return "Đang cập nhật giá";
+  
+    const min = Math.min(...prices);
+    const max = Math.max(...prices);
+  
+    return min === max
+      ? `${min.toLocaleString("vi-VN")} ₫`
+      : `${min.toLocaleString("vi-VN")} ₫ - ${max.toLocaleString("vi-VN")} ₫`;
+  };
+  
 
   return (
     <>
@@ -138,9 +169,7 @@ const ProductCard = (props) => {
                   <div className="wishlist-icon ms-auto">
                     <button
                       className="border-0 bg-transparent"
-                      onClick={(e) => {
-                        addToWish(item?._id);
-                      }}
+                      onClick={() => handleWishlistToggle(item?._id)}
                     >
                       {isWishlist ? (
                         <AiFillHeart className="text-danger fs-5" />
@@ -151,9 +180,7 @@ const ProductCard = (props) => {
                   </div>
 
                   </div>
-                <p className="price">
-                  {item?.price && `${item.price.toLocaleString("vi-VN")}đ`}
-                </p>
+                  <p className="price">{getPriceRangeFromVariants(item)}</p>
               </div>
               <div className="action-bar position-absolute">
                 <div className="d-flex flex-column gap-15">

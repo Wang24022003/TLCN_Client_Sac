@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   getAllProducts,
   clearCompareList,
+  toggleCompare,
 } from "../features/products/productSlilce";
 import { Link } from "react-router-dom";
 import { Modal, Button } from "react-bootstrap";
@@ -35,7 +36,12 @@ const OurStore = () => {
     for (let index = 0; index < productState?.length; index++) {
       const element = productState[index];
       newBrands.push(element.brand);
-      category.push(element?.category?.name);
+      if (element.category) {
+        category.push({
+          name: element.category.name,
+          id: element.category._id,
+        });
+      }
       newtags.push(element.tags);
     }
     setBrands(newBrands);
@@ -48,7 +54,7 @@ const OurStore = () => {
     let query = ``;
 
     if (category) {
-      query += `category=/${category}/i`;
+      query += `category=${category}`;
     }
     if (tag) {
       query += `&tags=/${tag}/i`;
@@ -75,6 +81,29 @@ const OurStore = () => {
   const handleShowModal = () => setShowModal(true); // Mở modal
   const handleCloseModal = () => setShowModal(false); // Đóng modal
 
+
+  const getPriceRangeFromVariants = (product) => {
+    const variants = product?.inventory?.productVariants;
+  
+    if (!variants || !Array.isArray(variants) || variants.length === 0) {
+      return "Đang cập nhật giá";
+    }
+  
+    const prices = variants
+      .map((v) => v.sellPrice)
+      .filter((p) => p !== undefined && p !== null);
+  
+    if (prices.length === 0) return "Đang cập nhật giá";
+  
+    const min = Math.min(...prices);
+    const max = Math.max(...prices);
+  
+    return min === max
+      ? `${min.toLocaleString("vi-VN")} ₫`
+      : `${min.toLocaleString("vi-VN")} ₫ - ${max.toLocaleString("vi-VN")} ₫`;
+  };
+
+  
   return (
     <>
       <Meta title={"Our Store"} />
@@ -95,10 +124,10 @@ const OurStore = () => {
                   </a>
 
                   {categories &&
-                    [...new Set(categories)].map((item, index) => {
+                    [...new Map(categories.map((item) => [item.id, item])).values()].map((item, index) => {
                       return (
-                        <li key={index} onClick={() => setCategory(item)}>
-                          {item}
+                        <li key={index} onClick={() => setCategory(item.id)}>
+                          {item.name}
                         </li>
                       );
                     })}
@@ -271,13 +300,27 @@ const OurStore = () => {
                           <div className="card-body">
                             <h5 className="card-title">{item.name}</h5>
                             <p className="card-text">
-                              {item.price.toLocaleString("vi-VN")}đ
+                              {getPriceRangeFromVariants(item)}
                             </p>
-                            {/* <button
-                              onClick={() => dispatch(clearCompareList(item._id))} 
+
+                            <button
+                              onClick={() => dispatch(toggleCompare(item._id))}
                               className="btn-close position-absolute top-0 end-0"
                               aria-label="Close"
-                            ></button> */}
+                              style={{
+                                backgroundColor: "rgba(255,255,255,0.9)",
+                                border: "none",
+                                padding: "8px",
+                                borderRadius: "50%",
+                                zIndex: 10,
+                                transition: "0.3s",
+                              }}
+                              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "red")}
+                              onMouseLeave={(e) =>
+                                (e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.9)")
+                              }
+                            />
+
                           </div>
                         </div>
                       ))}
