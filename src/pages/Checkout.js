@@ -115,7 +115,8 @@ const Checkout = () => {
       paymentMethod: values.paymentMethod,
       items: cartState.map((item) => ({
         product: item.product._id, // Ensure productId is sent
-        color: item.color._id,
+        color: item.color?._id || item.color || null,
+        size: item.size || null,
         quantity: item.quantity,
         price: item.price,
       })),

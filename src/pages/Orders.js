@@ -234,7 +234,7 @@ const Orders = () => {
               {filteredOrders &&
                 filteredOrders.map((item, index) => {
                   const totalReceipt = item.items.reduce(
-                    (sum, item) => sum + item.quantity * item.product.price,
+                    (sum, item) => sum + item.quantity * item.price,
                     0
                   );
                   return (
@@ -321,13 +321,7 @@ const Orders = () => {
                                 <div style={styles.productHeader}>
                                   <div style={styles.productColumn}>
                                     <h6>Tên sản phẩm</h6>
-                                  </div>
-                                  <div style={styles.productColumn}>
-                                    <h6>Hình ảnh</h6>
-                                  </div>
-                                  <div style={styles.productColumn}>
-                                    <h6>Color</h6>
-                                  </div>
+                                  </div>                                  
                                   <div style={styles.productColumn}>
                                     <h6>Số lượng</h6>
                                   </div>
@@ -343,51 +337,62 @@ const Orders = () => {
                                 {item?.items?.map((i, index) => {
                                   return (
                                     <div style={styles.productItem} key={index}>
-                                      <div style={styles.productColumn}>
-                                        <p>{i?.product?.name}</p>
-                                      </div>
-                                      <div style={styles.productColumn}>
-                                        <img
-                                          src={i?.product?.images[0]}
-                                          width={50}
-                                          height={50}
-                                          alt="product"
-                                          onClick={() =>
-                                            handleReview(i?.product?._id)
-                                          }
-                                        />
-                                      </div>
-                                      <div style={styles.productColumn}>
-                                        <ul style={styles.colors}>
-                                          <li
-                                            style={{
-                                              ...styles.colorItem,
-                                              backgroundColor: i?.color?.color,
-                                            }}
-                                          ></li>
-                                        </ul>
-                                      </div>
-                                      <div style={styles.productColumn}>
-                                        <p>{i?.quantity}</p>
-                                      </div>
-                                      <div style={styles.productColumn}>
-                                        <p>
-                                          {i?.product.price?.toLocaleString(
-                                            "vi-VN"
-                                          )}{" "}
-                                          ₫
-                                        </p>
-                                      </div>
-                                      <div style={styles.productColumn}>
-                                        {/* Tổng tiền tính toán: Đơn giá * Số lượng */}
-                                        <p>
-                                          {(
-                                            i?.product.price * i?.quantity
-                                          )?.toLocaleString("vi-VN")}{" "}
-                                          ₫
-                                        </p>
-                                      </div>
-                                    </div>
+  {/* Cột: Tên sản phẩm (ảnh + thông tin bên phải) */}
+  <div style={styles.productColumn}>
+    <div style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
+      {/* Ảnh sản phẩm bên trái */}
+      <img
+        src={i?.product?.images?.[0]}
+        width={60}
+        height={60}
+        alt="product"
+        style={{ objectFit: "cover", borderRadius: "6px", cursor: "pointer" }}
+        onClick={() => handleReview(i?.product?._id)}
+      />
+      {/* Tên + màu + size bên phải, căn lề trái */}
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+        <span style={{ fontWeight: 600 }}>{i?.product?.name}</span>
+
+        {i?.color && (
+          <div style={{ fontSize: "0.85rem", marginTop: 4 }}>
+            Màu:{" "}
+            <span
+              style={{
+                display: "inline-block",
+                width: 14,
+                height: 14,
+                borderRadius: "50%",
+                backgroundColor: i.color,
+                border: "1px solid #ccc",
+                marginRight: 4,
+                verticalAlign: "middle",
+              }}
+            ></span>
+            {i.color}
+          </div>
+        )}
+
+        {i?.size && (
+          <div style={{ fontSize: "0.85rem", marginTop: 4 }}>
+            Size: {i.size}
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+
+  {/* Các cột còn lại giữ nguyên */}
+  <div style={styles.productColumn}>
+    <p>{i?.quantity}</p>
+  </div>
+  <div style={styles.productColumn}>
+    <p>{i?.price?.toLocaleString("vi-VN")} ₫</p>
+  </div>
+  <div style={styles.productColumn}>
+    <p>{(i?.price * i?.quantity)?.toLocaleString("vi-VN")} ₫</p>
+  </div>
+</div>
+
                                   );
                                 })}
                               </div>
