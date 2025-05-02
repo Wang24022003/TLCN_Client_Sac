@@ -63,7 +63,7 @@ const Cart = () => {
     }, 200);
   };
 
-  const discountTarget = 500000; // Mức chi tiêu để được miễn phí ship
+  const discountTarget = 1000000; // Mức chi tiêu để được miễn phí ship
 
 
   return (
@@ -263,7 +263,7 @@ const Cart = () => {
               {/* Nút thanh toán */}
               <Link
                 to="/checkout"
-                className="w-full block text-center py-3 px-5 bg-blue-500 text-white rounded-full uppercase font-bold hover:bg-blue-600 transition"
+                className="w-full block text-center py-3 px-5 bg-[#232f3e] text-white rounded-lg uppercase font-bold hover:bg-[#2c3a4b] transition no-underline"
               >
                 Thanh toán
               </Link>

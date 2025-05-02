@@ -400,46 +400,77 @@ const Checkout = () => {
             </div>
           </div>
           <div className="col-5">
-            <div className="border-bottom py-4">
-              {cartState &&
-                cartState?.map((item, index) => {
-                  return (
-                    <div
-                      key={index}
-                      className="d-flex gap-10 mb-2 align-align-items-center"
-                    >
-                      <div className="w-75 d-flex gap-10">
-                        <div className="w-25 position-relative">
+          <div className="border-bottom py-4">
+            {cartState?.map((item, index) => {
+              const hasColor = item.color && /^#([0-9A-F]{3}){1,2}$/i.test(item.color);
+              const hasSize = item.size;
+
+              return (
+                <div
+                  key={index}
+                  className="d-flex align-items-center justify-content-between mb-3"
+                  style={{ borderBottom: "1px solid #eee", paddingBottom: "1rem" }}
+                >
+                  {/* Hình ảnh và thông tin sản phẩm */}
+                  <div className="d-flex align-items-start gap-3" style={{ width: "70%" }}>
+                    <div className="position-relative">
+                      <span
+                        style={{
+                          top: "-8px",
+                          right: "-8px",
+                          fontSize: "12px",
+                          width: "24px",
+                          height: "24px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                        className="badge bg-secondary text-white rounded-circle position-absolute"
+                      >
+                        {item.quantity}
+                      </span>
+                      <img
+                        src={item.product.images[0]}
+                        width={80}
+                        height={80}
+                        style={{ objectFit: "cover", borderRadius: "8px" }}
+                        alt="product"
+                      />
+                    </div>
+                    <div>
+                      <h6 className="mb-1 fw-semibold">{item.product.name}</h6>
+                      <div className="d-flex align-items-center gap-2">
+                        {hasColor && (
                           <span
-                            style={{ top: "-10px", right: "2px" }}
-                            className="badge bg-secondary text-white rounded-circle p-2 position-absolute"
-                          >
-                            {item?.quantity}
+                            className="rounded-circle border"
+                            style={{
+                              width: "18px",
+                              height: "18px",
+                              backgroundColor: item.color,
+                              display: "inline-block",
+                            }}
+                            title="Màu"
+                          ></span>
+                        )}
+                        {hasSize && (
+                          <span style={{ fontSize: "14px" }} className="text-muted">
+                            Size: {item.size}
                           </span>
-                          <img
-                            src={item?.product?.images[0]}
-                            width={100}
-                            height={100}
-                            alt="product"
-                          />
-                        </div>
-                        <div>
-                          <h5 className="total-price">{item?.product?.name}</h5>
-                          <p className="total-price">{item?.color?.color}</p>
-                        </div>
-                      </div>
-                      <div className="flex-grow-1">
-                        <h5 className="total">
-                          {(item?.price * item?.quantity).toLocaleString(
-                            "vi-VN"
-                          )}
-                          ₫
-                        </h5>
+                        )}
                       </div>
                     </div>
-                  );
-                })}
-            </div>
+                  </div>
+
+                  {/* Giá */}
+                  <div style={{ textAlign: "right", width: "30%" }}>
+                    <h6 className="mb-0 text-danger fw-semibold">
+                      {(item.price * item.quantity).toLocaleString("vi-VN")}₫
+                    </h6>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
             <div className="border-bottom py-4">
               <div className="d-flex justify-content-between align-items-center">
                 <p className="total">Tạm tính</p>
@@ -519,10 +550,11 @@ const Checkout = () => {
               <h4 className="total">Tổng hóa đơn</h4>
               <h5 className="total-price">
                 {totalAmount
-                  ? (
+                  ? Math.max(
                       totalAmount +
-                      (totalAmount >= 1000000 ? 0 : shippingCost) -
-                      discountAmount
+                        (totalAmount >= 1000000 ? 0 : shippingCost) -
+                        discountAmount,
+                      0
                     ).toLocaleString("vi-VN")
                   : "0"}
                 ₫
