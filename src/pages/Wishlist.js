@@ -43,46 +43,82 @@ const Wishlist = () => {
         {/* Danh sách sản phẩm trong Wishlist */}
         {wishlistState &&
           wishlistState.map((item, index) => (
-            <div className="col-lg-3 col-md-4 col-sm-6 my-3" key={index}
-            onMouseEnter={() => setHoveredProduct(index)} // Khi hover, lưu chỉ số sản phẩm
-            onMouseLeave={() => setHoveredProduct(null)} // Khi rời chuột, reset trạng thái
-            >
-              <div className="wishlist-card position-relative">
-                {/* Nút Xóa khỏi Wishlist */}
+          <div
+            className="col-lg-3 col-md-4 col-sm-6 my-3"
+            key={index}
+            onMouseEnter={() => setHoveredProduct(index)}
+            onMouseLeave={() => setHoveredProduct(null)}
+          >
+            <div className="product-card position-relative" style={{ cursor: "pointer" }}>
+              {/* Nút Xóa khỏi Wishlist */}
+              <div
+                className="wishlist-remove"
+                onClick={() => removeFromWishlist(item?._id)}
+                style={{ cursor: "pointer", top: "10px", right: "10px", position: "absolute", zIndex: 2 }}
+              >
+                <AiFillHeart className="text-danger fs-4" />
+              </div>
+
+              {/* Hình ảnh sản phẩm */}
+                    <div
+                      className="product-image"
+                      style={{
+                        position: "relative",
+                        width: "100%",
+                        height: "0",
+                        paddingBottom: "150%",
+                      }}
+                    >
+                      <img
+                        src={
+                          hoveredProduct === index && item?.images?.[1]
+                            ? item?.images[1]
+                            : item?.images?.[0] || "/default-image.png"
+                        }
+                        alt={item?.name}
+                        onClick={() => navigate("/product/" + item?._id)}
+                        style={{
+                          objectFit: "cover",
+                          display: "block",
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          width: "100%",
+                          height: "100%",
+                          transition: "0.3s ease",
+                        }}
+                      />
+                    </div>
+
+              {/* Thông tin sản phẩm */}
+              <div className="product-details" style={{ padding: "15px" }}>
+                <h6 className="brand">{item?.brand || "Không rõ thương hiệu"}</h6>
+                <h5 className="product-title">
+                  {item?.name?.length > 35 ? item.name.substr(0, 35) + "..." : item?.name}
+                </h5>
+
+                {/* Chỉ hiển thị khi hover */}
                 <div
-                  className="wishlist-remove"
-                  onClick={() => removeFromWishlist(item?._id)}
-                  style={{ cursor: "pointer", top: "10px", right: "10px" }}
+                  className={`hover-details ${hoveredProduct === index ? "hovered" : ""}`}
+                  style={{
+                    opacity: hoveredProduct === index ? 1 : 0,
+                    visibility: hoveredProduct === index ? "visible" : "hidden",
+                    transition: "opacity 0.3s ease, visibility 0.3s ease",
+                  }}
                 >
-                  <AiFillHeart className="text-danger fs-4" />
-                </div>
-
-                {/* Hình ảnh sản phẩm */}
-                <div className="wishlist-card-image" style={{ position: "relative" }}>
-                  <img
-                    src={
-                      hoveredProduct === index && item?.images?.[1]
-                        ? item?.images[1] // Hiển thị ảnh thứ 2 khi hover
-                        : item?.images?.[0] || "/default-image.png" // Dùng ảnh mặc định nếu không có ảnh
-                    }
-                    alt={item?.name}
-                    className="img-fluid"
-                    onClick={() => navigate("/product/" + item?._id)}
-                    style={{ objectFit: "cover", transition: "0.3s ease" }}
-                  />
-                </div>
-
-                {/* Thông tin sản phẩm */}
-                <div className="wishlist-card-details">
-                  <h5 className="title">{item?.name}</h5>
-                  <h6 className="price">
-                    {item?.price
-                      ? item.price.toLocaleString("vi-VN")
-                      : "0"}₫
-                  </h6>
+                  <div className="d-flex align-items-center">
+                    <div className="rating">★★★★★</div>
+                    <div className="ms-auto">
+                      <span style={{ color: "red" }}>
+                        {item?.price?.toLocaleString("vi-VN") || "0"}₫
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
+          </div>
+
           ))}
       </div>
     </Container>

@@ -62,12 +62,12 @@ const OurStore = () => {
     if (brand) {
       query += `&brand=/${brand}/i`;
     }
-    if (minPrice) {
-      query += `&price>=${minPrice}`;
-    }
-    if (maxPrice) {
-      query += `price<=${maxPrice}`;
-    }
+    // if (minPrice) {
+    //   query += `&price>=${minPrice}`;
+    // }
+    // if (maxPrice) {
+    //   query += `price<=${maxPrice}`;
+    // }
     if (sort) {
       query += `&sort=${sort}`;
     }
@@ -103,7 +103,21 @@ const OurStore = () => {
       : `${min.toLocaleString("vi-VN")} ₫ - ${max.toLocaleString("vi-VN")} ₫`;
   };
 
+  const filterByPriceRangeFromVariants = (products, min, max) => {
+    const minVal = Number(min) || 0;
+    const maxVal = Number(max) || Infinity;
   
+    return products.filter((product) => {
+      const variants = product?.inventory?.productVariants || [];
+      return variants.some((variant) => {
+        const price = variant.sellPrice;
+        return price >= minVal && price <= maxVal;
+      });
+    });
+  };
+  
+  console.log("Filtered products:", filterByPriceRangeFromVariants(productState, minPrice, maxPrice));
+
   return (
     <>
       <Meta title={"Our Store"} />
@@ -343,10 +357,10 @@ const OurStore = () => {
 
             <div className="products-list pb-5">
               <div className="d-flex gap-10 flex-wrap">
-                <ProductCard
-                  data={productState ? productState : []}
-                  grid={grid}
-                />
+              <ProductCard
+                data={filterByPriceRangeFromVariants(productState || [], minPrice, maxPrice)}
+                grid={grid}
+              />
               </div>
             </div>
           </div>
