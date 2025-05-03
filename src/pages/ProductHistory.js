@@ -67,15 +67,74 @@ const ProductHistory = () => {
     };
 
   const [hoveredProduct, setHoveredProduct] = useState(null);
+
+
+  const [selectedFilter, setSelectedFilter] = useState("all");
+
+//------------Lọc dữ liệu theo time----------------------------
+const filterOptions = [
+  { label: "Tất cả", value: "all" },
+  { label: "Hôm nay", value: "today" },
+  { label: "7 ngày qua", value: "last7days" },
+  { label: "30 ngày qua", value: "last30days" },
+];
+
+const filterByTime = (list) => {
+  if (selectedFilter === "all") return list;
+
+  const now = new Date();
+  return list?.filter((item) => {
+    const viewTime = new Date(item?.timeView);
+    if (!item?.timeView) return false;
+
+    if (selectedFilter === "today") {
+      return (
+        viewTime.toDateString() === now.toDateString()
+      );
+    } else if (selectedFilter === "last7days") {
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(now.getDate() - 7);
+      return viewTime >= sevenDaysAgo;
+    } else if (selectedFilter === "last30days") {
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(now.getDate() - 30);
+      return viewTime >= thirtyDaysAgo;
+    }
+
+    return true;
+  });
+};
+
+const filteredWishlist = filterByTime(wishlistState);
+
+
   return (
     <>
       <Container class1="wishlist-wrapper home-wrapper-2 py-5">
         <div className="row">
+        <div className="col-12 mb-4">
+          <select
+            className="form-select w-auto"
+            value={selectedFilter}
+            onChange={(e) => setSelectedFilter(e.target.value)}
+          >
+            {filterOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
           {wishlistState && wishlistState.length === 0 && (
             <div className="text-center fs-3">No Data</div>
           )}
-          {wishlistState &&
-            wishlistState?.map((item, index) => {
+          {filteredWishlist && filteredWishlist.length === 0 && (
+            <div className="text-center fs-3">Không có sản phẩm phù hợp</div>
+          )}
+          {filteredWishlist &&
+            filteredWishlist?.map((item, index) => {
+
               return (
                 <div className="col-lg-3 col-md-4 col-sm-6 my-3" key={index}
                   onMouseEnter={() => setHoveredProduct(index)} // Khi hover, lưu chỉ số sản phẩm
@@ -115,10 +174,14 @@ const ProductHistory = () => {
                     </div>
 
                     <div className="product-details" style={{ padding: "15px" }}>
+                        
                       <h6 className="brand">{item?.brand || "No brand"}</h6>
                       <h5 className="product-title">
                         {item?.name?.length > 35 ? item.name.substr(0, 35) + "..." : item?.name}
                       </h5>
+                      <p className="view-time text-muted" style={{ fontSize: "12px" }}>
+                          Đã xem lúc: {item?.timeView ? new Date(item.timeView).toLocaleString("vi-VN") : "Không rõ thời gian"}
+                      </p>
 
                       {/* Hover details */}
                       <div
