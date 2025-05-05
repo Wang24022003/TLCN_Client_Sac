@@ -31,6 +31,24 @@
   transform: translateY(-100%); /* Ẩn header bằng cách đẩy lên trên */
 }
 
+/* Keyframes for the fade-in and slide-up animation */
+@keyframes slideIn {
+  from {
+    transform: translateY(20px); /* Start from below the view */
+    opacity: 0; /* Start invisible */
+  }
+  to {
+    transform: translateY(0); /* End in original position */
+    opacity: 1; /* End fully visible */
+  }
+}
+
+/* Apply the animation to the chat container */
+.chat-container {
+  animation: slideIn 0.5s ease-out;
+}
+
+
 body {
   padding-top: 160px; /* Đảm bảo nội dung không bị che */
 }

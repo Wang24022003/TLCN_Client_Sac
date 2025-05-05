@@ -6,7 +6,6 @@ import { MdOutlineShoppingCart } from "react-icons/md";
 import { FiUser } from "react-icons/fi";
 import compare from "../images/compare.svg";
 import wishlist from "../images/wishlist.svg";
-import user from "../images/user.svg";
 import cart from "../images/cart.svg";
 import menu from "../images/menu.svg";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,8 +18,9 @@ import { authService } from "../features/user/userService";
 import { toast } from "react-toastify";
 import Dashboard from "./../pages/Dashboard";
 import { getNotificationsUser, makeAllAsReadNotification, makeAsReadNotification } from "../utils/api";
-const Header = () => {
+import ChatButton from "./ChatButton";
 
+const Header = ({ socket }) => {
   const [isHidden, setIsHidden] = useState(false); // Trạng thái ẩn/hiện
   const [lastScrollY, setLastScrollY] = useState(0); // Vị trí cuộn trước đó
 
@@ -68,6 +68,8 @@ const Header = () => {
   const getTokenFromLocalStorage = localStorage.getItem("customer")
     ? JSON.parse(localStorage.getItem("customer"))
     : null;
+
+  const token = localStorage.getItem("access_token")
 
   const config2 = {
     headers: {
@@ -197,7 +199,7 @@ const Header = () => {
   };
 
   return (
-    <div className={`header ${isHidden ? "hidden" : ""}`}>
+    <div className={`header ${isHidden ? "" : ""}`}>
       <>
         <header className="header-top-strip py-3">
           <div className="container-xxl">
@@ -608,29 +610,7 @@ const Header = () => {
             </div>
           </div>
         </header>
-
-        {/* Scroll to Top Button */}
-        {isVisible && (
-          <button
-            onClick={scrollToTop}
-            style={{
-              position: "fixed",
-              bottom: "150px",
-              right: "25px",
-              backgroundColor: "#ff5a5a",
-              color: "white",
-              border: "none",
-              borderRadius: "50%",
-              width: "50px",
-              height: "50px",
-              fontSize: "24px",
-              cursor: "pointer",
-              zIndex: 1000,
-            }}
-          >
-            ↑
-          </button>
-        )}
+        {<ChatButton token={token} socket={socket} user={userState} />}
       </>
     </div>
   );
