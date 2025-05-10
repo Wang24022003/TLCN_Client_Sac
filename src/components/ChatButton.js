@@ -1,19 +1,27 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   CloseOutlined,
-  SendOutlined,
-  UploadOutlined,
   CustomerServiceOutlined,
+  SendOutlined,
 } from '@ant-design/icons';
-import { Tooltip } from 'antd';
+import { notification, Tooltip } from 'antd';
 import { useFormik } from 'formik';
-import { chatService } from '../features/chat/chatService';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { toast } from 'react-toastify';
+import { chatService } from '../features/chat/chatService';
 import { formatMessageTime } from '../utils/dayConvert';
-import { uploadImg } from '../utils/api';
 import IconButtonUpload from './IconButtonUpload';
 
+const Context = React.createContext({ name: 'Default' });
 function ChatButton({ token, socket, user }) {
+  const [api, contextHolder] = notification.useNotification();
+  const contextValue = useMemo(() => ({ name: 'Ant Design' }), []);
+
   const messagesEndRef = useRef(null);
   const chatContainerRef = useRef(null);
 
@@ -28,32 +36,41 @@ function ChatButton({ token, socket, user }) {
   const [showChat, setShowChat] = useState(false);
   const [messages, setMessages] = useState([]);
 
-  const handleChatToggle = useCallback(async () => {
-    const res = await chatService.getChatRoom();
-    if (res.error) {
-      toast.error('Something Went Wrong');
-    } else {
-      const newChatRoom = res.data;
-      const messageRes = await chatService.getMessages(newChatRoom._id);
-      if (messageRes.error) {
-        toast.error('Something Went Wrong');
+  const openNotification = useCallback(
+    (placement, sender, message) => {
+      if (showChat) {
+        return;
       }
 
-      setChatRoom(newChatRoom);
-      setMessages(messageRes.data.result);
-      setShowChat(true);
-      socket.on(`chat-rooms/${newChatRoom._id}`, (newMsg) => {
-        setMessages((messages) => [...messages, newMsg]);
+      api.info({
+        message: (
+          <span>
+            Tin nhắn từ <b>{sender.name}</b>
+          </span>
+        ),
+        description: (
+          <Context.Consumer>{({ name }) => `${message}`}</Context.Consumer>
+        ),
+        placement,
       });
+    },
+    [api, showChat],
+  );
+
+  const handleChatToggle = useCallback(async () => {
+    const messageRes = await chatService.getMessages(chatRoom._id);
+    if (messageRes.error) {
+      toast.error('Something Went Wrong');
     }
-  }, [socket]);
+
+    setMessages(messageRes.data.result);
+    setShowChat(true);
+  }, [chatRoom]);
 
   const handleCloseChat = useCallback(() => {
     setShowChat(false);
-    setChatRoom(null);
     setMessages([]);
-    socket.off(`chat-rooms/${chatRoom._id}`);
-  }, [socket, chatRoom]);
+  }, []);
 
   const handleImageUpload = async ({ file }) => {
     if (file.status === 'done') {
@@ -83,6 +100,27 @@ function ChatButton({ token, socket, user }) {
   });
 
   useEffect(() => {
+    const init = async () => {
+      const res = await chatService.getChatRoom();
+      if (res.error) {
+        toast.error('Something Went Wrong');
+        return;
+      }
+
+      const newChatRoom = res.data;
+      setChatRoom(newChatRoom);
+      socket.on(`chat-rooms/${newChatRoom._id}`, (newMsg) => {
+        setMessages((messages) => [...messages, newMsg]);
+        openNotification('topRight', newMsg.sender, newMsg.content);
+      });
+    };
+
+    if (socket) {
+      init();
+    }
+  }, [socket]);
+
+  useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
@@ -94,36 +132,41 @@ function ChatButton({ token, socket, user }) {
     <div>
       {/* Floating Chat Button - Only renders if showChat is false */}
       {!showChat && (
-        <button
-          onClick={handleChatToggle}
-          style={{
-            position: 'fixed',
-            bottom: '250px',
-            right: '25px',
-            backgroundColor: 'transparent', // No background for the button
-            border: 'none',
-            borderRadius: '50%',
-            padding: 0, // Remove padding to fit icon exactly
-            cursor: 'pointer',
-            zIndex: 1000,
-          }}
-        >
-          {/* Tooltip to show text when hovering */}
-          <Tooltip title="Nhấn để hỗ trợ" placement="top">
-            {/* Customer Service Icon (Ant Design) with padding */}
-            <CustomerServiceOutlined
-              style={{
-                fontSize: '34px', // Adjust size to match the image size (64px)
-                color: '#ff5a5a', // Set a color similar to the image background
-                cursor: 'pointer',
-                boxShadow: 'rgba(17, 1, 9, 0.2) 0px 4px 8px 0px', // Shadow effect
-                borderRadius: '50%', // Circular shape (optional)
-                padding: '10px', // Add padding around the icon
-                backgroundColor: 'white', // Optional: Add a background color for better visibility
-              }}
-            />
-          </Tooltip>
-        </button>
+        <>
+          <button
+            onClick={handleChatToggle}
+            style={{
+              position: 'fixed',
+              bottom: '250px',
+              right: '25px',
+              backgroundColor: 'transparent', // No background for the button
+              border: 'none',
+              borderRadius: '50%',
+              padding: 0, // Remove padding to fit icon exactly
+              cursor: 'pointer',
+              zIndex: 1000,
+            }}
+          >
+            {/* Tooltip to show text when hovering */}
+            <Tooltip title="Nhấn để hỗ trợ" placement="top">
+              {/* Customer Service Icon (Ant Design) with padding */}
+              <CustomerServiceOutlined
+                style={{
+                  fontSize: '34px', // Adjust size to match the image size (64px)
+                  color: '#ff5a5a', // Set a color similar to the image background
+                  cursor: 'pointer',
+                  boxShadow: 'rgba(17, 1, 9, 0.2) 0px 4px 8px 0px', // Shadow effect
+                  borderRadius: '50%', // Circular shape (optional)
+                  padding: '10px', // Add padding around the icon
+                  backgroundColor: 'white', // Optional: Add a background color for better visibility
+                }}
+              />
+            </Tooltip>
+          </button>
+          <Context.Provider value={contextValue}>
+            {contextHolder}
+          </Context.Provider>
+        </>
       )}
 
       {/* Chat interface (hidden or shown based on state) */}
@@ -313,5 +356,4 @@ function ChatButton({ token, socket, user }) {
     </div>
   );
 }
-
 export default ChatButton;
