@@ -199,6 +199,7 @@ const filteredWishlist = filterByTime(wishlistState);
                             count={5}
                             size={20}
                             value={+item?.rating || 0}
+                            isHalf={true}
                             edit={false}
                             activeColor="#ffd700"
                           />

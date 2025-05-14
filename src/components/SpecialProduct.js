@@ -38,6 +38,7 @@ const SpecialProduct = (props) => {
                 size={24}
                 value={+totalrating}
                 edit={false}
+                isHalf={true}
                 activeColor="#ffd700"
               />
               <p className="price">

@@ -199,7 +199,7 @@ const Header = ({ socket }) => {
   };
 
   return (
-    <div className={`header ${isHidden ? "" : ""}`}>
+    <div className={`header ${isHidden ? "hidden" : ""}`}>
       <>
         <header className="header-top-strip py-3">
           <div className="container-xxl">
@@ -610,6 +610,28 @@ const Header = ({ socket }) => {
             </div>
           </div>
         </header>
+        {/* Scroll to Top Button */}
+        {isVisible && (
+          <button
+            onClick={scrollToTop}
+            style={{
+              position: "fixed",
+              bottom: "150px",
+              right: "25px",
+              backgroundColor: "#ff5a5a",
+              color: "white",
+              border: "none",
+              borderRadius: "50%",
+              width: "50px",
+              height: "50px",
+              fontSize: "24px",
+              cursor: "pointer",
+              zIndex: 1000,
+            }}
+          >
+            ↑
+          </button>
+        )}
         {<ChatButton token={token} socket={socket} user={userState} />}
       </>
     </div>

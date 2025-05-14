@@ -28,11 +28,13 @@ import {
   getuserProductWishlist,
 } from "../features/user/userSlice";
 import "./../Css/CssSingleProduct.css";
-import { getRatingsUser } from "../utils/api";
+import { getRatingsUser, uploadImg } from "../utils/api";
 import SizeSelect from "../components/SizeSelect";
 import { getAProductCategory } from "../features/pcategory/pcategorySlice";
 import { FiHeart, FiLayers } from "react-icons/fi";
 import { AiOutlineShareAlt } from "react-icons/ai";
+import Dropzone from "react-dropzone";
+import { LuImagePlus } from "react-icons/lu";
 
 const SingleProduct = () => {
   const { categoryName } = useSelector((state) => state.pCategory);
@@ -187,29 +189,50 @@ const SingleProduct = () => {
     setIsFilled(!isFilled);
   };
 
-  const addRatingToProduct = () => {
+  const addRatingToProduct = async () => {
     if (star === null) {
-      toast.error("Please add star rating");
-      return false;
-    } else if (comment === null) {
-      toast.error("Please Write Review About the Product");
-      return false;
-    } else {
-      dispatch(
+      toast.error("Vui lòng chọn số sao đánh giá");
+      return;
+    }
+  
+    if (!comment) {
+      toast.error("Vui lòng nhập nhận xét");
+      return;
+    }
+  
+    let uploadedUrls = [];
+  
+    try {
+      if (reviewImages.length > 0) {
+        const uploads = await Promise.all(
+          reviewImages.map((file) => uploadImg(file))
+        );
+        uploadedUrls = uploads.map((res) => res.data[0]); // mỗi upload trả về 1 URL
+      }
+  
+      await dispatch(
         addRating({
           userId: authState.user._id,
-          productId: productState?._id,
+          productId: productState._id,
+          fileUrl: uploadedUrls,
           rating: +star,
           comment: comment,
         })
-      );
-
-      setTimeout(() => {
-        dispatch(getAProduct(productState?._id));
-      }, 100);
+      ).unwrap();
+  
+      toast.success("Đánh giá đã được gửi");
+  
+      // Reset form
+      setStar(null);
+      setComment("");
+      setReviewImages([]);
+      setPreviewImages([]);
+      getListReview(); // cập nhật danh sách đánh giá mới
+    } catch (err) {
+      toast.error("Lỗi khi gửi đánh giá");
     }
-    return false;
   };
+  
 
   // New state to handle image navigation
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -354,37 +377,44 @@ const SingleProduct = () => {
   const getSelectedVariantPrice = () => {
     const variants = productState?.inventory?.productInventory?.productVariants;
     if (!variants || !Array.isArray(variants) || variants.length === 0) {
-      return "Đang cập nhật giá";
+      return { sellPrice: null, originalPrice: null };
     }
-
+  
     let matchedVariant;
-
-    // Nếu có cả màu và size
+  
     if (selectedColor && selectedSize) {
       matchedVariant = variants.find(
         (v) =>
           v.attributes.color === selectedColor &&
           v.attributes.size === selectedSize
       );
-    }
-    // Nếu chỉ có màu
-    else if (selectedColor) {
+    } else if (selectedColor) {
       matchedVariant = variants.find(
         (v) => v.attributes.color === selectedColor
       );
-    }
-    // Nếu chỉ có size
-    else if (selectedSize) {
+    } else if (selectedSize) {
       matchedVariant = variants.find((v) => v.attributes.size === selectedSize);
     }
-
-    if (matchedVariant && matchedVariant.sellPrice !== undefined) {
-      return `${matchedVariant.sellPrice.toLocaleString("vi-VN")} ₫`;
+  
+    if (matchedVariant) {
+      const { sellPrice, importPrice, discount } = matchedVariant;
+      const originalPrice = discount > 0
+        ? Math.round(sellPrice / (1 - discount / 100))
+        : sellPrice;
+      return {
+        sellPrice: sellPrice.toLocaleString("vi-VN") + " ₫",
+        originalPrice:
+          discount > 0 ? originalPrice.toLocaleString("vi-VN") + " ₫" : null,
+          discount,
+      };
     }
-
-    // Trường hợp chưa chọn gì hoặc không khớp → trả về khoảng giá
-    return getPriceRange();
+  
+    return {
+      sellPrice: getPriceRange(),
+      originalPrice: null,
+    };
   };
+  
 
   const getSelectedVariantStock = () => {
     const inventory = productState?.inventory?.productInventory;
@@ -437,6 +467,16 @@ const SingleProduct = () => {
     ...defaultImages.map((img) => ({ url: img, color: null })),
     ...(colorImages || []),
   ];
+
+  
+ 
+  const [reviewImages, setReviewImages] = useState([]);
+  const [previewImages, setPreviewImages] = useState([]);
+  const [showUploadBox, setShowUploadBox] = useState(false);
+
+
+  console.log("Rating value: ", productState?.rating);
+
 
   return (
     <>
@@ -554,19 +594,59 @@ const SingleProduct = () => {
 
                   <div className="border-bottom py-3">
                     <div className="w-full bg-red-100 px-4 py-3 rounded-lg mb-4">
-                      <p className="text-red-600 text-2xl font-bold m-0">
-                        {getSelectedVariantPrice()}
-                      </p>
-                    </div>
+                    {(() => {
+                      const { sellPrice, originalPrice, discount } = getSelectedVariantPrice();
+                      return (
+                        <div
+                          className="d-flex align-items-center gap-3"
+                          style={{ flexWrap: "wrap" }}
+                        >
+                          <span className="text-red-600 fw-bold fs-4">{sellPrice}</span>
 
+                          {originalPrice && (
+                            <span
+                              style={{
+                                textDecoration: "line-through",
+                                fontSize: "16px",
+                                color: "#888",
+                              }}
+                            >
+                              {originalPrice}
+                            </span>
+                          )}
+
+                          {discount > 0 && (
+                            <span
+                              style={{
+                                backgroundColor: "#fdecea", // nền đỏ nhạt
+                                color: "#e53935",           // chữ đỏ
+                                padding: "2px 6px",
+                                borderRadius: "4px",
+                                fontWeight: "bold",
+                                fontSize: "14px",
+                              }}
+                            >
+                              -{discount}%
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })()}
+                    </div>
                     <div className="d-flex align-items-center gap-10">
+                    {productState?.rating !== undefined && (
                       <ReactStars
-                        count={+5}
+                        count={5}
                         size={24}
-                        value={+productState?.totalrating?.toString()}
+                        value={Number(productState.rating)}
+                        isHalf={true}
                         edit={false}
                         activeColor="#ffd700"
                       />
+                    )}
+                    <span className="text-muted">
+                      {productState?.rating?.toFixed(1)} / 5
+                    </span>
                       <p className="mb-0 t-review">
                         ( {productState?.quantityComments} Đánh giá )
                       </p>
@@ -773,19 +853,34 @@ const SingleProduct = () => {
 
                     <div className="mt-4 mb-3">
                       <div className="d-flex align-items-center">
+                        {getSelectedVariantStock() === 0 ? (
                         <button
                           className="button border-0"
-                          type="button"
-                          onClick={() => {
-                            if (alreadyAdded) {
-                              navigate("/cart");
-                            } else {
-                              uploadCart();
-                            }
+                          disabled
+                          style={{
+                            backgroundColor: "red",
+                            color: "white",
+                            cursor: "not-allowed",
                           }}
                         >
-                          {alreadyAdded ? "Sản phẩm vào giỏ hàng" : "Mua ngay"}
+                          Hết hàng
                         </button>
+
+                        ) : (
+                          <button
+                            className="button border-0"
+                            type="button"
+                            onClick={() => {
+                              if (alreadyAdded) {
+                                navigate("/cart");
+                              } else {
+                                uploadCart();
+                              }
+                            }}
+                          >
+                            {alreadyAdded ? "Sản phẩm vào giỏ hàng" : "Mua ngay"}
+                          </button>
+                        )}
                       </div>
                     </div>
 
@@ -871,110 +966,208 @@ const SingleProduct = () => {
           </div>
         </div>
       </Container>
-      <Container class1="reviews-wrapper home-wrapper-2">
-        <div className="row">
-          <div className="col-12">
-            <h3 id="review">Đánh giá</h3>
-            <div className="review-inner-wrapper">
-              <div className="review-head d-flex justify-content-between align-items-end">
-                <div>
-                  <h4 className="mb-2">Đánh giá của khách hàng</h4>
-                  <div className="d-flex align-items-center gap-10">
-                    <ReactStars
-                      count={+5}
-                      size={24}
-                      value={+productState?.totalrating?.toString()}
-                      edit={false}
-                      activeColor="#ffd700"
-                    />
-                    <p className="mb-0">
-                      Dựa trên {productState?.quantityComments} đánh giá
-                    </p>
-                  </div>
-                </div>
 
-                {orderedProduct && (
-                  <div>
-                    <a className="text-dark text-decoration-underline" href="">
-                      Viết đánh giá
-                    </a>
+<Container class1="reviews-wrapper home-wrapper-2">
+  <div className="row">
+    <div className="col-12">
+      <h3 id="review">Đánh giá</h3>
+      <div className="review-inner-wrapper">
+        <div className="review-head d-flex justify-content-between align-items-end">
+          <div>
+            <h4 className="mb-2">Đánh giá của khách hàng</h4>
+            <div className="d-flex align-items-center gap-10">
+            {productState?.rating !== undefined && (
+              <ReactStars
+                count={5}
+                size={24}
+                value={Number(productState.rating)}
+                isHalf={true}
+                edit={false}
+                activeColor="#ffd700"
+              />
+            )}
+               <span className="text-muted">
+                  {productState?.rating?.toFixed(1)} / 5
+                </span>
+              <p className="mb-0">
+                Dựa trên {productState?.quantityComments} đánh giá
+              </p>
+            </div>
+          </div>
+
+          {orderedProduct && (
+            <div>
+              <a className="text-dark text-decoration-underline" href="#review">
+                Viết đánh giá
+              </a>
+            </div>
+          )}
+        </div>
+
+        {/* FORM đánh giá */}
+        <div className="review-form py-4">
+          <h4>Viết đánh giá</h4>
+
+          <div>
+            <ReactStars
+              count={+5}
+              size={24}
+              value={+0}
+              edit={true}
+              activeColor="#ffd700"
+              onChange={(e) => {
+                setStar(e);
+                setShowUploadBox(true);
+              }}
+            />
+          </div>
+
+          <div>
+          <textarea
+            className="w-100 form-control"
+            cols="30"
+            rows="4"
+            placeholder="Nội dung..."
+            onChange={(e) => {
+              setComment(e.target.value);
+              if (e.target.value.trim() !== "") {
+                setShowUploadBox(true); // 👈 Hiển thị upload khi bắt đầu nhập
+              }
+            }}
+          ></textarea>
+
+          </div>
+          {showUploadBox && (
+            <div
+              style={{
+                backgroundColor: "#fff",
+                padding: "20px",
+                borderRadius: "8px",
+                marginTop: "16px",
+              }}
+            >
+              <Dropzone
+                onDrop={(acceptedFiles) => {
+                  setReviewImages(acceptedFiles);
+                  setPreviewImages(acceptedFiles.map((file) => URL.createObjectURL(file)));
+                }}
+                accept={{ "image/*": [] }}
+                multiple
+              >
+                {({ getRootProps, getInputProps }) => (
+                  <div
+                    {...getRootProps()}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      padding: "16px",
+                      border: "2px dashed #ccc",
+                      borderRadius: "8px",
+                      cursor: "pointer",
+                      transition: "border-color 0.3s ease",
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#3b82f6")}
+                    onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#ccc")}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <LuImagePlus size={24} color="#3b82f6" />
+                      <p style={{ color: "#4B5563", fontSize: "14px", margin: "0" }}>
+                        Upload hoặc kéo ảnh vào đây
+                      </p>
+                    </div>
+                    <p style={{ color: "#9CA3AF", fontSize: "14px", margin: "0" }}>
+                      JPEG, PNG, GIF...
+                    </p>
+                    <input {...getInputProps()} />
                   </div>
                 )}
-              </div>
-              <div className="review-form py-4">
-                <h4>Viết đánh giá</h4>
+              </Dropzone>
+            </div>
+          )}
 
-                <div>
+          {previewImages.length > 0 && (
+            <div className="d-flex mt-2 flex-wrap gap-2 justify-content-start">
+              {previewImages.map((src, idx) => (
+                <img
+                  key={idx}
+                  src={src}
+                  alt={`preview-${idx}`}
+                  style={{
+                    width: "80px",
+                    height: "80px",
+                    objectFit: "cover",
+                    borderRadius: "4px",
+                    border: "1px solid #ccc",
+                  }}
+                />
+              ))}
+            </div>
+          )}
+
+          <div className="d-flex justify-content-end mt-3">
+            <button
+              onClick={addRatingToProduct}
+              className="button border-0"
+              type="button"
+            >
+              Gửi đánh giá
+            </button>
+          </div>
+        </div>
+
+        {/* Hiển thị danh sách đánh giá */}
+        <div className="reviews mt-4">
+          {reviews &&
+            reviews.map((item, index) => (
+              <div className="review" key={index}>
+                <div className="d-flex gap-10 align-items-center">
+                  <img
+                    src={item?.userId.avatar}
+                    alt={`${item?.userId.name}'s avatar`}
+                    className="rounded-circle"
+                    style={{
+                      width: "40px",
+                      height: "40px",
+                      objectFit: "cover",
+                    }}
+                  />
+                  <h6 className="mb-0">{item?.userId.name}</h6>
                   <ReactStars
                     count={+5}
                     size={24}
-                    value={+0}
-                    edit={true}
+                    value={+item?.rating}
+                    edit={false}
                     activeColor="#ffd700"
-                    onChange={(e) => {
-                      setStar(e);
-                    }}
                   />
                 </div>
-                <div>
-                  <textarea
-                    name=""
-                    id=""
-                    className="w-100 form-control"
-                    cols="30"
-                    rows="4"
-                    placeholder="Nội dung..."
-                    onChange={(e) => {
-                      setComment(e.target.value);
-                    }}
-                  ></textarea>
-                </div>
-                <div className="d-flex justify-content-end mt-3">
-                  <button
-                    onClick={addRatingToProduct}
-                    className="button border-0"
-                    type="button"
-                  >
-                    Gửi đánh giá
-                  </button>
-                </div>
+                <p className="mt-3">{item?.comment}</p>
+                {item?.fileUrl?.length > 0 && (
+                  <div className="d-flex gap-2 flex-wrap mt-2 justify-content-start">
+                    {item.fileUrl.map((img, i) => (
+                      <img
+                        key={i}
+                        src={img}
+                        alt="Đánh giá"
+                        style={{
+                          width: "100px",
+                          height: "100px",
+                          objectFit: "cover",
+                          borderRadius: "4px",
+                          border: "1px solid #ccc",
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
-              <div className="reviews mt-4">
-                {/* fix */}
-                {reviews &&
-                  reviews.map((item, index) => {
-                    return (
-                      <div className="review" key={index}>
-                        <div className="d-flex gap-10 align-items-center">
-                          {/* Hiển thị ảnh avatar */}
-                          <img
-                            src={item?.userId.avatar}
-                            alt={`${item?.userId.name}'s avatar`}
-                            className="rounded-circle"
-                            style={{
-                              width: "40px",
-                              height: "40px",
-                              objectFit: "cover",
-                            }}
-                          />
-                          <h6 className="mb-0">{item?.userId.name}</h6>
-                          <ReactStars
-                            count={+5}
-                            size={24}
-                            value={+item?.rating}
-                            edit={false}
-                            activeColor="#ffd700"
-                          />
-                        </div>
-                        <p className="mt-3">{item?.comment}</p>
-                      </div>
-                    );
-                  })}
-              </div>
-            </div>
-          </div>
+            ))}
         </div>
-      </Container>
+      </div>
+    </div>
+  </div>
+</Container>
+
       <Container class1="related-wrapper py-5 home-wrapper-2">
         <div className="row">
           <div className="col-12">

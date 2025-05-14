@@ -9,6 +9,8 @@ import { getuserProductWishlist } from "../features/user/userSlice";
 import { AiFillHeart } from "react-icons/ai";
 import "./../Css/CssWishlist.css";
 import { useNavigate } from "react-router-dom";
+import ReactStars from "react-rating-stars-component";
+
 
 const Wishlist = () => {
   const dispatch = useDispatch();
@@ -32,6 +34,28 @@ const Wishlist = () => {
     }, 300);
   };
 
+  const getPriceRangeFromVariants = (product) => {
+    const variants = product?.inventory?.productVariants;
+  
+    if (!variants || !Array.isArray(variants) || variants.length === 0) {
+      return "Đang cập nhật giá";
+    }
+  
+    const prices = variants
+      .map((v) => v.sellPrice)
+      .filter((p) => p !== undefined && p !== null);
+  
+    if (prices.length === 0) return "Đang cập nhật giá";
+  
+    const min = Math.min(...prices);
+    const max = Math.max(...prices);
+  
+    return min === max
+      ? `${min.toLocaleString("vi-VN")} ₫`
+      : `${min.toLocaleString("vi-VN")} ₫ - ${max.toLocaleString("vi-VN")} ₫`;
+  };
+
+  
   return (
     <Container class1="wishlist-wrapper home-wrapper-2 py-5">
       <div className="row">
@@ -107,12 +131,19 @@ const Wishlist = () => {
                   }}
                 >
                   <div className="d-flex align-items-center">
-                    <div className="rating">★★★★★</div>
-                    <div className="ms-auto">
-                      <span style={{ color: "red" }}>
-                        {item?.price?.toLocaleString("vi-VN") || "0"}₫
-                      </span>
-                    </div>
+                  <ReactStars
+                    count={5}
+                    size={20}
+                    value={+item?.rating || 0}
+                    isHalf={true}
+                    edit={false}
+                    activeColor="#ffd700"
+                  />
+                  </div>
+                  <div className="mt-1">
+                    <span style={{ color: "red" }}>
+                      {getPriceRangeFromVariants(item)}
+                    </span>
                   </div>
                 </div>
               </div>

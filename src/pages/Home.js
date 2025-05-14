@@ -18,6 +18,9 @@ import {
   AiOutlinePlusCircle,
 } from "react-icons/ai";
 import "./../Css/CssHome.css";
+import AOS from "aos";
+import "aos/dist/aos.css";
+
 const Home = () => {
   const blogState = useSelector((state) => state?.blog?.blog);
   const productState = useSelector((state) => state?.product?.product);
@@ -29,6 +32,10 @@ const Home = () => {
     getblogs();
     getProducts();
     dispatch(getuserProductWishlist());
+     AOS.init({
+        duration: 800, // thời gian chạy hiệu ứng
+        once: true, // chỉ chạy 1 lần
+      });
   }, []);
   const getblogs = () => {
     dispatch(getAllBlogs());
@@ -62,7 +69,7 @@ const Home = () => {
   
 
   const isProductInWishlist = (productId) =>
-    wishlistState?.some((item) => item._id === productId);
+  wishlistState?.some((item) => item._id === productId);
 
   const [hoveredProduct, setHoveredProduct] = useState(null);
 
@@ -89,6 +96,7 @@ const Home = () => {
       : `${min.toLocaleString("vi-VN")} ₫ - ${max.toLocaleString("vi-VN")} ₫`;
   };
   
+    const [showMore, setShowMore] = useState(false);
   
 
   
@@ -300,6 +308,7 @@ const Home = () => {
 
       
 
+
       <Container class1="featured-wrapper py-4 home-wrapper-2">
         <div className="row">
           <div className="col-12 d-flex justify-content-between align-items-center mb-3">
@@ -320,104 +329,117 @@ const Home = () => {
           {productState &&
             [...productState] // Tạo bản sao của mảng để không thay đổi trạng thái ban đầu
               .reverse() // Đảo ngược thứ tự mảng
-              .map((item, index) => {
-                if (item.tags === "featured") {
-                  return (
+              .filter((item) => item.tags === "featured") // Lọc chỉ những sản phẩm có tag "featured"
+              .slice(0, showMore ? productState.length : 8) // Hiển thị tất cả khi showMore = true, hoặc 8 sản phẩm đầu tiên
+              .map((item, index) => (
+                <div
+                  key={index}
+                  className="col-3 my-2"
+                  data-aos="fade-up"
+                  data-aos-delay={index * 100}
+                  onMouseEnter={() => setHoveredProduct(index)} // Khi hover, lưu chỉ số sản phẩm
+                  onMouseLeave={() => setHoveredProduct(null)} // Khi rời chuột, reset trạng thái
+                >
+                  <div className="product-card position-relative" style={{ cursor: "pointer" }}>
                     <div
-                      key={index}
-                      className="col-3 my-2"
-                      onMouseEnter={() => setHoveredProduct(index)} // Khi hover, lưu chỉ số sản phẩm
-                      onMouseLeave={() => setHoveredProduct(null)} // Khi rời chuột, reset trạng thái
+                      className="product-image"
+                      style={{
+                        position: "relative",
+                        width: "100%",
+                        height: "0",
+                        paddingBottom: "150%",
+                      }}
                     >
-                      <div className="product-card position-relative" style={{ cursor: "pointer" }}>
-                        <div
-                          className="product-image"
-                          style={{
-                            position: "relative",
-                            width: "100%",
-                            height: "0",
-                            paddingBottom: "150%",
-                          }}
-                        >
-                          <img
-                            src={
-                              hoveredProduct === index && item?.images?.[1]
-                                ? item?.images[1] // Hiển thị ảnh thứ 2 khi hover
-                                : item?.images?.[0] || "/default-image.png" // Dùng ảnh mặc định nếu không có ảnh
-                            }
-                            alt="product image"
-                            height={"250px"}
-                            width={"260px"}
-                            onClick={() => navigate("/product/" + item?._id)}
-                            style={{
-                              objectFit: "cover",
-                              display: "block",
-                              position: "absolute",
-                              top: 0,
-                              left: 0,
-                              width: "100%",
-                              height: "100%",
-                            }}
+                      <img
+                        src={
+                          hoveredProduct === index && item?.images?.[1]
+                            ? item?.images[1] // Hiển thị ảnh thứ 2 khi hover
+                            : item?.images?.[0] || "/default-image.png" // Dùng ảnh mặc định nếu không có ảnh
+                        }
+                        alt="product image"
+                        height={"250px"}
+                        width={"260px"}
+                        onClick={() => navigate("/product/" + item?._id)}
+                        style={{
+                          objectFit: "cover",
+                          display: "block",
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          width: "100%",
+                          height: "100%",
+                        }}
+                      />
+                    </div>
+                    <div className="product-details" style={{ padding: "15px" }}>
+                      {/* Name và Brand luôn hiển thị */}
+                      <h6 className="brand">{item?.brand}</h6>
+                      <h5 className="product-title">
+                        {item?.name?.length > 35 ? item.name.substr(0, 35) + "..." : item?.name}
+                      </h5>
+                      {/* 3 phần còn lại chỉ hiển thị khi hover */}
+                      <div
+                        className={`hover-details ${hoveredProduct === index ? "hovered" : ""}`}
+                        style={{
+                          opacity: hoveredProduct === index ? 1 : 0,
+                          visibility: hoveredProduct === index ? "visible" : "hidden",
+                          transition: "opacity 0.3s ease, visibility 0.3s ease",
+                        }}
+                      >
+                        <div className="d-flex align-items-center">
+                          <ReactStars
+                            count={+5}
+                            size={24}
+                            value={+item?.rating?.toString()}
+                            isHalf={true}
+                            edit={false}
+                            activeColor="#ffd700"
                           />
-                        </div>
-                        <div
-                          className="product-details"
-                          style={{
-                            padding: "15px",
-                          }}
-                        >
-                          {/* Name và Brand luôn hiển thị */}
-                          <h6 className="brand">{item?.brand}</h6>
-                          <h5 className="product-title">
-                            {item?.name?.length > 35
-                              ? item.name.substr(0, 35) + "..."
-                              : item?.name}
-                          </h5>
-                          {/* 3 phần còn lại chỉ hiển thị khi hover */}
-                          <div
-                            className={`hover-details ${
-                              hoveredProduct === index ? "hovered" : ""
-                            }`}
-                            style={{
-                              opacity: hoveredProduct === index ? 1 : 0,
-                              visibility: hoveredProduct === index
-                                ? "visible"
-                                : "hidden",
-                              transition: "opacity 0.3s ease, visibility 0.3s ease",
-                            }}
-                          >
-                            <div className="d-flex align-items-center">
-                              <ReactStars
-                                count={+5}
-                                size={24}
-                                value={+item?.rating?.toString()}
-                                edit={false}
-                                activeColor="#ffd700"
-                              />
-                              <div className="wishlist-icon ms-auto">
-                                <button
-                                  className="border-0 bg-transparent"
-                                  onClick={() => handleWishlistToggle(item?._id)}
-                                >
-                                  {isProductInWishlist(item?._id) ? (
-                                    <AiFillHeart className="fs-5 text-danger" />
-                                  ) : (
-                                    <AiOutlineHeart className="fs-5" />
-                                  )}
-                                </button>
-                              </div>
-                            </div>
-                            <p className="price" style={{ color: 'red' }}>{getPriceRangeFromVariants(item)}</p>
+                          <div className="wishlist-icon ms-auto">
+                            <button
+                              className="border-0 bg-transparent"
+                              onClick={() => handleWishlistToggle(item?._id)}
+                            >
+                              {isProductInWishlist(item?._id) ? (
+                                <AiFillHeart className="fs-5 text-danger" />
+                              ) : (
+                                <AiOutlineHeart className="fs-5" />
+                              )}
+                            </button>
                           </div>
                         </div>
+                        <p className="price" style={{ color: "red" }}>{getPriceRangeFromVariants(item)}</p>
+                        <p style={{ fontSize: "13px", marginBottom: "0" }}>
+                          Còn lại: {item?.inventory?.totalQuantity ?? 0} | Đã bán: {item?.inventory?.totalQuantitySell ?? 0}
+                        </p>
                       </div>
                     </div>
-                  );
-                }
-              })}
+                  </div>
+                </div>
+              ))}
+          {/* Dòng "Xem thêm" */}
+          {productState && productState.filter((item) => item.tags === "featured").length > 8 && (
+            <div className="col-12 text-center mt-3">
+              <div
+                onClick={() => setShowMore(!showMore)} // Thay đổi trạng thái showMore khi click
+                style={{
+                  cursor: "pointer",
+                  color: "#28a745", // Màu xanh lá khi hover
+                  fontSize: "14px",
+                  backgroundColor: "#f0f0f0", // Màu nền xám cho khung
+                  padding: "8px 15px", // Khoảng cách trong khung
+                  borderRadius: "5px", // Bo góc cho khung
+                  border: "1px solid #ccc", // Đường viền xung quanh
+                  width: "180px", // Đặt chiều dài khung cố định (hoặc thay đổi theo nhu cầu)
+                  margin: "0 auto", // Canh giữa khung
+                }}
+              >
+                {showMore ? "Thu gọn" : "Xem thêm"} {/* Hiển thị "Thu gọn" nếu showMore = true */}
+              </div>
+            </div>
+          )}
         </div>
       </Container>
-
 
       <Container class1="famous-wrapper py-3 home-wrapper-2">
         <div className="row">
@@ -574,8 +596,8 @@ const Home = () => {
                     totalrating={item?.rating.toString()}
                     price={getPriceRangeFromVariants(item)}
                     img={item?.images[0]}
-                    sold={item?.sold}
-                    quantity={item?.quantity}
+                    sold={item?.inventory?.totalQuantitySell || 0}
+                    quantity={item?.inventory?.totalQuantity || 0}
                   />
                 );
               }
@@ -585,7 +607,7 @@ const Home = () => {
 
       <Container class1="featured-wrapper py-4 home-wrapper-2">
         <div className="row">
-        <div className="col-12 d-flex justify-content-between align-items-center mb-3">
+          <div className="col-12 d-flex justify-content-between align-items-center mb-3">
             <h3 className="section-heading">Bộ sưu tập phổ biến</h3>
             <span
               onClick={() => navigate("/product")}
@@ -603,101 +625,115 @@ const Home = () => {
           {productState &&
             [...productState] // Tạo bản sao của mảng để không thay đổi trạng thái ban đầu
               .reverse() // Đảo ngược thứ tự mảng
-              .map((item, index) => {
-                if (item.tags === "popular") {
-                  return (
+              .filter((item) => item.tags === "popular") // Lọc chỉ những sản phẩm có tag "featured"
+              .slice(0, showMore ? productState.length : 8) // Hiển thị tất cả khi showMore = true, hoặc 8 sản phẩm đầu tiên
+              .map((item, index) => (
+                <div
+                  key={index}
+                  className="col-3 my-2"
+                  data-aos="fade-up"
+                  data-aos-delay={index * 100}
+                  onMouseEnter={() => setHoveredProduct(index)} // Khi hover, lưu chỉ số sản phẩm
+                  onMouseLeave={() => setHoveredProduct(null)} // Khi rời chuột, reset trạng thái
+                >
+                  <div className="product-card position-relative" style={{ cursor: "pointer" }}>
                     <div
-                      key={index}
-                      className="col-3 my-2"
-                      onMouseEnter={() => setHoveredProduct(index)} // Khi hover, lưu chỉ số sản phẩm
-                      onMouseLeave={() => setHoveredProduct(null)} // Khi rời chuột, reset trạng thái
+                      className="product-image"
+                      style={{
+                        position: "relative",
+                        width: "100%",
+                        height: "0",
+                        paddingBottom: "150%",
+                      }}
                     >
-                      <div className="product-card position-relative" style={{ cursor: "pointer" }}>
-                        <div
-                          className="product-image"
-                          style={{
-                            position: "relative",
-                            width: "100%",
-                            height: "0",
-                            paddingBottom: "150%",
-                          }}
-                        >
-                          <img
-                            src={
-                              hoveredProduct === index && item?.images?.[1]
-                                ? item?.images[1] // Hiển thị ảnh thứ 2 khi hover
-                                : item?.images?.[0] || "/default-image.png" // Dùng ảnh mặc định nếu không có ảnh
-                            }
-                            alt="product image"
-                            height={"250px"}
-                            width={"260px"}
-                            onClick={() => navigate("/product/" + item?._id)}
-                            style={{
-                              objectFit: "cover",
-                              display: "block",
-                              position: "absolute",
-                              top: 0,
-                              left: 0,
-                              width: "100%",
-                              height: "100%",
-                            }}
+                      <img
+                        src={
+                          hoveredProduct === index && item?.images?.[1]
+                            ? item?.images[1] // Hiển thị ảnh thứ 2 khi hover
+                            : item?.images?.[0] || "/default-image.png" // Dùng ảnh mặc định nếu không có ảnh
+                        }
+                        alt="product image"
+                        height={"250px"}
+                        width={"260px"}
+                        onClick={() => navigate("/product/" + item?._id)}
+                        style={{
+                          objectFit: "cover",
+                          display: "block",
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          width: "100%",
+                          height: "100%",
+                        }}
+                      />
+                    </div>
+                    <div className="product-details" style={{ padding: "15px" }}>
+                      {/* Name và Brand luôn hiển thị */}
+                      <h6 className="brand">{item?.brand}</h6>
+                      <h5 className="product-title">
+                        {item?.name?.length > 35 ? item.name.substr(0, 35) + "..." : item?.name}
+                      </h5>
+                      {/* 3 phần còn lại chỉ hiển thị khi hover */}
+                      <div
+                        className={`hover-details ${hoveredProduct === index ? "hovered" : ""}`}
+                        style={{
+                          opacity: hoveredProduct === index ? 1 : 0,
+                          visibility: hoveredProduct === index ? "visible" : "hidden",
+                          transition: "opacity 0.3s ease, visibility 0.3s ease",
+                        }}
+                      >
+                        <div className="d-flex align-items-center">
+                          <ReactStars
+                            count={+5}
+                            size={24}
+                            value={+item?.rating?.toString()}
+                            isHalf={true}
+                            edit={false}
+                            activeColor="#ffd700"
                           />
-                        </div>
-                        <div
-                          className="product-details"
-                          style={{
-                            padding: "15px",
-                          }}
-                        >
-                          {/* Name và Brand luôn hiển thị */}
-                          <h6 className="brand">{item?.brand}</h6>
-                          <h5 className="product-title">
-                            {item?.name?.length > 35
-                              ? item.name.substr(0, 35) + "..."
-                              : item?.name}
-                          </h5>
-                          {/* 3 phần còn lại chỉ hiển thị khi hover */}
-                          <div
-                            className={`hover-details ${
-                              hoveredProduct === index ? "hovered" : ""
-                            }`}
-                            style={{
-                              opacity: hoveredProduct === index ? 1 : 0,
-                              visibility: hoveredProduct === index
-                                ? "visible"
-                                : "hidden",
-                              transition: "opacity 0.3s ease, visibility 0.3s ease",
-                            }}
-                          >
-                            <div className="d-flex align-items-center">
-                              <ReactStars
-                                count={+5}
-                                size={24}
-                                value={+item?.rating?.toString()}
-                                edit={false}
-                                activeColor="#ffd700"
-                              />
-                              <div className="wishlist-icon ms-auto">
-                                <button
-                                  className="border-0 bg-transparent"
-                                  onClick={() => handleWishlistToggle(item?._id)}
-                                >
-                                  {isProductInWishlist(item?._id) ? (
-                                    <AiFillHeart className="fs-5 text-danger" />
-                                  ) : (
-                                    <AiOutlineHeart className="fs-5" />
-                                  )}
-                                </button>
-                              </div>
-                            </div>
-                            <p className="price" style={{ color: 'red' }}>{getPriceRangeFromVariants(item)}</p>
+                          <div className="wishlist-icon ms-auto">
+                            <button
+                              className="border-0 bg-transparent"
+                              onClick={() => handleWishlistToggle(item?._id)}
+                            >
+                              {isProductInWishlist(item?._id) ? (
+                                <AiFillHeart className="fs-5 text-danger" />
+                              ) : (
+                                <AiOutlineHeart className="fs-5" />
+                              )}
+                            </button>
                           </div>
                         </div>
+                        <p className="price" style={{ color: "red" }}>{getPriceRangeFromVariants(item)}</p>
+                        <p style={{ fontSize: "13px", marginBottom: "0" }}>
+                          Còn lại: {item?.inventory?.totalQuantity ?? 0} | Đã bán: {item?.inventory?.totalQuantitySell ?? 0}
+                        </p>
                       </div>
                     </div>
-                  );
-                }
-              })}
+                  </div>
+                </div>
+              ))}
+          {/* Dòng "Xem thêm" */}
+          {productState && productState.filter((item) => item.tags === "featured").length > 8 && (
+            <div className="col-12 text-center mt-3">
+              <div
+                onClick={() => setShowMore(!showMore)} // Thay đổi trạng thái showMore khi click
+                style={{
+                  cursor: "pointer",
+                  color: "#28a745", // Màu xanh lá khi hover
+                  fontSize: "14px",
+                  backgroundColor: "#f0f0f0", // Màu nền xám cho khung
+                  padding: "8px 15px", // Khoảng cách trong khung
+                  borderRadius: "5px", // Bo góc cho khung
+                  border: "1px solid #ccc", // Đường viền xung quanh
+                  width: "180px", // Đặt chiều dài khung cố định (hoặc thay đổi theo nhu cầu)
+                  margin: "0 auto", // Canh giữa khung
+                }}
+              >
+                {showMore ? "Thu gọn" : "Xem thêm"} {/* Hiển thị "Thu gọn" nếu showMore = true */}
+              </div>
+            </div>
+          )}
         </div>
       </Container>
 
