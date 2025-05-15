@@ -92,6 +92,23 @@ const ProductCard = (props) => {
   };
   
 
+  const getUniqueColors = (product) => {
+  if (!product?.variants || product.variants.length === 0) return [];
+
+  const seen = new Set();
+  const colors = [];
+
+  product.variants.forEach(variant => {
+    const color = variant.attributes?.color;
+    if (color?.name && !seen.has(color.name)) {
+      seen.add(color.name);
+      colors.push(color);
+    }
+  });
+
+  return colors;
+};
+
   return (
     <>
       {data?.map((item, index) => {
@@ -181,6 +198,26 @@ const ProductCard = (props) => {
 
                   </div>
                   <p className="price">{getPriceRangeFromVariants(item)}</p>
+
+                  {/* Hiển thị danh sách màu nếu có */}
+                        {getUniqueColors(item).length > 0 && (
+                          <div className="d-flex justify-content-start gap-2 ">
+                            {getUniqueColors(item).map((color, idx) => (
+                              <div
+                                key={idx}
+                                title={color.name}
+                                style={{
+                                  width: "18px",
+                                  height: "18px",
+                                  borderRadius: "50%",
+                                  backgroundColor: color.name,
+                                  border: "1px solid #ccc",
+                                }}
+                              />
+                            ))}
+                          </div>
+                        )}
+
               </div>
               <div className="action-bar position-absolute">
                 <div className="d-flex flex-column gap-15">

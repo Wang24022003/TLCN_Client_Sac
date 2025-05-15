@@ -28,6 +28,11 @@ const OurStore = () => {
   const [maxPrice, setMaxPrice] = useState(null);
   const [sort, setSort] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(12); // mặc định 12 sản phẩm/trang
+
+
+
   useEffect(() => {
     let newBrands = [];
     let category = [];
@@ -118,10 +123,21 @@ const OurStore = () => {
   
   console.log("Filtered products:", filterByPriceRangeFromVariants(productState, minPrice, maxPrice));
 
+const filteredProducts = filterByPriceRangeFromVariants(productState || [], minPrice, maxPrice)
+  .slice()
+  .reverse();
+
+const indexOfLastProduct = currentPage * pageSize;
+const indexOfFirstProduct = indexOfLastProduct - pageSize;
+const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+
+const totalPages = Math.ceil(filteredProducts.length / pageSize);
+
+
   return (
     <>
-      <Meta title={"Our Store"} />
-      <BreadCrumb title="Our Store" />
+      <Meta title={"Cửa Hàng"} />
+      <BreadCrumb title="Cửa Hàng" />
       <Container class1="store-wrapper home-wrapper-2 py-5">
         <div className="row">
           <div className="col-3">
@@ -284,6 +300,7 @@ const OurStore = () => {
               </div>
             </div>
 
+
             {compareList.length > 0 && (
               <div className="compare-section mb-4 d-flex justify-content-end">
                 {/* Nút so sánh sản phẩm căn lề phải với màu xám nền và chữ đỏ nháy */}
@@ -357,10 +374,64 @@ const OurStore = () => {
 
             <div className="products-list pb-5">
               <div className="d-flex gap-10 flex-wrap">
-              <ProductCard
-                data={filterByPriceRangeFromVariants(productState || [], minPrice, maxPrice)}
-                grid={grid}
-              />
+              <ProductCard data={currentProducts} grid={grid} />
+
+              </div>
+            </div>
+            <div className="flex justify-end items-center mt-6 gap-6 flex-wrap">
+              {/* Hiển thị số lượng và vị trí sản phẩm */}
+              <div className="flex items-center gap-2 text-sm">
+                <span>Hiển thị:</span>
+                <select
+                  className="border rounded px-2 py-1"
+                  value={pageSize}
+                  onChange={(e) => {
+                    setPageSize(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                >
+                  {[6, 12, 24, 48].map((size) => (
+                    <option key={size} value={size}>
+                      {size}
+                    </option>
+                  ))}
+                </select>
+                <span>
+                  {indexOfFirstProduct + 1}-{Math.min(indexOfLastProduct, filteredProducts.length)} trong tổng số {filteredProducts.length} sản phẩm
+                </span>
+              </div>
+
+              {/* Nút phân trang với dấu < và > */}
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="px-2 py-1 border rounded text-sm hover:bg-gray-100 disabled:opacity-50"
+                >
+                  {"<"}
+                </button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
+                  <button
+                    key={number}
+                    onClick={() => setCurrentPage(number)}
+                    className={`px-3 py-1 rounded border text-sm ${
+                      currentPage === number
+                        ? "bg-blue-600 text-white"
+                        : "bg-white text-gray-700 hover:bg-gray-100"
+                    }`}
+                  >
+                    {number}
+                  </button>
+                ))}
+
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className="px-2 py-1 border rounded text-sm hover:bg-gray-100 disabled:opacity-50"
+                >
+                  {">"}
+                </button>
               </div>
             </div>
           </div>
