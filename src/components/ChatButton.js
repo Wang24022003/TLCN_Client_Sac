@@ -137,7 +137,7 @@ function ChatButton({ token, socket, user }) {
             onClick={handleChatToggle}
             style={{
               position: 'fixed',
-              bottom: '250px',
+              bottom: '90px',
               right: '25px',
               backgroundColor: 'transparent', // No background for the button
               border: 'none',
@@ -153,7 +153,7 @@ function ChatButton({ token, socket, user }) {
               <CustomerServiceOutlined
                 style={{
                   fontSize: '34px', // Adjust size to match the image size (64px)
-                  color: '#ff5a5a', // Set a color similar to the image background
+                  color: '#002E29', // Set a color similar to the image background
                   cursor: 'pointer',
                   boxShadow: 'rgba(17, 1, 9, 0.2) 0px 4px 8px 0px', // Shadow effect
                   borderRadius: '50%', // Circular shape (optional)
@@ -244,7 +244,7 @@ function ChatButton({ token, socket, user }) {
                       : message.sender &&
                         (message.sender === user._id ||
                           message.sender._id === user._id)
-                      ? '#ff5a5a'
+                      ? '#002E29'
                       : '#f0f0f0',
                     color: message.isSystem
                       ? '#777'
@@ -327,7 +327,7 @@ function ChatButton({ token, socket, user }) {
               {/* Message Input Field */}
               <input
                 type="text"
-                placeholder="Type your message..."
+                placeholder="Soạn tin nhắn..."
                 style={{
                   width: '100%',
                   padding: '10px',
@@ -345,7 +345,7 @@ function ChatButton({ token, socket, user }) {
                 type="submit"
                 style={{
                   fontSize: '24px',
-                  color: '#ff5a5a',
+                  color: '#002E29',
                   cursor: 'pointer',
                 }}
               />

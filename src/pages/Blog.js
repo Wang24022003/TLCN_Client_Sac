@@ -33,8 +33,8 @@ const Blog = () => {
 
   return (
     <>
-      <Meta title={"Blogs"} />
-      <BreadCrumb title="Blogs" />
+      <Meta title={"Bài viết"} />
+      <BreadCrumb title="Bài viết" />
       <Container class1="blog-wrapper home-wrapper-2 py-5">
         <div className="row">
           <div className="col-3">
