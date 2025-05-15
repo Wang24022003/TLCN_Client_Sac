@@ -11,7 +11,7 @@ import moment from "moment";
 import { getAllProducts, removeToWishlist } from "../features/products/productSlilce";
 import ReactStars from "react-rating-stars-component";
 import { addToWishlist } from "../features/products/productSlilce";
-import { getuserProductWishlist } from "../features/user/userSlice";
+import { getProductUserRecentView, getuserProductHistory, getuserProductWishlist } from "../features/user/userSlice";
 import {
   AiFillHeart,
   AiOutlineHeart,
@@ -24,19 +24,72 @@ import "aos/dist/aos.css";
 const Home = () => {
   const blogState = useSelector((state) => state?.blog?.blog);
   const productState = useSelector((state) => state?.product?.product);
+  const authState = useSelector((state) => state?.auth);
+  const historyState = useSelector((state) => state?.auth?.recentView);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    getblogs();
-    getProducts();
-    dispatch(getuserProductWishlist());
-     AOS.init({
-        duration: 800, // thời gian chạy hiệu ứng
-        once: true, // chỉ chạy 1 lần
-      });
-  }, []);
+useEffect(() => {
+  getblogs();
+  getProducts();
+  dispatch(getuserProductWishlist());
+  dispatch(getProductUserRecentView());
+
+  AOS.init({
+    duration: 800,
+    once: true,
+  });
+
+  let playerReady = false;
+
+  // Hàm chờ API sẵn sàng
+  window.onYouTubeIframeAPIReady = () => {
+    playerReady = true;
+  };
+
+  // Inject script YouTube API nếu chưa có
+  if (!window.YT) {
+    const tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.body.appendChild(tag);
+  }
+
+  const iframe = document.getElementById("featured-video");
+
+  if (iframe) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const isVisible = entry.isIntersecting;
+
+          // Chỉ gửi play/pause nếu player sẵn sàng
+          if (playerReady) {
+            iframe.contentWindow.postMessage(
+              JSON.stringify({
+                event: "command",
+                func: isVisible ? "playVideo" : "pauseVideo",
+                args: [],
+              }),
+              "*"
+            );
+          }
+        });
+      },
+      {
+        threshold: 0.5, // Chỉ phát khi ít nhất 50% iframe trong vùng nhìn
+      }
+    );
+
+    observer.observe(iframe);
+
+    return () => {
+      observer.disconnect();
+    };
+  }
+}, []);
+
+
   const getblogs = () => {
     dispatch(getAllBlogs());
   };
@@ -98,11 +151,48 @@ const Home = () => {
   
     const [showMore, setShowMore] = useState(false);
   
+const getUniqueColors = (product) => {
+  if (!product?.variants || product.variants.length === 0) return [];
+
+  const seen = new Set();
+  const colors = [];
+
+  product.variants.forEach(variant => {
+    const color = variant.attributes?.color;
+    if (color?.name && !seen.has(color.name)) {
+      seen.add(color.name);
+      colors.push(color);
+    }
+  });
+
+  return colors;
+};
+
+const getUniqueColorsWishlist = (product) => {
+  if (!product?.inventory?.productVariants || product.inventory.productVariants.length === 0) {
+    return [];
+  }
+
+  const seenColors = new Set();
+  const colors = [];
+
+  product.inventory.productVariants.forEach(variant => {
+    const color = variant.attributes?.color;
+    if (color && !seenColors.has(color)) {
+      seenColors.add(color);
+      colors.push(color);
+    }
+  });
+
+  return colors; // mảng các màu dưới dạng chuỗi CSS (#hex hoặc tên màu)
+};
+
 
   
   return (
     <>
-      <Container className="home-wrapper-1 py-5">
+      <Container className="home-wrapper-1 py-5" style={{ position: "relative",  overflow: "hidden"  }}>
+       
         <div
           style={{
             display: "flex",
@@ -305,27 +395,107 @@ const Home = () => {
           </div>
         </div>
       </Container>
+{/* nổi bật */}
+      <Container class1="featured-wrapper py-4 home-wrapper-x1">
+        <div style={{ position: "relative",  zIndex: 0 }}>
+          {/* Ảnh góc trên bên trái */}
+          <img
+            src="images/corner-top-left.png"
+            alt="top left decoration"
+            style={{
+              position: "absolute",
+              top: "-12px",
+              left: "-51px",
+              width: "290px",
+              height: "auto",
+              zIndex: -1,
+            }}
+          />
 
-      
-
-
-      <Container class1="featured-wrapper py-4 home-wrapper-2">
-        <div className="row">
-          <div className="col-12 d-flex justify-content-between align-items-center mb-3">
-            <h3 className="section-heading">Bộ sưu tập nổi bật</h3>
-            <span
-              onClick={() => navigate("/product")}
+          {/* Ảnh góc trên bên phải */}
+          <img
+            src="images/corner-top-rightt.png"
+            alt="top right decoration"
+            style={{
+              position: "absolute",
+              top: "-12px",
+              right: "-51px",
+              width: "290px",
+              height: "auto",
+              zIndex: -1,
+            }}
+          />
+          {/* Ảnh góc dưới bên trái */}
+            <img
+              src="images/bottom-left.png"
+              alt="bottom left decoration"
               style={{
-                cursor: "pointer",
-                color: "#6c757d", // Màu xám mặc định (gray)
-                fontSize: "14px", // Cỡ chữ nhỏ
+                position: "absolute",
+                bottom: "-25px",
+                left: "-54px",
+                width: "540px",
+                height: "auto",
+                zIndex: -1,
+                opacity: 0.3,
               }}
-              onMouseEnter={(e) => (e.target.style.color = "#28a745")} // Đổi màu xanh lá khi hover
-              onMouseLeave={(e) => (e.target.style.color = "#6c757d")} // Đổi lại màu xám khi rời chuột
-            >
-              Xem tất cả
-            </span>
+            />
+
+            {/* Ảnh góc dưới bên phải */}
+            <img
+              src="images/bottom-right.png"
+              alt="bottom right decoration"
+              style={{
+                position: "absolute",
+                bottom: "-16px",
+                right: "-50px",
+                width: "400px",
+                height: "auto",
+                zIndex: -1,
+                opacity: 0.3,
+              }}
+          />
+
+          {/* Nội dung chính */}
+          <div className="row">
+          <div className="col-12 mb-3">
+            <div className="d-flex justify-content-center align-items-center">
+              {/* Ảnh bên trái */}
+              <img
+                src="images/Right.png"
+                alt="left decoration"
+                style={{ width: "130px", height: "60px", objectFit: "contain" }}
+              />
+
+              {/* Tiêu đề ở giữa */}
+              <h3 className="section-heading text-center mb-0" style={{ color: "#fff" }}>
+                Bộ sưu tập nổi bật
+              </h3>
+
+              {/* Ảnh bên phải */}
+              <img
+                src="images/Left.png"
+                alt="right decoration"
+                style={{ width: "130px", height: "60px", objectFit: "contain" }}
+              />
+            </div>
+
+            {/* Xem tất cả: để dưới nếu vẫn muốn dùng */}
+            <div className="text-center mt-2">
+              <span
+                onClick={() => navigate("/product")}
+                style={{
+                  cursor: "pointer",
+                  color: "#d1d1d1",
+                  fontSize: "14px",
+                }}
+                onMouseEnter={(e) => (e.target.style.color = "#28a745")}
+                onMouseLeave={(e) => (e.target.style.color = "#d1d1d1")}
+              >
+                Xem tất cả
+              </span>
+            </div>
           </div>
+
           {productState &&
             [...productState] // Tạo bản sao của mảng để không thay đổi trạng thái ban đầu
               .reverse() // Đảo ngược thứ tự mảng
@@ -371,10 +541,15 @@ const Home = () => {
                         }}
                       />
                     </div>
-                    <div className="product-details" style={{ padding: "15px" }}>
+                    <div className="product-details" style={{ padding: "15px", color: "#fff", textShadow: "0 1px 2px rgba(0, 0, 0, 0.6)", }}>
                       {/* Name và Brand luôn hiển thị */}
-                      <h6 className="brand">{item?.brand}</h6>
-                      <h5 className="product-title">
+                      <div className="d-flex justify-content-between align-items-center">
+                        <h8 className="brand">{item?.brand}</h8>
+                        <p style={{ fontSize: "13px", marginBottom: "0", color: "#fff" }}>
+                          Đã bán: {item?.inventory?.totalQuantitySell ?? 0}
+                        </p>
+                      </div>
+                      <h5 className="product-title" style={{ color: "#fff", textShadow: "0 1px 2px rgba(0, 0, 0, 0.6)", }}>
                         {item?.name?.length > 35 ? item.name.substr(0, 35) + "..." : item?.name}
                       </h5>
                       {/* 3 phần còn lại chỉ hiển thị khi hover */}
@@ -393,8 +568,10 @@ const Home = () => {
                             value={+item?.rating?.toString()}
                             isHalf={true}
                             edit={false}
+                            color="#ccc"
                             activeColor="#ffd700"
                           />
+                          
                           <div className="wishlist-icon ms-auto">
                             <button
                               className="border-0 bg-transparent"
@@ -408,37 +585,376 @@ const Home = () => {
                             </button>
                           </div>
                         </div>
-                        <p className="price" style={{ color: "red" }}>{getPriceRangeFromVariants(item)}</p>
-                        <p style={{ fontSize: "13px", marginBottom: "0" }}>
-                          Còn lại: {item?.inventory?.totalQuantity ?? 0} | Đã bán: {item?.inventory?.totalQuantitySell ?? 0}
+                        <p
+                          className="price"
+                          style={{
+                            color: "#F90004FF",            // Màu đỏ tươi hơn
+                            fontWeight: "bold",          // Chữ đậm
+                            fontSize: "18px",            // Lớn hơn mặc định
+                            display: "inline-block",     // Giữ khối gọn
+                          }}
+                        >
+                          {getPriceRangeFromVariants(item)}
                         </p>
+                        {/* Hiển thị danh sách màu nếu có */}
+                        {getUniqueColors(item).length > 0 && (
+                          <div className="d-flex justify-content-start gap-2 ">
+                            {getUniqueColors(item).map((color, idx) => (
+                              <div
+                                key={idx}
+                                title={color.name}
+                                style={{
+                                  width: "18px",
+                                  height: "18px",
+                                  borderRadius: "50%",
+                                  backgroundColor: color.name,
+                                  border: "1px solid #ccc",
+                                }}
+                              />
+                            ))}
+                          </div>
+                        )}
+                        
                       </div>
                     </div>
                   </div>
                 </div>
               ))}
           {/* Dòng "Xem thêm" */}
-          {productState && productState.filter((item) => item.tags === "featured").length > 8 && (
+          
+        {productState && productState.filter((item) => item.tags === "featured").length > 8 && (
+        <div className="col-12 text-center mt-3">
+          <div
+            onClick={() => setShowMore(!showMore)}
+            className="fancy-toggle-btn"
+          >
             <div className="col-12 text-center mt-3">
-              <div
-                onClick={() => setShowMore(!showMore)} // Thay đổi trạng thái showMore khi click
+              <button onClick={() => setShowMore(!showMore)} className="gold-toggle-btn">
+                <div className="btn-inner d-flex align-items-center justify-content-center position-relative">
+                  <img src="images/icon-left.png" alt="left" className="btn-icon icon-left" />
+                  <span className="btn-text">{showMore ? "Thu gọn" : "Xem thêm"}</span>
+                  <img src="images/icon-right.png" alt="right" className="btn-icon icon-right" />
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+
+        </div>
+        </div>
+     
+      </Container>
+{/* áo dài */}
+      <Container class1="featured-wrapper py-4 home-wrapper-y ">
+        <div style={{ position: "relative",  zIndex: 0 }}>
+          {/* Ảnh góc trên bên trái */}
+          <img
+            src="images/corner-top-left.png"
+            alt="top left decoration"
+            style={{
+              position: "absolute",
+              top: "-12px",
+              left: "-51px",
+              width: "290px",
+              height: "auto",
+              zIndex: -1,
+            }}
+          />
+
+          {/* Ảnh góc trên bên phải */}
+          <img
+            src="images/corner-top-rightt.png"
+            alt="top right decoration"
+            style={{
+              position: "absolute",
+              top: "-12px",
+              right: "-51px",
+              width: "290px",
+              height: "auto",
+              zIndex: -1,
+            }}
+          />
+          {/* Ảnh góc dưới bên trái */}
+            <img
+              src="images/bottom-left.png"
+              alt="bottom left decoration"
+              style={{
+                position: "absolute",
+                bottom: "0px",
+                left: "-54px",
+                width: "540px",
+                height: "auto",
+                zIndex: -1,
+                opacity: 0.3,
+              }}
+            />
+
+            {/* Ảnh góc dưới bên phải */}
+            <img
+              src="images/bottom-right.png"
+              alt="bottom right decoration"
+              style={{
+                position: "absolute",
+                bottom: "-16px",
+                right: "-50px",
+                width: "400px",
+                height: "auto",
+                zIndex: -1,
+                opacity: 0.3,
+              }}
+          />
+
+          {/* Nội dung chính */}
+          <div className="row align-items-start">
+          <div className="col-12 mb-3">
+            <div className="d-flex justify-content-center align-items-center">
+              {/* Ảnh bên trái */}
+              <img
+                src="images/Right.png"
+                alt="left decoration"
+                style={{ width: "130px", height: "60px", objectFit: "contain" }}
+              />
+
+              {/* Tiêu đề ở giữa */}
+              <h3 className="section-heading text-center mb-0" style={{ color: "#FFFFFFFF" }}>
+                Bộ sưu tập áo dài 
+              </h3>
+
+              {/* Ảnh bên phải */}
+              <img
+                src="images/Left.png"
+                alt="right decoration"
+                style={{ width: "130px", height: "60px", objectFit: "contain" }}
+              />
+            </div>
+
+            {/* Xem tất cả: để dưới nếu vẫn muốn dùng */}
+            <div className="text-center mt-2">
+              <span
+                onClick={() => navigate("/product")}
                 style={{
                   cursor: "pointer",
-                  color: "#28a745", // Màu xanh lá khi hover
+                  color: "#d1d1d1",
                   fontSize: "14px",
-                  backgroundColor: "#f0f0f0", // Màu nền xám cho khung
-                  padding: "8px 15px", // Khoảng cách trong khung
-                  borderRadius: "5px", // Bo góc cho khung
-                  border: "1px solid #ccc", // Đường viền xung quanh
-                  width: "180px", // Đặt chiều dài khung cố định (hoặc thay đổi theo nhu cầu)
-                  margin: "0 auto", // Canh giữa khung
+                }}
+                onMouseEnter={(e) => (e.target.style.color = "#28a745")}
+                onMouseLeave={(e) => (e.target.style.color = "#d1d1d1")}
+              >
+                Xem tất cả
+              </span>
+            </div>
+          </div>
+          <div className="col-md-6 mb-4" data-aos="fade-right">
+
+            <div style={{ position: "relative", overflow: "visible" }}>
+              <div
+                style={{
+                  position: "relative",
+                  paddingBottom: "56.25%",
+                  height: 0,
+                  overflow: "hidden",
+                  borderRadius: "10px",
                 }}
               >
-                {showMore ? "Thu gọn" : "Xem thêm"} {/* Hiển thị "Thu gọn" nếu showMore = true */}
+                <iframe
+                  id="featured-video"
+                  src="https://www.youtube.com/embed/0GGvA32Kzhw?enablejsapi=1"
+                  title="YouTube video"
+                  allow="autoplay; encrypted-media"
+                  allowFullScreen
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    border: "none",
+                    borderRadius: "10px",
+                  }}
+                ></iframe>
+              </div>
+
+              {/* Ảnh đè lên video và tràn ra ngoài một phần */}
+              <img
+                src="images/aodai1.png"
+                alt="Decor Overlay"
+                style={{
+                  position: "absolute",
+                  bottom: "-157px", 
+                  left: "-106px",   
+                  width: "250px",
+                  height: "auto",
+                  zIndex: 3,
+                }}
+              />
+              <img
+                src="images/aodai2.png" 
+                alt="Decor Bottom Right"
+                style={{
+                  position: "absolute",
+                  bottom: "-150px", 
+                  right: "-10px",  
+                  width: "450px",
+                  height: "auto",
+                  zIndex: 3,
+                }}
+              />
+            </div>
+
+          </div>
+
+
+          <div className="col-md-6">
+          <div className="row">
+            {productState &&
+            [...productState] // Tạo bản sao của mảng để không thay đổi trạng thái ban đầu
+              .reverse() // Đảo ngược thứ tự mảng
+              .filter((item) =>  item.category?._id === "681f0085fd79f6db173a2173") // Lọc chỉ những sản phẩm có tag "featured"
+              .slice(0, showMore ? productState.length : 2) // Hiển thị tất cả khi showMore = true, hoặc 8 sản phẩm đầu tiên
+              .map((item, index) => (
+                <div
+                  key={index}
+                  className="col-6 my-2"
+                  data-aos="fade-up"
+                  data-aos-delay={index * 100}
+                  onMouseEnter={() => setHoveredProduct(index)} // Khi hover, lưu chỉ số sản phẩm
+                  onMouseLeave={() => setHoveredProduct(null)} // Khi rời chuột, reset trạng thái
+                >
+                  <div className="product-card position-relative" style={{ cursor: "pointer" }}>
+                    <div
+                      className="product-image"
+                      style={{
+                        position: "relative",
+                        width: "100%",
+                        height: "0",
+                        paddingBottom: "150%",
+                      }}
+                    >
+                      <img
+                        src={
+                          hoveredProduct === index && item?.images?.[1]
+                            ? item?.images[1] // Hiển thị ảnh thứ 2 khi hover
+                            : item?.images?.[0] || "/default-image.png" // Dùng ảnh mặc định nếu không có ảnh
+                        }
+                        alt="product image"
+                        height={"250px"}
+                        width={"260px"}
+                        onClick={() => navigate("/product/" + item?._id)}
+                        style={{
+                          objectFit: "cover",
+                          display: "block",
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          width: "100%",
+                          height: "100%",
+                        }}
+                      />
+                    </div>
+                    <div className="product-details" style={{ padding: "15px", }}>
+                      {/* Name và Brand luôn hiển thị */}
+                      <div className="d-flex justify-content-between align-items-center">
+                        <h8 className="brand">{item?.brand}</h8>
+                        <p style={{ fontSize: "13px", marginBottom: "0"}}>
+                          Đã bán: {item?.inventory?.totalQuantitySell ?? 0}
+                        </p>
+                      </div>
+                      <h5 className="product-title" style={{ color: "#020202",}}>
+                        {item?.name?.length > 35 ? item.name.substr(0, 35) + "..." : item?.name}
+                      </h5>
+                      {/* 3 phần còn lại chỉ hiển thị khi hover */}
+                      <div
+                        className={`hover-details ${hoveredProduct === index ? "hovered" : ""}`}
+                        style={{
+                          opacity: hoveredProduct === index ? 1 : 0,
+                          visibility: hoveredProduct === index ? "visible" : "hidden",
+                          transition: "opacity 0.3s ease, visibility 0.3s ease",
+                        }}
+                      >
+                        <div className="d-flex align-items-center">
+                          <ReactStars
+                            count={+5}
+                            size={24}
+                            value={+item?.rating?.toString()}
+                            isHalf={true}
+                            edit={false}
+                            color="#ccc"
+                            activeColor="#ffd700"
+                          />
+                          
+                          <div className="wishlist-icon ms-auto">
+                            <button
+                              className="border-0 bg-transparent"
+                              onClick={() => handleWishlistToggle(item?._id)}
+                            >
+                              {isProductInWishlist(item?._id) ? (
+                                <AiFillHeart className="fs-5 text-danger" />
+                              ) : (
+                                <AiOutlineHeart className="fs-5" />
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                        <p
+                          className="price"
+                          style={{
+                            color: "#F90004FF",            // Màu đỏ tươi hơn
+                            fontWeight: "bold",          // Chữ đậm
+                            fontSize: "18px",            // Lớn hơn mặc định
+                            display: "inline-block",     // Giữ khối gọn
+                          }}
+                        >
+                          {getPriceRangeFromVariants(item)}
+                        </p>
+                        {/* Hiển thị danh sách màu nếu có */}
+                        {getUniqueColors(item).length > 0 && (
+                          <div className="d-flex justify-content-start gap-2 ">
+                            {getUniqueColors(item).map((color, idx) => (
+                              <div
+                                key={idx}
+                                title={color.name}
+                                style={{
+                                  width: "18px",
+                                  height: "18px",
+                                  borderRadius: "50%",
+                                  backgroundColor: color.name,
+                                  border: "1px solid #ccc",
+                                }}
+                              />
+                            ))}
+                          </div>
+                        )}
+                        
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+         {/* Dòng "Xem thêm" */}
+           {productState && productState.filter((item) => item.category?._id === "681f0085fd79f6db173a2173").length > 2 && (
+            <div className="col-12 text-center mt-3">
+              <div
+                onClick={() => setShowMore(!showMore)}
+                className="fancy-toggle-btn"
+              >
+                <div className="col-12 text-center mt-3">
+                  <button onClick={() => setShowMore(!showMore)} className="gold-toggle-btn">
+                    <div className="btn-inner d-flex align-items-center justify-content-center position-relative">
+                      <img src="images/icon-left.png" alt="left" className="btn-icon icon-left" />
+                      <span className="btn-text">{showMore ? "Thu gọn" : "Xem thêm"}</span>
+                      <img src="images/icon-right.png" alt="right" className="btn-icon icon-right" />
+                    </div>
+                  </button>
+                </div>
               </div>
             </div>
-          )}
+          )}  
+          </div>
         </div>
+      </div>
       </Container>
 
       <Container class1="famous-wrapper py-3 home-wrapper-2">
@@ -565,63 +1081,356 @@ const Home = () => {
         </div>
       </Container>
       
-      <Container class1="special-wrapper py-4 home-wrapper-2">
-        <div className="row">
-        <div className="col-12 d-flex justify-content-between align-items-center mb-3">
-            <h3 className="section-heading">Bộ sưu tập đặc biệt</h3>
-            <span
-              onClick={() => navigate("/product")}
+{/* đặc biệt */}
+      <Container class1="featured-wrapper py-4 home-wrapper-2x">
+        <div style={{ position: "relative",  zIndex: 0 }}>
+          {/* Ảnh góc trên bên trái */}
+          <img
+            src="images/corner-top-left.png"
+            alt="top left decoration"
+            style={{
+              position: "absolute",
+              top: "-12px",
+              left: "-51px",
+              width: "290px",
+              height: "auto",
+              zIndex: -1,
+            }}
+          />
+
+          {/* Ảnh góc trên bên phải */}
+          <img
+            src="images/corner-top-rightt.png"
+            alt="top right decoration"
+            style={{
+              position: "absolute",
+              top: "-12px",
+              right: "-51px",
+              width: "290px",
+              height: "auto",
+              zIndex: -1,
+            }}
+          />
+          {/* Ảnh góc dưới bên trái */}
+            <img
+              src="images/bottom-left.png"
+              alt="bottom left decoration"
               style={{
-                cursor: "pointer",
-                color: "#6c757d", // Màu xám mặc định (gray)
-                fontSize: "14px", // Cỡ chữ nhỏ
+                position: "absolute",
+                bottom: "0px",
+                left: "-54px",
+                width: "540px",
+                height: "auto",
+                zIndex: -1,
+                opacity: 0.3,
               }}
-              onMouseEnter={(e) => (e.target.style.color = "#28a745")} // Đổi màu xanh lá khi hover
-              onMouseLeave={(e) => (e.target.style.color = "#6c757d")} // Đổi lại màu xám khi rời chuột
-            >
-              Xem tất cả
-            </span>
+            />
+
+            {/* Ảnh góc dưới bên phải */}
+            <img
+              src="images/bottom-right.png"
+              alt="bottom right decoration"
+              style={{
+                position: "absolute",
+                bottom: "-16px",
+                right: "-50px",
+                width: "400px",
+                height: "auto",
+                zIndex: -1,
+                opacity: 0.3,
+              }}
+          />
+
+          {/* Nội dung chính */}
+          <div className="row">
+          <div className="col-12 mb-3">
+            <div className="d-flex justify-content-center align-items-center">
+              {/* Ảnh bên trái */}
+              <img
+                src="images/Right.png"
+                alt="left decoration"
+                style={{ width: "130px", height: "60px", objectFit: "contain" }}
+              />
+
+              {/* Tiêu đề ở giữa */}
+              <h3 className="section-heading text-center mb-0" style={{ color: "#000000" }}>
+                Bộ sưu tập đặc biệt 
+              </h3>
+
+              {/* Ảnh bên phải */}
+              <img
+                src="images/Left.png"
+                alt="right decoration"
+                style={{ width: "130px", height: "60px", objectFit: "contain" }}
+              />
+            </div>
+
+            {/* Xem tất cả: để dưới nếu vẫn muốn dùng */}
+            <div className="text-center mt-2">
+              <span
+                onClick={() => navigate("/product")}
+                style={{
+                  cursor: "pointer",
+                  color: "#d1d1d1",
+                  fontSize: "14px",
+                }}
+                onMouseEnter={(e) => (e.target.style.color = "#28a745")}
+                onMouseLeave={(e) => (e.target.style.color = "#d1d1d1")}
+              >
+                Xem tất cả
+              </span>
+            </div>
           </div>
-        </div>
-        <div className="row">
+
           {productState &&
-            productState?.map((item, index) => {
-              if (item.tags === "special") {
-                return (
-                  <SpecialProduct
-                    key={index}
-                    id={item?._id}
-                    title={item?.name}
-                    brand={item?.brand}
-                    totalrating={item?.rating.toString()}
-                    price={getPriceRangeFromVariants(item)}
-                    img={item?.images[0]}
-                    sold={item?.inventory?.totalQuantitySell || 0}
-                    quantity={item?.inventory?.totalQuantity || 0}
-                  />
-                );
-              }
-            })}
+            [...productState] // Tạo bản sao của mảng để không thay đổi trạng thái ban đầu
+              .reverse() // Đảo ngược thứ tự mảng
+              .filter((item) => item.tags === "special") // Lọc chỉ những sản phẩm có tag "featured"
+              .slice(0, showMore ? productState.length : 4) // Hiển thị tất cả khi showMore = true, hoặc 8 sản phẩm đầu tiên
+              .map((item, index) => (
+                <div
+                  key={index}
+                  className="col-3 my-2"
+                  data-aos="fade-up"
+                  data-aos-delay={index * 100}
+                  onMouseEnter={() => setHoveredProduct(index)} // Khi hover, lưu chỉ số sản phẩm
+                  onMouseLeave={() => setHoveredProduct(null)} // Khi rời chuột, reset trạng thái
+                >
+                  <div className="product-card position-relative" style={{ cursor: "pointer" }}>
+                    <div
+                      className="product-image"
+                      style={{
+                        position: "relative",
+                        width: "100%",
+                        height: "0",
+                        paddingBottom: "150%",
+                      }}
+                    >
+                      <img
+                        src={
+                          hoveredProduct === index && item?.images?.[1]
+                            ? item?.images[1] // Hiển thị ảnh thứ 2 khi hover
+                            : item?.images?.[0] || "/default-image.png" // Dùng ảnh mặc định nếu không có ảnh
+                        }
+                        alt="product image"
+                        height={"250px"}
+                        width={"260px"}
+                        onClick={() => navigate("/product/" + item?._id)}
+                        style={{
+                          objectFit: "cover",
+                          display: "block",
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          width: "100%",
+                          height: "100%",
+                        }}
+                      />
+                    </div>
+                    <div className="product-details" style={{ padding: "15px", color: "#000000",  }}>
+                      {/* Name và Brand luôn hiển thị */}
+                      <div className="d-flex justify-content-between align-items-center">
+                        <h8 className="brand">{item?.brand}</h8>
+                        <p style={{ fontSize: "13px", marginBottom: "0", color: "#000000" }}>
+                          Đã bán: {item?.inventory?.totalQuantitySell ?? 0}
+                        </p>
+                      </div>
+                      <h5 className="product-title" style={{ color: "#020202",}}>
+                        {item?.name?.length > 35 ? item.name.substr(0, 35) + "..." : item?.name}
+                      </h5>
+                      {/* 3 phần còn lại chỉ hiển thị khi hover */}
+                      <div
+                        className={`hover-details ${hoveredProduct === index ? "hovered" : ""}`}
+                        style={{
+                          opacity: hoveredProduct === index ? 1 : 0,
+                          visibility: hoveredProduct === index ? "visible" : "hidden",
+                          transition: "opacity 0.3s ease, visibility 0.3s ease",
+                        }}
+                      >
+                        <div className="d-flex align-items-center">
+                          <ReactStars
+                            count={+5}
+                            size={24}
+                            value={+item?.rating?.toString()}
+                            isHalf={true}
+                            edit={false}
+                            color="#ccc"
+                            activeColor="#ffd700"
+                          />
+                          
+                          <div className="wishlist-icon ms-auto">
+                            <button
+                              className="border-0 bg-transparent"
+                              onClick={() => handleWishlistToggle(item?._id)}
+                            >
+                              {isProductInWishlist(item?._id) ? (
+                                <AiFillHeart className="fs-5 text-danger" />
+                              ) : (
+                                <AiOutlineHeart className="fs-5" />
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                        <p
+                          className="price"
+                          style={{
+                            color: "#F90004FF",            // Màu đỏ tươi hơn
+                            fontWeight: "bold",          // Chữ đậm
+                            fontSize: "18px",            // Lớn hơn mặc định
+                            display: "inline-block",     // Giữ khối gọn
+                          }}
+                        >
+                          {getPriceRangeFromVariants(item)}
+                        </p>
+                        {/* Hiển thị danh sách màu nếu có */}
+                        {getUniqueColors(item).length > 0 && (
+                          <div className="d-flex justify-content-start gap-2 ">
+                            {getUniqueColors(item).map((color, idx) => (
+                              <div
+                                key={idx}
+                                title={color.name}
+                                style={{
+                                  width: "18px",
+                                  height: "18px",
+                                  borderRadius: "50%",
+                                  backgroundColor: color.name,
+                                  border: "1px solid #ccc",
+                                }}
+                              />
+                            ))}
+                          </div>
+                        )}
+                        
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+          {/* Dòng "Xem thêm" */}
+          {productState && productState.filter((item) => item.tags === "special").length > 4 && (
+            <div className="col-12 text-center mt-3">
+              <div
+                onClick={() => setShowMore(!showMore)}
+                className="fancy-toggle-btn"
+              >
+                <div className="col-12 text-center mt-3">
+                  <button onClick={() => setShowMore(!showMore)} className="gold-toggle-btn">
+                    <div className="btn-inner d-flex align-items-center justify-content-center position-relative">
+                      <img src="images/icon-left.png" alt="left" className="btn-icon icon-left" />
+                      <span className="btn-text">{showMore ? "Thu gọn" : "Xem thêm"}</span>
+                      <img src="images/icon-right.png" alt="right" className="btn-icon icon-right" />
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}  
+        
+        </div>
         </div>
       </Container>
 
-      <Container class1="featured-wrapper py-4 home-wrapper-2">
-        <div className="row">
-          <div className="col-12 d-flex justify-content-between align-items-center mb-3">
-            <h3 className="section-heading">Bộ sưu tập phổ biến</h3>
-            <span
-              onClick={() => navigate("/product")}
+{/* phổ biến */}
+      <Container class1="featured-wrapper py-4 home-wrapper-z">
+        <div style={{ position: "relative",  zIndex: 0 }}>
+          {/* Ảnh góc trên bên trái */}
+          <img
+            src="images/corner-top-left.png"
+            alt="top left decoration"
+            style={{
+              position: "absolute",
+              top: "-12px",
+              left: "-51px",
+              width: "290px",
+              height: "auto",
+              zIndex: -1,
+            }}
+          />
+
+          {/* Ảnh góc trên bên phải */}
+          <img
+            src="images/corner-top-rightt.png"
+            alt="top right decoration"
+            style={{
+              position: "absolute",
+              top: "-12px",
+              right: "-51px",
+              width: "290px",
+              height: "auto",
+              zIndex: -1,
+            }}
+          />
+          {/* Ảnh góc dưới bên trái */}
+            <img
+              src="images/bottom-left.png"
+              alt="bottom left decoration"
               style={{
-                cursor: "pointer",
-                color: "#6c757d", // Màu xám mặc định (gray)
-                fontSize: "14px", // Cỡ chữ nhỏ
+                position: "absolute",
+                bottom: "0px",
+                left: "-54px",
+                width: "540px",
+                height: "auto",
+                zIndex: -1,
+                opacity: 0.3,
               }}
-              onMouseEnter={(e) => (e.target.style.color = "#28a745")} // Đổi màu xanh lá khi hover
-              onMouseLeave={(e) => (e.target.style.color = "#6c757d")} // Đổi lại màu xám khi rời chuột
-            >
-              Xem tất cả
-            </span>
+            />
+
+            {/* Ảnh góc dưới bên phải */}
+            <img
+              src="images/bottom-right.png"
+              alt="bottom right decoration"
+              style={{
+                position: "absolute",
+                bottom: "-16px",
+                right: "-50px",
+                width: "400px",
+                height: "auto",
+                zIndex: -1,
+                opacity: 0.3,
+              }}
+          />
+
+          {/* Nội dung chính */}
+          <div className="row">
+          <div className="col-12 mb-3">
+            <div className="d-flex justify-content-center align-items-center">
+              {/* Ảnh bên trái */}
+              <img
+                src="images/Right.png"
+                alt="left decoration"
+                style={{ width: "130px", height: "60px", objectFit: "contain" }}
+              />
+
+              {/* Tiêu đề ở giữa */}
+              <h3 className="section-heading text-center mb-0" style={{ color: "#fff" }}>
+                Bộ sưu tập phổ biến
+              </h3>
+
+              {/* Ảnh bên phải */}
+              <img
+                src="images/Left.png"
+                alt="right decoration"
+                style={{ width: "130px", height: "60px", objectFit: "contain" }}
+              />
+            </div>
+
+            {/* Xem tất cả: để dưới nếu vẫn muốn dùng */}
+            <div className="text-center mt-2">
+              <span
+                onClick={() => navigate("/product")}
+                style={{
+                  cursor: "pointer",
+                  color: "#d1d1d1",
+                  fontSize: "14px",
+                }}
+                onMouseEnter={(e) => (e.target.style.color = "#28a745")}
+                onMouseLeave={(e) => (e.target.style.color = "#d1d1d1")}
+              >
+                Xem tất cả
+              </span>
+            </div>
           </div>
+
           {productState &&
             [...productState] // Tạo bản sao của mảng để không thay đổi trạng thái ban đầu
               .reverse() // Đảo ngược thứ tự mảng
@@ -667,10 +1476,15 @@ const Home = () => {
                         }}
                       />
                     </div>
-                    <div className="product-details" style={{ padding: "15px" }}>
+                    <div className="product-details" style={{ padding: "15px", color: "#fff", textShadow: "0 1px 2px rgba(0, 0, 0, 0.6)", }}>
                       {/* Name và Brand luôn hiển thị */}
-                      <h6 className="brand">{item?.brand}</h6>
-                      <h5 className="product-title">
+                      <div className="d-flex justify-content-between align-items-center">
+                        <h8 className="brand">{item?.brand}</h8>
+                        <p style={{ fontSize: "13px", marginBottom: "0", color: "#fff" }}>
+                          Đã bán: {item?.inventory?.totalQuantitySell ?? 0}
+                        </p>
+                      </div>
+                      <h5 className="product-title" style={{ color: "#fff", textShadow: "0 1px 2px rgba(0, 0, 0, 0.6)", }}>
                         {item?.name?.length > 35 ? item.name.substr(0, 35) + "..." : item?.name}
                       </h5>
                       {/* 3 phần còn lại chỉ hiển thị khi hover */}
@@ -689,8 +1503,10 @@ const Home = () => {
                             value={+item?.rating?.toString()}
                             isHalf={true}
                             edit={false}
+                            color="#ccc"
                             activeColor="#ffd700"
                           />
+                          
                           <div className="wishlist-icon ms-auto">
                             <button
                               className="border-0 bg-transparent"
@@ -704,44 +1520,689 @@ const Home = () => {
                             </button>
                           </div>
                         </div>
-                        <p className="price" style={{ color: "red" }}>{getPriceRangeFromVariants(item)}</p>
-                        <p style={{ fontSize: "13px", marginBottom: "0" }}>
-                          Còn lại: {item?.inventory?.totalQuantity ?? 0} | Đã bán: {item?.inventory?.totalQuantitySell ?? 0}
+                        <p
+                          className="price"
+                          style={{
+                            color: "#F90004FF",            // Màu đỏ tươi hơn
+                            fontWeight: "bold",          // Chữ đậm
+                            fontSize: "18px",            // Lớn hơn mặc định
+                            display: "inline-block",     // Giữ khối gọn
+                          }}
+                        >
+                          {getPriceRangeFromVariants(item)}
                         </p>
+                        {/* Hiển thị danh sách màu nếu có */}
+                        {getUniqueColors(item).length > 0 && (
+                          <div className="d-flex justify-content-start gap-2 ">
+                            {getUniqueColors(item).map((color, idx) => (
+                              <div
+                                key={idx}
+                                title={color.name}
+                                style={{
+                                  width: "18px",
+                                  height: "18px",
+                                  borderRadius: "50%",
+                                  backgroundColor: color.name,
+                                  border: "1px solid #ccc",
+                                }}
+                              />
+                            ))}
+                          </div>
+                        )}
+                        
                       </div>
                     </div>
                   </div>
                 </div>
               ))}
           {/* Dòng "Xem thêm" */}
-          {productState && productState.filter((item) => item.tags === "featured").length > 8 && (
+          
+        {productState && productState.filter((item) => item.tags === "popular").length > 8 && (
+        <div className="col-12 text-center mt-3">
+          <div
+            onClick={() => setShowMore(!showMore)}
+            className="fancy-toggle-btn"
+          >
             <div className="col-12 text-center mt-3">
-              <div
-                onClick={() => setShowMore(!showMore)} // Thay đổi trạng thái showMore khi click
-                style={{
-                  cursor: "pointer",
-                  color: "#28a745", // Màu xanh lá khi hover
-                  fontSize: "14px",
-                  backgroundColor: "#f0f0f0", // Màu nền xám cho khung
-                  padding: "8px 15px", // Khoảng cách trong khung
-                  borderRadius: "5px", // Bo góc cho khung
-                  border: "1px solid #ccc", // Đường viền xung quanh
-                  width: "180px", // Đặt chiều dài khung cố định (hoặc thay đổi theo nhu cầu)
-                  margin: "0 auto", // Canh giữa khung
-                }}
-              >
-                {showMore ? "Thu gọn" : "Xem thêm"} {/* Hiển thị "Thu gọn" nếu showMore = true */}
-              </div>
+              <button onClick={() => setShowMore(!showMore)} className="gold-toggle-btn">
+                <div className="btn-inner d-flex align-items-center justify-content-center position-relative">
+                  <img src="images/icon-left.png" alt="left" className="btn-icon icon-left" />
+                  <span className="btn-text">{showMore ? "Thu gọn" : "Xem thêm"}</span>
+                  <img src="images/icon-right.png" alt="right" className="btn-icon icon-right" />
+                </div>
+              </button>
             </div>
-          )}
+          </div>
+        </div>
+      )}
+
+
+        </div>
         </div>
       </Container>
+
+{/* áo nhật bình */}
+      <Container class1="featured-wrapper py-4 home-wrapper-y2 ">
+        <div style={{ position: "relative",  zIndex: 0 }}>
+          {/* Ảnh góc trên bên trái */}
+          <img
+            src="images/corner-top-left.png"
+            alt="top left decoration"
+            style={{
+              position: "absolute",
+              top: "-12px",
+              left: "-51px",
+              width: "290px",
+              height: "auto",
+              zIndex: -1,
+            }}
+          />
+
+          {/* Ảnh góc trên bên phải */}
+          <img
+            src="images/corner-top-rightt.png"
+            alt="top right decoration"
+            style={{
+              position: "absolute",
+              top: "-12px",
+              right: "-51px",
+              width: "290px",
+              height: "auto",
+              zIndex: -1,
+            }}
+          />
+          {/* Ảnh góc dưới bên trái */}
+            <img
+              src="images/bottom-left.png"
+              alt="bottom left decoration"
+              style={{
+                position: "absolute",
+                bottom: "0px",
+                left: "-54px",
+                width: "540px",
+                height: "auto",
+                zIndex: -1,
+                opacity: 0.3,
+              }}
+            />
+
+            {/* Ảnh góc dưới bên phải */}
+            <img
+              src="images/bottom-right.png"
+              alt="bottom right decoration"
+              style={{
+                position: "absolute",
+                bottom: "-16px",
+                right: "-50px",
+                width: "400px",
+                height: "auto",
+                zIndex: -1,
+                opacity: 0.3,
+              }}
+          />
+
+          {/* Nội dung chính */}
+          <div className="row align-items-start">
+          <div className="col-12 mb-3">
+            <div className="d-flex justify-content-center align-items-center">
+              {/* Ảnh bên trái */}
+              <img
+                src="images/Right.png"
+                alt="left decoration"
+                style={{ width: "130px", height: "60px", objectFit: "contain" }}
+              />
+
+              {/* Tiêu đề ở giữa */}
+              <h3 className="section-heading text-center mb-0" style={{ color: "#FFFFFFFF" }}>
+                Bộ sưu tập áo nhật bình 
+              </h3>
+
+              {/* Ảnh bên phải */}
+              <img
+                src="images/Left.png"
+                alt="right decoration"
+                style={{ width: "130px", height: "60px", objectFit: "contain" }}
+              />
+            </div>
+
+            {/* Xem tất cả: để dưới nếu vẫn muốn dùng */}
+            <div className="text-center mt-2">
+              <span
+                onClick={() => navigate("/product")}
+                style={{
+                  cursor: "pointer",
+                  color: "#d1d1d1",
+                  fontSize: "14px",
+                }}
+                onMouseEnter={(e) => (e.target.style.color = "#28a745")}
+                onMouseLeave={(e) => (e.target.style.color = "#d1d1d1")}
+              >
+                Xem tất cả
+              </span>
+            </div>
+          </div>
+
+
+
+          <div className="col-md-6 mb-4">
+          <div className="row">
+            {productState &&
+            [...productState] // Tạo bản sao của mảng để không thay đổi trạng thái ban đầu
+              .reverse() // Đảo ngược thứ tự mảng
+              .filter((item) =>  item.category?._id === "681f0071fd79f6db173a216b") // Lọc chỉ những sản phẩm có tag "featured"
+              .slice(0, showMore ? productState.length : 2) // Hiển thị tất cả khi showMore = true, hoặc 8 sản phẩm đầu tiên
+              .map((item, index) => (
+                <div
+                  key={index}
+                  className="col-6 my-2"
+                  data-aos="fade-up"
+                  data-aos-delay={index * 100}
+                  onMouseEnter={() => setHoveredProduct(index)} // Khi hover, lưu chỉ số sản phẩm
+                  onMouseLeave={() => setHoveredProduct(null)} // Khi rời chuột, reset trạng thái
+                >
+                  <div className="product-card position-relative" style={{ cursor: "pointer" }}>
+                    <div
+                      className="product-image"
+                      style={{
+                        position: "relative",
+                        width: "100%",
+                        height: "0",
+                        paddingBottom: "150%",
+                      }}
+                    >
+                      <img
+                        src={
+                          hoveredProduct === index && item?.images?.[1]
+                            ? item?.images[1] // Hiển thị ảnh thứ 2 khi hover
+                            : item?.images?.[0] || "/default-image.png" // Dùng ảnh mặc định nếu không có ảnh
+                        }
+                        alt="product image"
+                        height={"250px"}
+                        width={"260px"}
+                        onClick={() => navigate("/product/" + item?._id)}
+                        style={{
+                          objectFit: "cover",
+                          display: "block",
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          width: "100%",
+                          height: "100%",
+                        }}
+                      />
+                    </div>
+                    <div className="product-details" style={{ padding: "15px", }}>
+                      {/* Name và Brand luôn hiển thị */}
+                      <div className="d-flex justify-content-between align-items-center">
+                        <h8 className="brand">{item?.brand}</h8>
+                        <p style={{ fontSize: "13px", marginBottom: "0"}}>
+                          Đã bán: {item?.inventory?.totalQuantitySell ?? 0}
+                        </p>
+                      </div>
+                      <h5 className="product-title" style={{ color: "#020202",}}>
+                        {item?.name?.length > 35 ? item.name.substr(0, 35) + "..." : item?.name}
+                      </h5>
+                      {/* 3 phần còn lại chỉ hiển thị khi hover */}
+                      <div
+                        className={`hover-details ${hoveredProduct === index ? "hovered" : ""}`}
+                        style={{
+                          opacity: hoveredProduct === index ? 1 : 0,
+                          visibility: hoveredProduct === index ? "visible" : "hidden",
+                          transition: "opacity 0.3s ease, visibility 0.3s ease",
+                        }}
+                      >
+                        <div className="d-flex align-items-center">
+                          <ReactStars
+                            count={+5}
+                            size={24}
+                            value={+item?.rating?.toString()}
+                            isHalf={true}
+                            edit={false}
+                            color="#ccc"
+                            activeColor="#ffd700"
+                          />
+                          
+                          <div className="wishlist-icon ms-auto">
+                            <button
+                              className="border-0 bg-transparent"
+                              onClick={() => handleWishlistToggle(item?._id)}
+                            >
+                              {isProductInWishlist(item?._id) ? (
+                                <AiFillHeart className="fs-5 text-danger" />
+                              ) : (
+                                <AiOutlineHeart className="fs-5" />
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                        <p
+                          className="price"
+                          style={{
+                            color: "#F90004FF",            // Màu đỏ tươi hơn
+                            fontWeight: "bold",          // Chữ đậm
+                            fontSize: "18px",            // Lớn hơn mặc định
+                            display: "inline-block",     // Giữ khối gọn
+                          }}
+                        >
+                          {getPriceRangeFromVariants(item)}
+                        </p>
+                        {/* Hiển thị danh sách màu nếu có */}
+                        {getUniqueColors(item).length > 0 && (
+                          <div className="d-flex justify-content-start gap-2 ">
+                            {getUniqueColors(item).map((color, idx) => (
+                              <div
+                                key={idx}
+                                title={color.name}
+                                style={{
+                                  width: "18px",
+                                  height: "18px",
+                                  borderRadius: "50%",
+                                  backgroundColor: color.name,
+                                  border: "1px solid #ccc",
+                                }}
+                              />
+                            ))}
+                          </div>
+                        )}
+                        
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+         {/* Dòng "Xem thêm" */}
+           {productState && productState.filter((item) => item.category?._id === "681f0071fd79f6db173a216b").length > 2 && (
+            <div className="col-12 text-center mt-3">
+              <div
+                onClick={() => setShowMore(!showMore)}
+                className="fancy-toggle-btn"
+              >
+                <div className="col-12 text-center mt-3">
+                  <button onClick={() => setShowMore(!showMore)} className="gold-toggle-btn">
+                    <div className="btn-inner d-flex align-items-center justify-content-center position-relative">
+                      <img src="images/icon-left.png" alt="left" className="btn-icon icon-left" />
+                      <span className="btn-text">{showMore ? "Thu gọn" : "Xem thêm"}</span>
+                      <img src="images/icon-right.png" alt="right" className="btn-icon icon-right" />
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}  
+          </div>
+          <div className="col-md-6 mb-4" data-aos="fade-right">
+
+            <div style={{ position: "relative", overflow: "visible" }}>
+              <div
+                style={{
+                  position: "relative",
+                  paddingBottom: "56.25%",
+                  height: 0,
+                  overflow: "hidden",
+                  borderRadius: "10px",
+                }}
+              >
+                <iframe
+                  id="featured-video"
+
+                  src="https://www.youtube.com/embed/pOX7wuIzju4?enablejsapi=1"
+                  title="YouTube video"
+                  allow="autoplay; encrypted-media"
+                  allowFullScreen
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    border: "none",
+                    borderRadius: "10px",
+                  }}
+                ></iframe>
+              </div>
+
+              {/* Ảnh đè lên video và tràn ra ngoài một phần */}
+              <img
+                src="images/nhatbinh2.png"
+                alt="Decor Overlay"
+                style={{
+                  position: "absolute",
+                  bottom: "-180px", 
+                  left: "-76px",   
+                  width: "250px",
+                  height: "auto",
+                  zIndex: 3,
+                }}
+              />
+              <img
+                src="images/nhatbinh1.png" 
+                alt="Decor Bottom Right"
+                style={{
+                  position: "absolute",
+                  bottom: "-180px", 
+                  right: "-50px",  
+                  width: "250px",
+                  height: "auto",
+                  zIndex: 3,
+                }}
+              />
+            </div>
+
+          </div>
+        </div>
+      </div>
+      </Container>
+
+{/* yêu thích */}
+      {authState?.user && wishlistState && wishlistState.length > 0 && (
+        <Container class1="featured-wrapper py-4 home-wrapper-2x">
+          <div style={{ position: "relative", zIndex: 0 }}>
+            {/* Ảnh góc trang trí */}
+            <img src="images/corner-top-left.png" alt="top left decoration" style={{ position: "absolute", top: "-12px", left: "-51px", width: "290px", zIndex: -1 }} />
+            <img src="images/corner-top-rightt.png" alt="top right decoration" style={{ position: "absolute", top: "-12px", right: "-51px", width: "290px", zIndex: -1 }} />
+            {/* <img src="images/bottom-left.png" alt="bottom left decoration" style={{ position: "absolute", bottom: "0px", left: "-54px", width: "540px", opacity: 0.3, zIndex: -1 }} />
+            <img src="images/bottom-right.png" alt="bottom right decoration" style={{ position: "absolute", bottom: "-16px", right: "-50px", width: "400px", opacity: 0.3, zIndex: -1 }} /> */}
+
+            <div className="row">
+              <div className="col-12 mb-3">
+                <div className="d-flex justify-content-center align-items-center">
+                  <img src="images/Right.png" alt="left decoration" style={{ width: "130px", height: "60px", objectFit: "contain" }} />
+                  <h3 className="section-heading text-center mb-0" style={{ color: "#000000" }}>
+                    Sản phẩm yêu thích
+                  </h3>
+                  <img src="images/Left.png" alt="right decoration" style={{ width: "130px", height: "60px", objectFit: "contain" }} />
+                </div>
+                <div className="text-center mt-2">
+                  <span
+                    onClick={() => navigate("/wishlist")}
+                    style={{
+                      cursor: "pointer",
+                      color: "#d1d1d1",
+                      fontSize: "14px",
+                    }}
+                    onMouseEnter={(e) => (e.target.style.color = "#28a745")}
+                    onMouseLeave={(e) => (e.target.style.color = "#d1d1d1")}
+                  >
+                    Xem tất cả
+                  </span>
+                </div>
+              </div>
+
+              {[...wishlistState]
+                .reverse()
+                .slice(0, showMore ? wishlistState.length : 4)
+                .map((item, index) => (
+                  <div
+                    key={index}
+                    className="col-3 my-2"
+                    data-aos="fade-up"
+                    data-aos-delay={index * 100}
+                    onMouseEnter={() => setHoveredProduct(index)}
+                    onMouseLeave={() => setHoveredProduct(null)}
+                  >
+                    <div className="product-card position-relative" style={{ cursor: "pointer" }}>
+                      <div className="product-image" style={{ position: "relative", width: "100%", height: "0", paddingBottom: "150%" }}>
+                        <img
+                          src={
+                            hoveredProduct === index && item?.images?.[1]
+                              ? item?.images[1]
+                              : item?.images?.[0] || "/default-image.png"
+                          }
+                          alt="product"
+                          onClick={() => navigate("/product/" + item?._id)}
+                          style={{
+                            objectFit: "cover",
+                            display: "block",
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            width: "100%",
+                            height: "100%",
+                          }}
+                        />
+                      </div>
+                      <div className="product-details" style={{ padding: "15px", color: "#000" }}>
+                        <div className="d-flex justify-content-between align-items-center">
+                          <h8 className="brand">{item?.brand}</h8>
+                          <p style={{ fontSize: "13px", marginBottom: 0 }}>
+                            Đã bán: {item?.inventory?.totalQuantitySell ?? 0}
+                          </p>
+                        </div>
+                        <h5 className="product-title">
+                          {item?.name?.length > 35 ? item.name.substr(0, 35) + "..." : item?.name}
+                        </h5>
+
+                        <div
+                          className={`hover-details ${hoveredProduct === index ? "hovered" : ""}`}
+                          style={{
+                            opacity: hoveredProduct === index ? 1 : 0,
+                            visibility: hoveredProduct === index ? "visible" : "hidden",
+                            transition: "opacity 0.3s ease, visibility 0.3s ease",
+                          }}
+                        >
+                          <div className="d-flex align-items-center">
+                            <ReactStars
+                              count={5}
+                              size={24}
+                              value={+item?.rating?.toString()}
+                              isHalf={true}
+                              edit={false}
+                              color="#ccc"
+                              activeColor="#ffd700"
+                            />
+                            <div className="wishlist-icon ms-auto">
+                              <button
+                                className="border-0 bg-transparent"
+                                onClick={() => handleWishlistToggle(item?._id)}
+                              >
+                                {isProductInWishlist(item?._id) ? (
+                                  <AiFillHeart className="fs-5 text-danger" />
+                                ) : (
+                                  <AiOutlineHeart className="fs-5" />
+                                )}
+                              </button>
+                            </div>
+                          </div>
+                          <p className="price" style={{ color: "#F90004", fontWeight: "bold", fontSize: "18px" }}>
+                            {getPriceRangeFromVariants(item)}
+                          </p>
+                          {getUniqueColorsWishlist(item).length > 0 && (
+                            <div className="d-flex justify-content-start gap-2">
+                              {getUniqueColorsWishlist(item).map((color, idx) => (
+                                <div
+                                  key={idx}
+                                  title={color}
+                                  style={{
+                                    width: "18px",
+                                    height: "18px",
+                                    borderRadius: "50%",
+                                    backgroundColor: color,
+                                    border: "1px solid #ccc",
+                                  }}
+                                />
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+              {wishlistState.length > 4 && (
+                <div className="col-12 text-center mt-3">
+                  <button onClick={() => setShowMore(!showMore)} className="gold-toggle-btn">
+                    <div className="btn-inner d-flex align-items-center justify-content-center position-relative">
+                      <img src="images/icon-left.png" alt="left" className="btn-icon icon-left" />
+                      <span className="btn-text">{showMore ? "Thu gọn" : "Xem thêm"}</span>
+                      <img src="images/icon-right.png" alt="right" className="btn-icon icon-right" />
+                    </div>
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </Container>
+      )}
+
+{/* đã xem */}
+{authState?.user && historyState && historyState.length > 0 && (
+  <Container class1="featured-wrapper py-4 home-wrapper-z">
+    <div style={{ position: "relative", zIndex: 0 }}>
+      {/* Các ảnh góc trang trí */}
+      <img src="images/corner-top-left.png" alt="top left decoration" style={{ position: "absolute", top: "-12px", left: "-51px", width: "290px", zIndex: -1 }} />
+      <img src="images/corner-top-rightt.png" alt="top right decoration" style={{ position: "absolute", top: "-12px", right: "-51px", width: "290px", zIndex: -1 }} />
+      <img src="images/bottom-left.png" alt="bottom left decoration" style={{ position: "absolute", bottom: "0px", left: "-54px", width: "540px", opacity: 0.3, zIndex: -1 }} />
+      <img src="images/bottom-right.png" alt="bottom right decoration" style={{ position: "absolute", bottom: "-16px", right: "-50px", width: "400px", opacity: 0.3, zIndex: -1 }} />
+
+      {/* Nội dung chính */}
+      <div className="row">
+        <div className="col-12 mb-3">
+          <div className="d-flex justify-content-center align-items-center">
+            <img src="images/Right.png" alt="left decoration" style={{ width: "130px", height: "60px", objectFit: "contain" }} />
+            <h3 className="section-heading text-center mb-0" style={{ color: "#fff" }}>Sản phẩm đã xem</h3>
+            <img src="images/Left.png" alt="right decoration" style={{ width: "130px", height: "60px", objectFit: "contain" }} />
+          </div>
+
+          <div className="text-center mt-2">
+            <span
+              onClick={() => navigate("/product")}
+              style={{
+                cursor: "pointer",
+                color: "#d1d1d1",
+                fontSize: "14px",
+              }}
+              onMouseEnter={(e) => (e.target.style.color = "#28a745")}
+              onMouseLeave={(e) => (e.target.style.color = "#d1d1d1")}
+            >
+              Xem tất cả
+            </span>
+          </div>
+        </div>
+
+        {[...historyState].reverse().slice(0, showMore ? historyState.length : 8).map((item, index) => (
+          <div key={index} className="col-3 my-2" data-aos="fade-up" data-aos-delay={index * 100}
+            onMouseEnter={() => setHoveredProduct(index)}
+            onMouseLeave={() => setHoveredProduct(null)}
+          >
+            <div className="product-card position-relative" style={{ cursor: "pointer" }}>
+              <div className="product-image" style={{ position: "relative", width: "100%", height: "0", paddingBottom: "150%" }}>
+                <img
+                  src={
+                    hoveredProduct === index && item?.images?.[1]
+                      ? item?.images[1]
+                      : item?.images?.[0] || "/default-image.png"
+                  }
+                  alt="product"
+                  onClick={() => navigate("/product/" + item?._id)}
+                  style={{
+                    objectFit: "cover",
+                    display: "block",
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                  }}
+                />
+              </div>
+
+              <div className="product-details" style={{ padding: "15px", color: "#fff", textShadow: "0 1px 2px rgba(0,0,0,0.6)" }}>
+                <div className="d-flex justify-content-between align-items-center">
+                  <h8 className="brand">{item?.brand}</h8>
+                  <p style={{ fontSize: "13px", marginBottom: "0" }}>
+                    Đã bán: {item?.inventory?.totalQuantitySell ?? 0}
+                  </p>
+                </div>
+                <h5 className="product-title" style={{color: "#fff"}}>
+                  {item?.name?.length > 35 ? item.name.substr(0, 35) + "..." : item?.name}
+                </h5>
+
+                <div className={`hover-details ${hoveredProduct === index ? "hovered" : ""}`}
+                  style={{
+                    opacity: hoveredProduct === index ? 1 : 0,
+                    visibility: hoveredProduct === index ? "visible" : "hidden",
+                    transition: "opacity 0.3s ease, visibility 0.3s ease",
+                  }}
+                >
+                  <div className="d-flex align-items-center">
+                    <ReactStars
+                      count={5}
+                      size={24}
+                      value={+item?.rating?.toString()}
+                      isHalf={true}
+                      edit={false}
+                      color="#ccc"
+                      activeColor="#ffd700"
+                    />
+                    <div className="wishlist-icon ms-auto">
+                      <button
+                        className="border-0 bg-transparent"
+                        onClick={() => handleWishlistToggle(item?._id)}
+                      >
+                        {isProductInWishlist(item?._id) ? (
+                          <AiFillHeart className="fs-5 text-danger" />
+                        ) : (
+                          <AiOutlineHeart className="fs-5" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                  <p className="price" style={{ color: "#F90004FF", fontWeight: "bold", fontSize: "18px" }}>
+                    {getPriceRangeFromVariants(item)}
+                  </p>
+                  {getUniqueColorsWishlist(item).length > 0 && (
+                  <div className="d-flex justify-content-start gap-2">
+                    {getUniqueColorsWishlist(item).map((color, idx) => (
+                      <div
+                        key={idx}
+                        title={color}
+                        style={{
+                          width: "18px",
+                          height: "18px",
+                          borderRadius: "50%",
+                          backgroundColor: color,
+                          border: "1px solid #ccc",
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
+
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+
+        {historyState.length > 8 && (
+          <div className="col-12 text-center mt-3">
+            <button onClick={() => setShowMore(!showMore)} className="gold-toggle-btn">
+              <div className="btn-inner d-flex align-items-center justify-content-center position-relative">
+                <img src="images/icon-left.png" alt="left" className="btn-icon icon-left" />
+                <span className="btn-text">{showMore ? "Thu gọn" : "Xem thêm"}</span>
+                <img src="images/icon-right.png" alt="right" className="btn-icon icon-right" />
+              </div>
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  </Container>
+)}
+
+      
 
 
       <Container class1="blog-wrapper py-3 home-wrapper-2">
         <div className="row">
           <div className="col-12">
-            <h3 className="section-heading">Bài viết mới nhất</h3>
+          <div className="d-flex justify-content-center align-items-center">
+            <img src="images/Right.png" alt="left decoration" style={{ width: "130px", height: "60px", objectFit: "contain" }} />
+            <h3 className="section-heading text-center mb-0" style={{ color: "#000000" }}>Bài viết mới nhất</h3>
+            <img src="images/Left.png" alt="right decoration" style={{ width: "130px", height: "60px", objectFit: "contain" }} />
+          </div>
           </div>
         </div>
         <div className="row">

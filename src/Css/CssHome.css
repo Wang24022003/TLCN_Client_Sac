@@ -18,4 +18,72 @@
    }
 
    
-   
+
+
+
+   /* ----- icon đen----*/
+
+
+   .black-outline-btn {
+  background-color: rgba(128, 128, 128, 0.2); /* nền xám mờ */
+  color: #000000; /* chữ màu đen */
+  font-weight: bold;
+  font-size: 14px;
+  border: 1px solid #000000; /* khung viền đen */
+  border-radius: 8px;
+  padding: 10px 20px;
+  width: 180px;
+  margin: 0 auto;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-text {
+  position: relative;
+  z-index: 2;
+}
+
+.btn-icon {
+  width: 80px;
+  height: 60px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%) scale(0.5);
+  opacity: 0;
+  transition: all 0.4s ease;
+  z-index: 1;
+  object-fit: contain;
+}
+
+.icon-left {
+  left: 50%;
+}
+
+.icon-right {
+  right: 50%;
+}
+
+.black-outline-btn:hover .icon-left {
+  left: -10px;
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+.black-outline-btn:hover .icon-right {
+  right: -10px;
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+.black-outline-btn:active {
+  transform: scale(0.97);
+}
