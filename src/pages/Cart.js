@@ -200,13 +200,29 @@ const Cart = () => {
             ))}
             {/* Nút tiếp tục mua sắm & hủy đơn hàng */}
             <div className="d-flex justify-content-between align-items-center mt-4">
-              <Link to="/product" className="button2 button">
-                <FaArrowLeft style={{ fontSize: "20px", marginRight: "8px" }} />
-                Tiếp tục mua sắm
+              <Link to="/product" className="shopping-btn">
+                <FaArrowLeft className="icon-left" />
+                <span className="btn-text">Tiếp tục mua sắm</span>
               </Link>
-              <button className="button danger" onClick={deleteAllCartProduct}>
-                Xóa giỏ hàng
-              </button>
+
+              <div className="text-center mt-3">
+                <button onClick={deleteAllCartProduct} className="gold-toggle-btn1">
+                  <div className="btn-inner d-flex align-items-center justify-content-center position-relative">
+                    <img
+                      src="/images/icon-left.png"
+                      alt="left"
+                      className="btn-icon icon-left"
+                    />
+                    <span className="btn-text">Xóa giỏ hàng</span>
+                    <img
+                      src="/images/icon-right.png"
+                      alt="right"
+                      className="btn-icon icon-right"
+                    />
+                  </div>
+                </button>
+              </div>
+
             </div>
           </div>
 
@@ -261,12 +277,22 @@ const Cart = () => {
               </div>
 
               {/* Nút thanh toán */}
-              <Link
-                to="/checkout"
-                className="w-full block text-center py-3 px-5 bg-[#232f3e] text-white rounded-lg uppercase font-bold hover:bg-[#2c3a4b] transition no-underline"
-              >
-                Thanh toán
+              <Link to="/checkout" className="checkout-fancy-btn">
+                <div className="btn-inner d-flex align-items-center justify-content-center position-relative">
+                  <img
+                    src="/images/icon-left.png"
+                    alt="left"
+                    className="btn-icon icon-left"
+                  />
+                  <span className="btn-text">Thanh toán</span>
+                  <img
+                    src="/images/icon-right.png"
+                    alt="right"
+                    className="btn-icon icon-right"
+                  />
+                </div>
               </Link>
+
             </div>
           </div>
 

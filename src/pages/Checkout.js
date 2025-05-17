@@ -25,6 +25,7 @@ import {
 } from "../utils/api";
 import { toast } from "react-toastify";
 import { Formik, Field, Form, ErrorMessage } from "formik";
+import { FaArrowLeft } from "react-icons/fa";
 
 const Checkout = () => {
   const dispatch = useDispatch();
@@ -376,23 +377,39 @@ const Checkout = () => {
                           />
                         </div>
 
-                        <div className="w-100">
-                          <div className="d-flex justify-content-between align-items-center">
+                          <div  className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 mt-4"
+                          >
                             <Link
                               to="/cart"
-                              className="d-flex align-items-center text-dark"
+                              className="d-flex align-items-center text-dark text-decoration-none"
+                              style={{ gap: "8px" }}
                             >
-                              <BiArrowBack className="me-2" />
+                              <BiArrowBack />
                               <span>Quay lại giỏ hàng</span>
                             </Link>
-                            <Link to="/product" className="button">
-                              Tiếp tục mua sắm
+
+                            <Link to="/product" className="shopping-btn">
+                              <FaArrowLeft className="icon-left" />
+                              <span className="btn-text">Tiếp tục mua sắm</span>
                             </Link>
-                            <button className="button" type="submit">
-                              Đặt hàng
+
+                            <button type="submit" className="btn-order-submit">
+                              <div className="btn-inner-order d-flex align-items-center justify-content-center position-relative">
+                                <img
+                                  src="/images/icon-left.png"
+                                  alt="left"
+                                  className="btn-icon-order icon-left-order"
+                                />
+                                <span className="btn-text-order">Đặt hàng</span>
+                                <img
+                                  src="/images/icon-right.png"
+                                  alt="right"
+                                  className="btn-icon-order icon-right-order"
+                                />
+                              </div>
                             </button>
                           </div>
-                        </div>
+
                       </div>
                     </div>
                   </div>

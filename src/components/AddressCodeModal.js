@@ -35,18 +35,9 @@ const AddressListModal = ({
                 <h5 className="font-weight-bold">Người nhận: {address.receiver}</h5>
                 <p>Số điện thoại: {address.phone}</p>
                 <p>
-                  <strong>Tỉnh/Thành phố: </strong> {address.province}
+                <strong>Địa chỉ: </strong> 
+                  {`${address.specific}, ${address.wards}, ${address.districts}, ${address.province}`}
                 </p>
-                <p>
-                  <strong>Quận/Huyện: </strong> {address.districts}
-                </p>
-                <p>
-                  <strong>Phường/Xã: </strong> {address.wards}
-                </p>
-                <p>
-                  <strong>Địa chỉ chi tiết: </strong> {address.specific}
-                </p>
-
                 {/* Icon dấu cộng ở góc trên cùng bên phải */}
                 <FaPlus
                   className="address-select-icon position-absolute"
