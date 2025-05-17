@@ -3,7 +3,7 @@ import Container from "../components/Container";
 import BreadCrumb from "../components/BreadCrumb";
 import { useDispatch, useSelector } from "react-redux";
 import { getOrders } from "../features/user/userSlice";
-import { FaPlus, FaMinus } from "react-icons/fa";
+import { FaPlus, FaMinus, FaListUl, FaClipboardList, FaCheckCircle, FaTools, FaTruck, FaBoxOpen, FaTimesCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { updateOrder } from "../features/products/productSlilce";
 import { toast } from "react-toastify";
@@ -199,24 +199,133 @@ const Orders = () => {
   },
   };
 
+  const translateStatus = (status) => {
+  switch (status) {
+    case "CONFIRMED":
+      return "Đã xác nhận";
+    case "PREPARE":
+      return "Đang chuẩn bị";
+    case "UNCONFIRMED":
+      return "Đơn hàng mới";
+    case "ON_DELIVERY":
+      return "Đang vận chuyển";
+    case "DELIVERED":
+      return "Đã giao hàng";
+    case "CANCEL":
+      return "Đã hủy";
+    default:
+      return "Không xác định";
+  }
+};
+
+const statusOptions = [
+  { value: "", label: "Tất cả", icon: <FaListUl /> },
+  { value: "UNCONFIRMED", label: "Đơn hàng mới", icon: <FaClipboardList /> },
+  { value: "CONFIRMED", label: "Đã xác nhận", icon: <FaCheckCircle /> },
+  { value: "PREPARE", label: "Đang chuẩn bị", icon: <FaTools /> },
+  { value: "ON_DELIVERY", label: "Đang vận chuyển", icon: <FaTruck /> },
+  { value: "DELIVERED", label: "Đã giao hàng", icon: <FaBoxOpen /> },
+  { value: "CANCEL", label: "Đã hủy", icon: <FaTimesCircle /> },
+];
+
+const statusCounts = orderState?.reduce((acc, order) => {
+  const status = order.statusUser || "UNKNOWN";
+  acc[status] = (acc[status] || 0) + 1;
+  return acc;
+}, {});
+
+
   return (
     <>
       <Container class1="cart-wrapper home-wrapper-2 py-5">
-        <div className="mb-4 d-flex justify-content-end">
-          <select
-            className="form-select w-auto"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
+      <div className="position-relative d-flex justify-content-center align-items-center mb-4" style={{ height: "90px" }}>
+        {/* Thanh ngang phía sau */}
+        <div
+          style={{
+            position: "absolute",
+            top: "30px", // đặt giữa icon
+            left: 0,
+            right: 0,
+            height: "4px",
+            backgroundColor: "#ccc",
+            zIndex: 1,
+          }}
+        />
+
+        {/* Các hình tròn */}
+        <div className="d-flex justify-content-center align-items-center gap-5 flex-wrap" style={{ zIndex: 2 }}>
+          {statusOptions.map((status) => (
+            <div
+              key={status.value}
+              onClick={() => setStatusFilter(status.value)}
+              style={{
+                cursor: "pointer",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "6px",
+              }}
+            >
+      <div
+        style={{
+          position: "relative",
+          width: "50px",
+          height: "50px",
+          borderRadius: "50%",
+          border: statusFilter === status.value ? "3px solid #007bff" : "2px solid #ccc",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: statusFilter === status.value ? "#e9f5ff" : "#fff",
+          transition: "all 0.3s",
+          fontSize: "1.2rem",
+        }}
+      >
+        {/* Dot hoặc số đếm */}
+        {statusCounts?.[status.value] > 0 && (
+          <div
+            style={{
+              position: "absolute",
+              top: "-6px",
+              right: "-6px",
+              minWidth: "18px",
+              height: "18px",
+              padding: "0 4px",
+              backgroundColor: "red",
+              color: "white",
+              fontSize: "0.75rem",
+              fontWeight: "bold",
+              borderRadius: "12px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              lineHeight: 1,
+            }}
           >
-            <option value="">All</option>
-            <option value="UNCONFIRMED">Đơn hàng mới</option>
-            <option value="CONFIRMED">Đã xác nhận</option>
-            <option value="PREPARE">Đang chuẩn bị</option>
-            <option value="ON_DELIVERY">Đang vận chuyển</option>
-            <option value="DELIVERED">Đã giao hàng</option>
-            <option value="CANCEL">Đã hủy</option>
-          </select>
+            +{statusCounts[status.value]}
+          </div>
+        )}
+
+        {status.icon}
+      </div>
+
+
+              <div
+                style={{
+                  fontSize: "0.8rem",
+                  textAlign: "center",
+                  whiteSpace: "nowrap",
+                  maxWidth: "70px",
+                }}
+              >
+                {status.label}
+              </div>
+            </div>
+          ))}
         </div>
+      </div>
+
+
 
         <div className="table-responsive">
           <table className="table table-striped align-middle">
@@ -244,7 +353,7 @@ const Orders = () => {
                           <td>{item?._id}</td>
                           <td>
                             <span className={getStatusStyle(item?.statusUser)}>
-                              {item?.statusUser}
+                              {translateStatus(item?.statusUser)}
                             </span>
                           </td>
                           <td>{totalReceipt.toLocaleString("vi-VN")} ₫</td>

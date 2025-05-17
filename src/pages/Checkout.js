@@ -154,14 +154,14 @@ const Checkout = () => {
 
   const handleDiscountCode = () => {
     const discountCodes = {
-      // FEE10K: 50000,
-      // GIAM500K: 500000,
-      // GIAM100K: 100000,
-      // GIAM50K: 50000,
-      // GIAM20K: 50000,
-      // GIAM10K: 10000,
-      // DT: 30000,
-      // GIAM200K: 200000,
+      FEE10K: 50000,
+      GIAM500K: 500000,
+      GIAM100K: 100000,
+      GIAM50K: 50000,
+      GIAM20K: 50000,
+      GIAM10K: 10000,
+      DT: 30000,
+      GIAM200K: 200000,
     };
 
     if (discountCodes[discountCode]) {
