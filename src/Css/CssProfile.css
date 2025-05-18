@@ -1,0 +1,110 @@
+.avatar-wrapper {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  z-index: 0;
+}
+
+.avatar-background {
+  position: absolute;
+  top: -150px;
+  left: -150px;
+  width: 460px;
+  height: 460px;
+  z-index: -2;
+  animation: spin 10s linear infinite;
+}
+
+.avatar-background img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  opacity: 1; /* nếu muốn làm mờ */
+}
+
+.avatar-img {
+  position: relative;
+  z-index: 1;
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #ddd;
+  margin: 5px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+
+.avatar-background-second {
+  position: absolute;
+  top: -70px;
+  left: -70px;
+  width: 300px;
+  height: 300px;
+  z-index: -1; /* nằm sau lớp background 1 */
+  animation: spin-reverse 20s linear infinite;
+}
+
+.avatar-background-second img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  opacity: 1; /* làm mờ nhiều hơn nếu muốn hiệu ứng đẹp */
+}
+
+
+@keyframes spin-reverse {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+
+.change-avatar-label {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ccc;
+  color: black;
+  border: 1px solid black;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 14px;
+  z-index: 2;
+  cursor: pointer;
+  white-space: nowrap; /* <- ngăn chữ xuống dòng */
+  display: inline-block; /* giữ nội dung nằm trên 1 dòng */
+}
+
+/* 
+.profile-container {
+  position: relative;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.profile-background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.15;
+  z-index: -1;
+} */

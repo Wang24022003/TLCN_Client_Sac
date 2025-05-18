@@ -7,6 +7,7 @@ import BreadCrumb from "../components/BreadCrumb";
 import Container from "../components/Container";
 import { FiEdit } from "react-icons/fi";
 import { uploadImg } from "../utils/api";
+import "./../Css/CssProfile.css";
 
 const TYPE_GENDER = {
   FEMALE: "FEMALE",
@@ -75,53 +76,68 @@ const Profile = () => {
     }
   };
 
+  const GENDER_LABELS = {
+  FEMALE: "Nữ",
+  MALE: "Nam",
+  OTHER: "Khác",
+};
+
+
   return (
     <>
-      <Container class1="cart-wrapper home-wrapper-2 py-5">
+      <Container class1="cart-wrapper home-wrapper-2 py-5 profile-container">
+        {/* <img
+        src="/images/bg_profile.png" // ← thay bằng đường dẫn ảnh của bạn
+        alt="Background"
+        className="profile-background-image"
+      /> */}
         <div className="row">
-          <div className="col-12">
-            <div
-              className="col-12 d-flex justify-content-center align-items-center mb-4"
-              style={{ minHeight: "200px" }}
-            >
-              <div className="text-center">
+          <div className="col-md-6 d-flex flex-column align-items-center justify-content-center">
+            <div className="text-center mb-4">
+              <div className="avatar-wrapper">
+                <div className="avatar-background-second">
+                  <img src="/images/TD_nho.png" alt="Background Layer 2" />
+                </div>
+                <div className="avatar-background">
+                  <img src="/images/TD_lon.png" alt="Background Layer 1" />
+                </div>
                 <img
                   src={profilebase64 || dataProfile?.avatar}
                   alt="Avatar"
-                  className="rounded-circle"
-                  style={{
-                    width: "150px",
-                    height: "150px",
-                    objectFit: "cover",
-                    border: "2px solid #ddd",
-                  }}
+                  className="avatar-img"
                 />
-                {!edit && (
-                  <div className="mt-3">
-                    <label
-                      htmlFor="upload-avatar"
-                      className="btn btn-link text-primary"
-                    >
-                      Thay đổi ảnh
-                    </label>
-                    <input
-                      type="file"
-                      id="upload-avatar"
-                      accept="image/*"
-                      style={{ display: "none" }}
-                      onChange={handleImageChange}
-                    />
-                  </div>
-                )}
+                 {!edit && (
+                <label htmlFor="upload-avatar" className="change-avatar-label">
+                  Thay đổi ảnh
+                  <input
+                    type="file"
+                    id="upload-avatar"
+                    accept="image/*"
+                    style={{ display: "none" }}
+                    onChange={handleImageChange}
+                  />
+                </label>
+              )}
               </div>
-            </div>
 
-            <div className="d-flex justify-content-between align-items-center">
+
+             
+
+            </div>
+          </div>
+
+          <div className="col-md-6">
+          <div
+          style={{
+            border: "2px dashed #002E29",
+            borderRadius: "8px",
+            padding: "20px",
+          }}>
+             <div className="d-flex justify-content-between align-items-center">
               <h3 className="my-3">Thông tin tài khoản</h3>
               <FiEdit className="fs-3" onClick={() => setEdit(false)} />
             </div>
-          </div>
-          <div className="col-12">
+
             <Formik
               initialValues={dataProfile}
               validationSchema={profileSchema}
@@ -130,71 +146,57 @@ const Profile = () => {
             >
               {({ values }) => (
                 <Form>
-                  <div className="mb-3">
-                    <label htmlFor="name" className="form-label">
-                      Họ và Tên
-                    </label>
-                    <Field
-                      type="text"
-                      name="name"
-                      className="form-control"
-                      disabled={edit}
-                    />
-                    <ErrorMessage
-                      name="name"
-                      component="div"
-                      className="text-danger"
-                    />
+                  <div className="row">
+                    <div className="mb-3 col-md-6">
+                      <label htmlFor="name" className="form-label">Họ và Tên</label>
+                      <Field
+                        type="text"
+                        name="name"
+                        className="form-control"
+                        disabled={edit}
+                      />
+                      <ErrorMessage name="name" component="div" className="text-danger" />
+                    </div>
+                    <div className="mb-3 col-md-6">
+                      <label htmlFor="email" className="form-label">Email</label>
+                      <Field
+                        type="text"
+                        name="email"
+                        className="form-control"
+                        disabled
+                      />
+                    </div>
                   </div>
-                  <div className="mb-3">
-                    <label htmlFor="email" className="form-label">
-                      Email
-                    </label>
-                    <Field
-                      type="text"
-                      name="email"
-                      className="form-control"
-                      disabled
-                    />
+
+                  <div className="row">
+                    <div className="mb-3 col-md-6">
+                      <label htmlFor="age" className="form-label">Tuổi</label>
+                      <Field
+                        type="number"
+                        name="age"
+                        className="form-control"
+                        disabled={edit}
+                      />
+                      <ErrorMessage name="age" component="div" className="text-danger" />
+                    </div>
+                    <div className="mb-3 col-md-6">
+                      <label htmlFor="gender" className="form-label">Giới tính</label>
+                      <Field
+                        as="select"
+                        name="gender"
+                        className="form-select"
+                        disabled={edit}
+                      >
+                        {Object.keys(TYPE_GENDER).map((key) => (
+                          <option key={key} value={TYPE_GENDER[key]}>
+                            {GENDER_LABELS[TYPE_GENDER[key]]}
+                          </option>
+                        ))}
+                      </Field>
+                      <ErrorMessage name="gender" component="div" className="text-danger" />
+                    </div>
                   </div>
-                  <div className="mb-3">
-                    <label htmlFor="age" className="form-label">
-                      Tuổi
-                    </label>
-                    <Field
-                      type="number"
-                      name="age"
-                      className="form-control"
-                      disabled={edit}
-                    />
-                    <ErrorMessage
-                      name="age"
-                      component="div"
-                      className="text-danger"
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label htmlFor="gender" className="form-label">
-                      Giới tính
-                    </label>
-                    <Field
-                      as="select"
-                      name="gender"
-                      className="form-select"
-                      disabled={edit}
-                    >
-                      {Object.keys(TYPE_GENDER).map((key) => (
-                        <option key={key} value={TYPE_GENDER[key]}>
-                          {TYPE_GENDER[key]}
-                        </option>
-                      ))}
-                    </Field>
-                    <ErrorMessage
-                      name="gender"
-                      component="div"
-                      className="text-danger"
-                    />
-                  </div>
+
                   <div className="mb-3">
                     <label htmlFor="point" className="form-label">
                       Điểm tích lũy
@@ -210,17 +212,23 @@ const Profile = () => {
                     <button
                       type="submit"
                       className="btn"
-                      style={{ backgroundColor: "green", borderColor: "green", color: "white" }}
+                      style={{
+                        backgroundColor: "green",
+                        borderColor: "green",
+                        color: "white",
+                      }}
                     >
                       Lưu thay đổi
                     </button>
-
                   )}
                 </Form>
               )}
             </Formik>
           </div>
+           
+          </div>
         </div>
+
       </Container>
     </>
   );
