@@ -1,0 +1,32 @@
+.nav-selected {
+  background: #005248;
+  background: radial-gradient(circle, rgba(0, 82, 72, 1) 0%, rgba(0, 46, 41, 1) 66%, rgba(0, 0, 0, 1) 100%);
+  color: white;
+}
+
+@keyframes float-in-out {
+  0%, 100% {
+    transform: translateY(-50%) translateX(0);
+  }
+  50% {
+    transform: translateY(-50%) translateX(-6px); /* sẽ dùng cho ảnh bên trái */
+  }
+}
+
+@keyframes float-in-out-reverse {
+  0%, 100% {
+    transform: translateY(-50%) translateX(0);
+  }
+  50% {
+    transform: translateY(-50%) translateX(6px); /* sẽ dùng cho ảnh bên phải */
+  }
+}
+
+.float-left-animation {
+  animation: float-in-out 2s ease-in-out infinite;
+}
+
+.float-right-animation {
+  animation: float-in-out-reverse 2s ease-in-out infinite;
+}
+

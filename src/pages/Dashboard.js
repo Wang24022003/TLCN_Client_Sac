@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { RiAccountCircleLine } from "react-icons/ri";
 import { IoMdLogOut } from "react-icons/io";
-import { FaBell, FaBorderAll, FaGift, FaHeart, FaHistory, FaList, FaMapMarkerAlt, FaShoppingCart } from "react-icons/fa";
+import { FaBell, FaBorderAll, FaClipboardList, FaGift, FaHeart, FaHistory, FaList, FaMapMarkerAlt, FaShoppingCart } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { authService } from "../features/user/userService";
+import "./../Css/CssDashboard.css";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -66,7 +67,7 @@ const Dashboard = () => {
           >
             <ul className="py-2 text-slate-600 px-4">
               {/* User Info Section */}
-              <div className="flex items-center gap-3 p-4 border-b">
+              <div className="flex items-center gap-3 p-4">
                 <img
                   src={userState?.avatar || "/default-avatar.png"}
                   alt="User Avatar"
@@ -75,76 +76,311 @@ const Dashboard = () => {
                 <span className="text-lg font-semibold">{userState?.name}</span>
               </div>
 
-              
+              <div
+                style={{ backgroundColor: 'rgba(0, 46, 41, 1)' }}
+                className="h-[2px] w-full my-2"
+              />
 
+              
               <li
-                className={`flex items-center gap-2 py-3 px-4 rounded-lg cursor-pointer ${selectedMenu === 'my-profile' ? 'bg-gradient-to-r from-green-400 via-green-500 to-green-600 text-white' : 'hover:bg-slate-100'}`}
+                className={`relative flex items-center gap-2 py-3 px-4 rounded-lg cursor-pointer ${
+                  selectedMenu === 'my-profile' ? 'nav-selected justify-center' : 'hover:bg-slate-100'
+                }`}
+                
                 onClick={() => handleMenuClick('my-profile')}
               >
-                <RiAccountCircleLine className="text-xl" />
-                <Link to='/dashboard/my-profile' className="block" style={{ textDecoration: 'none', color: 'inherit' }}>Tài khoản của tôi</Link>
+                {/* Ảnh nền bên trái */}
+                {selectedMenu === 'my-profile' && (
+                  <img
+                    src="/images/icon-left.png"
+                    alt="left-decor"
+                    className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
+                    style={{ transform: 'translateY(-50%)' }}
+                  />
+                )}
+
+                {/* Nội dung */}
+                <RiAccountCircleLine className="text-xl z-10" />
+                <Link
+                  to="/dashboard/my-profile"
+                  className="block z-10"
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                >
+                  Tài khoản của tôi
+                </Link>
+
+                {/* Ảnh nền bên phải */}
+                {selectedMenu === 'my-profile' && (
+                  <img
+                    src="/images/icon-right.png"
+                    alt="right-decor"
+                    className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
+                    style={{ transform: 'translateY(-50%)' }}
+                  />
+                )}
               </li>
 
+        
+
               <li
-                className={`flex items-center gap-2 py-3 px-4 rounded-lg cursor-pointer ${selectedMenu === 'address' ? 'bg-gradient-to-r from-green-400 via-green-500 to-green-600 text-white' : 'hover:bg-slate-100'}`}
+                className={`relative flex items-center  gap-2 py-3 px-4 rounded-lg cursor-pointer ${
+                  selectedMenu === 'address' ? 'nav-selected justify-center' : 'hover:bg-slate-100'
+                }`}
                 onClick={() => handleMenuClick('address')}
               >
-                <FaMapMarkerAlt className="text-xl" />
-                <Link to='/dashboard/address' className="block" style={{ textDecoration: 'none', color: 'inherit' }}>Địa chỉ</Link>
+                {/* Ảnh nền bên trái */}
+                {selectedMenu === 'address' && (
+                  <img
+                    src="/images/icon-left.png"
+                    alt="left-decor"
+                    className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
+                    style={{ transform: 'translateY(-50%)' }}
+                  />
+                )}
+
+                {/* Nội dung */}
+                <FaMapMarkerAlt className="text-xl z-10" />
+                <Link
+                  to="/dashboard/address"
+                  className="block z-10"
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                >
+                  Địa chỉ
+                </Link>
+
+                {/* Ảnh nền bên phải */}
+                {selectedMenu === 'address' && (
+                  <img
+                    src="/images/icon-right.png"
+                    alt="right-decor"
+                    className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
+                    style={{ transform: 'translateY(-50%)' }}
+                  />
+                )}
               </li>
 
               <li
-                className={`flex items-center gap-2 py-3 px-4 rounded-lg cursor-pointer ${selectedMenu === 'my-orders' ? 'bg-gradient-to-r from-green-400 via-green-500 to-green-600 text-white' : 'hover:bg-slate-100'}`}
+                className={`relative flex items-center gap-2 py-3 px-4 rounded-lg cursor-pointer ${
+                  selectedMenu === 'my-orders' ? 'nav-selected justify-center' : 'hover:bg-slate-100'
+                }`}
                 onClick={() => handleMenuClick('my-orders')}
               >
-                <FaBorderAll className="text-xl" />
-                <Link to='/dashboard/my-orders' className="block" style={{ textDecoration: 'none', color: 'inherit' }}>Đơn mua</Link>
+                {/* Ảnh nền bên trái */}
+                {selectedMenu === 'my-orders' && (
+                  <img
+                    src="/images/icon-left.png"
+                    alt="left-decor"
+                    className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
+                    style={{ transform: 'translateY(-50%)' }}
+                  />
+                )}
+
+                {/* Nội dung */}
+                <FaClipboardList className="text-xl z-10" />
+                <Link
+                  to="/dashboard/my-orders"
+                  className="block z-10"
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                >
+                  Đơn mua
+                </Link>
+
+                {/* Ảnh nền bên phải */}
+                {selectedMenu === 'my-orders' && (
+                  <img
+                    src="/images/icon-right.png"
+                    alt="right-decor"
+                    className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
+                    style={{ transform: 'translateY(-50%)' }}
+                  />
+                )}
               </li>
 
               <li
-                className={`flex items-center gap-2 py-3 px-4 rounded-lg cursor-pointer ${selectedMenu === 'product-history' ? 'bg-gradient-to-r from-green-400 via-green-500 to-green-600 text-white' : 'hover:bg-slate-100'}`}
+                className={`relative flex items-center gap-2 py-3 px-4 rounded-lg cursor-pointer ${
+                  selectedMenu === 'product-history' ? 'nav-selected justify-center' : 'hover:bg-slate-100'
+                }`}
                 onClick={() => handleMenuClick('product-history')}
               >
-                <FaHistory className="text-xl" />
-                <Link to='/dashboard/product-history' className="block" style={{ textDecoration: 'none', color: 'inherit' }}>Lịch sử xem</Link>
+                {/* Ảnh nền bên trái */}
+                {selectedMenu === 'product-history' && (
+                  <img
+                    src="/images/icon-left.png"
+                    alt="left-decor"
+                    className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
+                    style={{ transform: 'translateY(-50%)' }}
+                  />
+                )}
+
+                {/* Nội dung */}
+                <FaHistory className="text-xl z-10" />
+                <Link
+                  to="/dashboard/product-history"
+                  className="block z-10"
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                >
+                  Lịch sử xem
+                </Link>
+
+                {/* Ảnh nền bên phải */}
+                {selectedMenu === 'product-history' && (
+                  <img
+                    src="/images/icon-right.png"
+                    alt="right-decor"
+                    className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
+                    style={{ transform: 'translateY(-50%)' }}
+                  />
+                )}
               </li>
 
-
               <li
-                className={`flex items-center gap-2 py-3 px-4 rounded-lg cursor-pointer ${selectedMenu === 'my-wishlist' ? 'bg-gradient-to-r from-green-400 via-green-500 to-green-600 text-white' : 'hover:bg-slate-100'}`}
+                className={`relative flex items-center gap-2 py-3 px-4 rounded-lg cursor-pointer ${
+                  selectedMenu === 'my-wishlist' ? 'nav-selected justify-center' : 'hover:bg-slate-100'
+                }`}
                 onClick={() => handleMenuClick('my-wishlist')}
               >
-                <FaHeart className="text-xl" />
-                <Link to='/dashboard/my-wishlist' className="block" style={{ textDecoration: 'none', color: 'inherit' }}>Sản phẩm yêu thích</Link>
+                {/* Ảnh nền bên trái */}
+                {selectedMenu === 'my-wishlist' && (
+                  <img
+                    src="/images/icon-left.png"
+                    alt="left-decor"
+                    className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
+                    style={{ transform: 'translateY(-50%)' }}
+                  />
+                )}
+
+                {/* Nội dung */}
+                <FaHeart className="text-xl z-10" />
+                <Link
+                  to="/dashboard/my-wishlist"
+                  className="block z-10"
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                >
+                  Sản phẩm yêu thích
+                </Link>
+
+                {/* Ảnh nền bên phải */}
+                {selectedMenu === 'my-wishlist' && (
+                  <img
+                    src="/images/icon-right.png"
+                    alt="right-decor"
+                    className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
+                    style={{ transform: 'translateY(-50%)' }}
+                  />
+                )}
               </li>
-
-
-             
-
               
               <li
-                className={`flex items-center gap-2 py-3 px-4 rounded-lg cursor-pointer ${selectedMenu === 'history' ? 'bg-gradient-to-r from-green-400 via-green-500 to-green-600 text-white' : 'hover:bg-slate-100'}`}
+                className={`relative flex items-center gap-2 py-3 px-4 rounded-lg cursor-pointer ${
+                  selectedMenu === 'history' ? 'nav-selected justify-center' : 'hover:bg-slate-100'
+                }`}
                 onClick={() => handleMenuClick('history')}
               >
-                <FaShoppingCart className="text-xl" />
-                <Link to='/dashboard/history' className="block" style={{ textDecoration: 'none', color: 'inherit' }}>Sản phẩm đã mua</Link>
+                {/* Ảnh nền bên trái */}
+                {selectedMenu === 'history' && (
+                  <img
+                    src="/images/icon-left.png"
+                    alt="left-decor"
+                    className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
+                    style={{ transform: 'translateY(-50%)' }}
+                  />
+                )}
+
+                {/* Nội dung */}
+                <FaShoppingCart className="text-xl z-10" />
+                <Link
+                  to="/dashboard/history"
+                  className="block z-10"
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                >
+                  Sản phẩm đã mua
+                </Link>
+
+                {/* Ảnh nền bên phải */}
+                {selectedMenu === 'history' && (
+                  <img
+                    src="/images/icon-right.png"
+                    alt="right-decor"
+                    className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
+                    style={{ transform: 'translateY(-50%)' }}
+                  />
+                )}
               </li>
 
               <li
-                className={`flex items-center gap-2 py-3 px-4 rounded-lg cursor-pointer ${selectedMenu === 'voucher' ? 'bg-gradient-to-r from-green-400 via-green-500 to-green-600 text-white' : 'hover:bg-slate-100'}`}
+                className={`relative flex items-center gap-2 py-3 px-4 rounded-lg cursor-pointer ${
+                  selectedMenu === 'voucher' ? 'nav-selected justify-center' : 'hover:bg-slate-100'
+                }`}
                 onClick={() => handleMenuClick('voucher')}
               >
-                <FaGift className="text-xl" />
-                <Link to='/dashboard/voucher' className="block" style={{ textDecoration: 'none', color: 'inherit' }}>Kho Voucher</Link>
+                {/* Ảnh nền bên trái */}
+                {selectedMenu === 'voucher' && (
+                  <img
+                    src="/images/icon-left.png"
+                    alt="left-decor"
+                    className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
+                    style={{ transform: 'translateY(-50%)' }}
+                  />
+                )}
+
+                {/* Nội dung */}
+                <FaGift className="text-xl z-10" />
+                <Link
+                  to="/dashboard/voucher"
+                  className="block z-10"
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                >
+                  Kho Voucher
+                </Link>
+
+                {/* Ảnh nền bên phải */}
+                {selectedMenu === 'voucher' && (
+                  <img
+                    src="/images/icon-right.png"
+                    alt="right-decor"
+                    className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
+                    style={{ transform: 'translateY(-50%)' }}
+                  />
+                )}
               </li>
 
               <li
-                className={`flex items-center gap-2 py-3 px-4 rounded-lg cursor-pointer ${selectedMenu === 'notifications' ? 'bg-gradient-to-r from-green-400 via-green-500 to-green-600 text-white' : 'hover:bg-slate-100'}`}
+                className={`relative flex items-center gap-2 py-3 px-4 rounded-lg cursor-pointer ${
+                  selectedMenu === 'notifications' ? 'nav-selected justify-center' : 'hover:bg-slate-100'
+                }`}
                 onClick={() => handleMenuClick('notifications')}
               >
-                <FaBell className="text-xl" />
-                <Link to='/dashboard/notifications' className="block"style={{ textDecoration: 'none', color: 'inherit' }}>Thông Báo</Link>
+                {/* Ảnh nền bên trái */}
+                {selectedMenu === 'notifications' && (
+                  <img
+                    src="/images/icon-left.png"
+                    alt="left-decor"
+                    className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
+                    style={{ transform: 'translateY(-50%)' }}
+                  />
+                )}
+
+                {/* Nội dung */}
+                <FaBell className="text-xl z-10" />
+                <Link
+                  to="/dashboard/notifications"
+                  className="block z-10"
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                >
+                  Thông Báo
+                </Link>
+
+                {/* Ảnh nền bên phải */}
+                {selectedMenu === 'notifications' && (
+                  <img
+                    src="/images/icon-right.png"
+                    alt="right-decor"
+                    className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
+                    style={{ transform: 'translateY(-50%)' }}
+                  />
+                )}
               </li>
+
 
               {/* Logout */}
               <li
@@ -168,4 +404,6 @@ const Dashboard = () => {
   );
 };
 
+
 export default Dashboard;
+

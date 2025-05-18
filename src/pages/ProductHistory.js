@@ -14,6 +14,17 @@ import {
 import { useNavigate } from "react-router-dom";
 import ReactStars from "react-rating-stars-component";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+} from "recharts";
+
+
 const ProductHistory = () => {
   const dispatch = useDispatch();
   useEffect(() => {
@@ -107,23 +118,64 @@ const filterByTime = (list) => {
 
 const filteredWishlist = filterByTime(wishlistState);
 
+const getChartData = (data) => {
+  const grouped = {};
+
+  data.forEach((item) => {
+    if (!item.timeView) return;
+    const dateKey = new Date(item.timeView).toLocaleDateString("vi-VN");
+    grouped[dateKey] = (grouped[dateKey] || 0) + 1;
+  });
+
+  return Object.entries(grouped)
+    .map(([date, count]) => ({ date, count }))
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
+};
+
+const chartData = getChartData(filteredWishlist);
+const sortedWishlist = [...filteredWishlist].sort((a, b) => new Date(b.timeView) - new Date(a.timeView));
+
 
   return (
     <>
       <Container class1="wishlist-wrapper home-wrapper-2 py-5">
         <div className="row">
         <div className="col-12 mb-4">
-          <select
-            className="form-select w-auto"
-            value={selectedFilter}
-            onChange={(e) => setSelectedFilter(e.target.value)}
-          >
-            {filterOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+          <div className="d-flex justify-content-between align-items-start flex-wrap gap-3">
+            <select
+              className="form-select w-auto"
+              value={selectedFilter}
+              onChange={(e) => setSelectedFilter(e.target.value)}
+            >
+              {filterOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+
+            <div style={{ width: "400px", minWidth: "300px" }} className="bg-white p-2 rounded shadow-sm">
+              <h6 className="text-center mb-2" style={{ fontSize: "14px" }}>
+                Biểu đồ lượt xem
+              </h6>
+              {chartData.length === 0 ? (
+                <p className="text-muted text-center mb-0" style={{ fontSize: "13px" }}>Không có dữ liệu</p>
+              ) : (
+                <ResponsiveContainer width="100%" height={150}>
+                  <BarChart data={chartData}>
+                    <XAxis dataKey="date" tick={{ fontSize: 10 }} />
+                    <YAxis allowDecimals={false} hide />
+                    <Tooltip
+                      contentStyle={{ backgroundColor: "#f8f9fa", border: "1px solid #ccc" }}
+                      formatter={(value) => [`${value} lượt xem`, "Số lượng"]}
+                      labelFormatter={(label) => `Ngày: ${label}`}
+                    />
+                    <Bar dataKey="count" fill="#002E27" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+          </div>
         </div>
 
           {wishlistState && wishlistState.length === 0 && (
@@ -132,8 +184,8 @@ const filteredWishlist = filterByTime(wishlistState);
           {filteredWishlist && filteredWishlist.length === 0 && (
             <div className="text-center fs-3">Không có sản phẩm phù hợp</div>
           )}
-          {filteredWishlist &&
-            filteredWishlist?.map((item, index) => {
+          {sortedWishlist  &&
+            sortedWishlist?.map((item, index) => {
 
               return (
                 <div className="col-lg-3 col-md-4 col-sm-6 my-3" key={index}
