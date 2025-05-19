@@ -254,16 +254,24 @@ const SingleProduct = () => {
   // State and logic for related products
   const [relatedProducts, setRelatedProducts] = useState([]);
 
-  useEffect(() => {
-    if (productState?.category) {
-      const filteredProducts = productsState.filter(
-        (product) =>
-          product.category === productState.category &&
-          product._id !== getProductId
+useEffect(() => {
+  if (productState?.category?._id) {
+    const filteredProducts = productsState.filter((product) => {
+      const productCategoryId =
+        typeof product.category === "object"
+          ? product.category._id
+          : product.category;
+
+      return (
+        productCategoryId === productState.category._id &&
+        product._id !== getProductId
       );
-      setRelatedProducts(filteredProducts);
-    }
-  }, [productState, productsState, getProductId]);
+    });
+
+    setRelatedProducts(filteredProducts);
+  }
+}, [productState, productsState, getProductId]);
+
 
   // State and logic for related products by brand
   const [relatedByBrand, setRelatedByBrand] = useState([]);
@@ -476,11 +484,41 @@ const SingleProduct = () => {
 
 
   console.log("Rating value: ", productState?.rating);
+  
+const [showSizeImage, setShowSizeImage] = useState(false);
+
+useEffect(() => {
+  dispatch(getuserProductWishlist());
+}, [dispatch]);
+
+const [sameCategoryWishlist, setSameCategoryWishlist] = useState([]);
+
+useEffect(() => {
+  if (productState?.category && wishlistState?.length > 0) {
+    const currentCategoryId =
+      typeof productState.category === "object"
+        ? productState.category._id
+        : productState.category;
+
+    const filtered = wishlistState.filter((item) => {
+      const itemCategoryId =
+        typeof item.category === "object" ? item.category._id : item.category;
+
+      return (
+        itemCategoryId === currentCategoryId && item._id !== productState._id
+      );
+    });
+
+    setSameCategoryWishlist(filtered);
+  }
+}, [productState?.category, productState?._id, wishlistState]);
+
+
 
 
   return (
     <>
-      <Meta title={"Product Name"} />
+      <Meta title={productState?.name} />
       <BreadCrumb title={productState?.name} />
       <Container class1="main-product-wrapper py-5 home-wrapper-2">
         <div className="row">
@@ -656,10 +694,10 @@ const SingleProduct = () => {
                     </a>
                   </div>
                   <div className="py-3">
-                    {/* <div className="d-flex gap-10 align-items-center my-2">
-                      <h3 className="product-heading">Loại :</h3>
-                      <p className="product-data">{productState?.category}</p>
-                    </div> */}
+                    <div className="d-flex gap-10 align-items-center my-2">
+                      <h3 className="product-heading">Mã sản phẩm :</h3>
+                      <p className="product-data">{productState?.code}</p>
+                    </div>
                     <div className="d-flex gap-10 align-items-center my-2">
                       <h3 className="product-heading">Thương hiệu :</h3>
                       <p className="product-data">{productState?.brand}</p>
@@ -667,7 +705,7 @@ const SingleProduct = () => {
                     <div className="d-flex gap-10 align-items-center my-2">
                       <h3 className="product-heading">Danh mục :</h3>
                       <p className="product-data">
-                        {productState?.category?.name}
+                        {productState?.category?.name || categoryName}
                       </p>
                     </div>
                     <div className="d-flex gap-10 align-items-center my-2">
@@ -889,10 +927,14 @@ const SingleProduct = () => {
                     </div>
 
                     <div className="flex flex-col md:flex-row border-b py-1 text-sm">
-                      <div className="flex cursor-pointer gap-1 p-3 items-center leading-none">
+                      <div
+                        className="flex cursor-pointer gap-1 p-3 items-center leading-none"
+                        onClick={() => setShowSizeImage(true)}
+                      >
                         <FaRulerHorizontal className="text-sm" />
                         Kích thước
                       </div>
+
                       <div className="flex cursor-pointer gap-1 p-3 items-center leading-none">
                         <BsShield className="text-sm" />
                         Vận chuyển & trả hàng
@@ -906,7 +948,24 @@ const SingleProduct = () => {
                         Hỗ trợ
                       </div>
                     </div>
-
+                    {showSizeImage && (
+                      <div
+                    className="fixed inset-0 flex items-center justify-center z-50"
+                    style={{ backgroundColor: "rgba(0, 0, 0, 0.6)" }}
+                        onClick={() => setShowSizeImage(false)} // Click nền thì đóng
+                      >
+                        <div
+                          className="bg-white rounded-lg max-w-[90%] max-h-[90%] p-2"
+                          onClick={(e) => e.stopPropagation()} // Ngăn đóng khi click vào ảnh
+                        >
+                          <img
+                            src="/images/size.png"
+                            alt="Kích thước"
+                            className="max-w-full max-h-[80vh] object-contain"
+                          />
+                        </div>
+                      </div>
+                    )}
                     <div className="flex flex-col md:flex-row justify-between border-b py-1 text-sm">
                       <div className="flex flex-col md:flex-row">
                         <div className="flex cursor-pointer gap-1 p-3 items-center leading-none">
@@ -1167,15 +1226,38 @@ const SingleProduct = () => {
     </div>
   </div>
 </Container>
+      {sameCategoryWishlist.length > 0 && (
+        <Container class1="related-wrapper py-5 home-wrapper-2">
+          <div className="row">
+            <div className="col-12">
+              <h3 className="section-heading">Sản phẩm yêu thích liên quan</h3>
+            </div>
+          </div>
+          <div className="row">
+            <ProductCard data={sameCategoryWishlist} />
+          </div>
+        </Container>
+      )}
+
 
       <Container class1="related-wrapper py-5 home-wrapper-2">
+        <div className="row">
+          <div className="col-12">
+            <h3 className="section-heading">Sản phẩm cùng thương hiệu</h3>
+          </div>
+        </div>
+        <div className="row">
+          <ProductCard data={relatedByBrand} />
+        </div>
+      </Container>
+      <Container class1="related-wrapper py-3 home-wrapper-2">
         <div className="row">
           <div className="col-12">
             <h3 className="section-heading">Sản phẩm liên quan</h3>
           </div>
         </div>
         <div className="row">
-          <ProductCard data={relatedByBrand} />
+          <ProductCard data={relatedProducts} />
         </div>
       </Container>
       <Container class1="popular-wrapper py-3 home-wrapper-2">
@@ -1186,17 +1268,6 @@ const SingleProduct = () => {
         </div>
         <div className="row">
           <ProductCard data={popularProduct} />
-        </div>
-      </Container>
-
-      <Container class1="related-wrapper py-3 home-wrapper-2">
-        <div className="row">
-          <div className="col-12">
-            <h3 className="section-heading">Sản phẩm nổi bật</h3>
-          </div>
-        </div>
-        <div className="row">
-          <ProductCard data={relatedProducts} />
         </div>
       </Container>
     </>
