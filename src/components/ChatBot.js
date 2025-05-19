@@ -1,55 +1,100 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaRegQuestionCircle } from "react-icons/fa";
 import { FiMessageSquare } from "react-icons/fi";
 import { IoMdSend } from "react-icons/io";
-import { useSelector } from "react-redux";
-
+import { useDispatch, useSelector } from "react-redux";
+import { chatbot } from "../features/user/userSlice";
+import "./../Css/CssChatBot.css";
 const ChatBot = () => {
-  const [messages, setMessages] = useState([
-    { from: "bot", text: "Xin chào! Tôi có thể giúp gì cho bạn về thời trang hôm nay?" }
-  ]);
+  const [messages, setMessages] = useState(() => {
+    const savedMessages = localStorage.getItem("chatMessages");
+      return savedMessages
+        ? JSON.parse(savedMessages)
+        : [{ from: "bot", text: "Xin chào! Tôi có thể giúp gì cho bạn về thời trang hôm nay?" }];
+  });
+
+
+useEffect(() => {
+  localStorage.setItem("chatMessages", JSON.stringify(messages));
+}, [messages]);
+
   const [input, setInput] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const user = useSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
 
-  const handleSend = async () => {
-    if (!input.trim()) return;
 
-    const timestamp = new Date().toISOString();
-    const userMessage = { from: "user", text: input, timestamp };
-    const updatedMessages = [...messages, userMessage];
-    setMessages(updatedMessages);
-    setInput("");
 
-    // Gửi yêu cầu đến OpenAI API (hoặc server proxy của bạn)
-    const response = await fetch("http://localhost:8800/api/v1/chatbot", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ message: input })
-    });
+ const handleSend = async () => {
+  if (!input.trim()) return;
 
-    const data = await response.json();
-    const botMessage = { from: "bot", text: data.reply || "Xin lỗi, tôi chưa hiểu ý bạn.",  timestamp: new Date().toISOString() };
-    setMessages([...updatedMessages, botMessage]);
-  };
+  const timestamp = new Date().toISOString();
+  const userMessage = { from: "user", text: input, timestamp };
+  const updatedMessages = [...messages, userMessage];
+  setMessages(updatedMessages);
+  setInput("");
+  setIsLoading(true);
+
+  try {
+    const res = await dispatch(chatbot({ message: input }));
+
+    setIsLoading(false);
+
+    if (res.payload?.data?.reply) {
+      const botMessage = {
+        from: "bot",
+        text: res.payload.data.reply,
+        timestamp: new Date().toISOString(),
+      };
+      setMessages([...updatedMessages, botMessage]);
+    } else {
+      const errorMsg = {
+        from: "bot",
+        text: "Xin lỗi, tôi chưa hiểu ý bạn.",
+        timestamp: new Date().toISOString(),
+      };
+      setMessages([...updatedMessages, errorMsg]);
+    }
+  } catch (error) {
+    setIsLoading(false); 
+    const errorMsg = {
+      from: "bot",
+      text: "Đã xảy ra lỗi khi gọi trợ lý. Vui lòng thử lại.",
+      timestamp: new Date().toISOString(),
+    };
+    setMessages([...updatedMessages, errorMsg]);
+  }
+};
+
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter") handleSend();
   };
 
+  const [isLoading, setIsLoading] = useState(false);
+
+  const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+  
+  function extractLinks(text) {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  return text.match(urlRegex) || [];
+}
+
   return (
     <div className="text-sm font-sans">
       {isOpen ? (
         <div className="w-80 h-[400px] bg-white border-3 border-[#006156] shadow-xl rounded-xl flex flex-col">
-          <div className="bg-black text-white px-4 py-2 rounded-t-xl flex justify-between items-center">
+          <div style={{ backgroundColor: "#002E27" }} className=" text-white px-4 py-2 rounded-t-xl flex justify-between items-center">
           {/* Bên trái: Avatar + Tên + Trạng thái */}
           <div className="flex items-center space-x-3">
             <img
               src="images/sac.png" // ← đổi đường dẫn ảnh tại đây
               alt="Avatar"
-              className="w-10 h-10 rounded-full border-2 border-white"
+              className="w-10 h-10 rounded-full border-2 border-black"
             />
             <div className="leading-tight">
               <div className="font-semibold">Trợ lý ảo Sắc</div>
@@ -61,65 +106,155 @@ const ChatBot = () => {
           <button onClick={() => setIsOpen(false)} className="text-white text-xl">×</button>
         </div>
 
-          <div className="flex-1 overflow-y-auto p-3 space-y-2">
-            {messages.map((msg, index) => (
-              <div
+        <div className="flex-1 overflow-y-auto overflow-x-hidden p-3 space-y-3">
+          {messages.map((msg, index) => (
+            <div
               key={index}
-              className={`flex items-start gap-2 ${msg.from === "bot" ? "" : "flex-row-reverse"}`}
+              className={`flex items-start ${msg.from === "bot" ? "flex-row" : "flex-row-reverse"} gap-2`}
             >
-              <div className="relative">
+              {/* Avatar */}
+              <div className="relative flex-shrink-0">
                 <img
                   src={msg.from === "bot" ? "images/sac.png" : user?.avatar || "/images/default-user.png"}
-                  alt={msg.from === "bot" ? "Bot Avatar" : "User Avatar"}
-                  className="w-8 h-8 rounded-full border border-white"
+                  alt="Avatar"
+                  className="w-8 h-8 rounded-full object-cover border-[2px] border-#181818FF"
                 />
                 {msg.from === "bot" && (
-                  <span className="absolute bottom-0 right-0 block w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
+                  <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
+                )}
+                {msg.from === "user" && (
+                  <span className="absolute bottom-0 left-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
                 )}
               </div>
 
-                <div className="flex flex-col items-start max-w-[75%]">
-                  <div
-                    className={`p-2 rounded-lg ${
-                      msg.from === "bot"
-                        ? "bg-gray-100 text-left text-black"
-                        : "bg-[#013f37] text-right text-white"
-                    }`}
-                  >
-                    {msg.text}
-                  </div>
-                  <div
-                    className={`text-[10px] mt-1 text-gray-500 ${
-                      msg.from === "bot" ? "text-left" : "text-right self-end"
-                    }`}
-                  >
-                    {msg.timestamp && new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </div>
+
+              {/* Nội dung tin nhắn */}
+              <div className="flex flex-col max-w-[calc(100%-2.5rem)]">
+                <div
+                  className={`p-2 rounded-lg break-words whitespace-pre-wrap ${
+                    msg.from === "bot"
+                      ? "bg-gray-100 text-left text-black"
+                      : "bg-[#013f37] text-right text-white"
+                  }`}
+                >
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: msg.text.replace(
+                        /(https?:\/\/[^\s]+)/g,
+                        (url) => `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline break-all">${url}</a>`
+                      ),
+                    }}
+                  />
+
+                </div>
+                <div
+                  className={`text-[10px] mt-1 text-gray-500 ${
+                    msg.from === "bot" ? "text-left" : "text-right self-end"
+                  }`}
+                >
+                  {msg.timestamp &&
+                    new Date(msg.timestamp).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
                 </div>
               </div>
-            ))}
+            </div>
+          ))}
+          <div ref={messagesEndRef} />
+        </div>
+        {isLoading && (
+          <div className="flex items-start flex-row gap-2">
+            {/* Avatar bot */}
+            <div className="relative flex-shrink-0">
+              <img
+                src="images/sac.png"
+                alt="Bot Avatar"
+                className="w-8 h-8 rounded-full object-cover border-[2px] border-black"
+              />
+              <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
+            </div>
+
+            {/* Dấu 3 chấm nhảy */}
+            <div className="flex flex-col max-w-[calc(100%-2.5rem)]">
+              <div className="bg-gray-100 text-black p-2 rounded-lg">
+                <span className="flex gap-1">
+                  <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                  <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                  <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></span>
+                </span>
+              </div>
+            </div>
           </div>
+        )}
+
           <div className="p-2 border-t flex items-center gap-2">
             <input
               className="flex-1 border rounded-lg px-3 py-1 text-sm focus:outline-none"
               type="text"
               value={input}
-              placeholder="Hỏi tôi về phối đồ, màu sắc, sự kiện..."
+              placeholder="Hỏi Sắc về thời trang..."
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyPress}
             />
-            <button onClick={handleSend}>
-              <IoMdSend className="text-xl text-blue-500" />
+            <button
+              onClick={handleSend}
+              style={{ color: "#002E27" }}
+              className="text-xl"
+              onMouseEnter={e => (e.currentTarget.style.color = "#005248")}
+              onMouseLeave={e => (e.currentTarget.style.color = "#002E27")}
+            >
+              <IoMdSend />
             </button>
+
           </div>
         </div>
       ) : (
-        <button
-          onClick={() => setIsOpen(true)}
-          className="bg-black text-white p-2 rounded-full shadow-lg hover:scale-105 transition"
+      <button
+        onClick={() => setIsOpen(true)}
+        className="bg-black p-2 rounded-full shadow-lg hover:scale-105 transition relative w-14 h-14 flex items-center justify-center"
+        style={{
+          boxShadow: "0 4px 15px rgba(255, 0, 128, 0.7), 0 0 10px rgba(255, 140, 0, 0.6), 0 0 20px rgba(64, 224, 208, 0.8)",
+        }}
+      >
+        {/* Hai viền hình vuông nằm trong vòng tròn */}
+        <span
+          className="absolute w-10 h-10 border-2 pointer-events-none"
+          style={{
+            borderImage: "linear-gradient(270deg, #ff0080, #ff8c00, #40e0d0) 1",
+            animation: "borderSpin 6s linear infinite",
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%) rotate(0deg)',
+            borderRadius: '0', // hình vuông
+          }}
+        />
+        <span
+          className="absolute w-10 h-10 border-2 pointer-events-none"
+          style={{
+            borderImage: "linear-gradient(270deg, #40e0d0, #ff0080, #ff8c00) 1",
+            animation: "borderSpinReverse 8s linear infinite",
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%) rotate(45deg)',
+            borderRadius: '0', // hình vuông
+          }}
+        />
+
+        {/* Chữ AI nằm trên cùng */}
+        <span
+          className="relative text-lg font-bold bg-clip-text text-transparent"
+          style={{
+            backgroundImage: "linear-gradient(270deg, #ff0080, #ff8c00, #40e0d0)",
+            backgroundSize: "600% 600%",
+            animation: "gradientText 4s ease infinite",
+          }}
         >
-          <FaRegQuestionCircle size={39} />
-        </button>
+          AI
+        </span>
+      </button>
+
+
 
       )}
     </div>

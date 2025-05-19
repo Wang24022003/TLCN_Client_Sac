@@ -204,6 +204,11 @@ const getProductUserRecentView = async () => {
   }
 };
 
+const chatbot = async (chatbotData) => {
+  const response = await instance.post(`chat-ai`, chatbotData);
+  return response;
+};
+
 export const authService = {
   register,
   active_account,
@@ -231,4 +236,5 @@ export const authService = {
   paymentVerification,
   getProductUserRecentView,
   getNewInfoUser,
+  chatbot,
 };

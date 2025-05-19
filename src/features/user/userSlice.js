@@ -280,6 +280,18 @@ export const resetPassword = createAsyncThunk(
   }
 );
 
+export const chatbot = createAsyncThunk(
+  "chat-ai",
+  async (chatbotData, thunkAPI) => {
+    const re = await authService.chatbot(chatbotData);
+    if (re && re.data) {
+      return re;
+    } else {
+      return thunkAPI.rejectWithValue(re);
+    }
+  }
+);
+
 export const resetState = createAction("Reset_all");
 
 const getCustomerfromLocalStorage = localStorage.getItem("customer")
@@ -305,7 +317,23 @@ export const authSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-
+      .addCase(chatbot.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(chatbot.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.token = action.payload.data.reply;
+       
+      })
+      .addCase(chatbot.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+        
+      })
       .addCase(registerUser.pending, (state) => {
         state.isLoading = true;
       })
