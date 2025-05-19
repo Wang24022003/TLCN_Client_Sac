@@ -31,10 +31,13 @@ import "./../Css/CssSingleProduct.css";
 import { getRatingsUser, uploadImg } from "../utils/api";
 import SizeSelect from "../components/SizeSelect";
 import { getAProductCategory } from "../features/pcategory/pcategorySlice";
-import { FiHeart, FiLayers } from "react-icons/fi";
+import { FiGift, FiHeart, FiLayers } from "react-icons/fi";
 import { AiOutlineShareAlt } from "react-icons/ai";
 import Dropzone from "react-dropzone";
 import { LuImagePlus } from "react-icons/lu";
+import { motion } from "framer-motion"
+
+
 
 const SingleProduct = () => {
   const { categoryName } = useSelector((state) => state.pCategory);
@@ -513,14 +516,24 @@ useEffect(() => {
   }
 }, [productState?.category, productState?._id, wishlistState]);
 
+const [activeTab, setActiveTab] = useState("description");
 
-
+const floatingIconVariants = {
+  animate: {
+    x: [0, -5, 0], // hoặc [0, 5, 0] cho icon phải
+    transition: {
+      repeat: Infinity,
+      duration: 1.2,
+      ease: "easeInOut",
+    },
+  },
+};
 
   return (
     <>
       <Meta title={productState?.name} />
       <BreadCrumb title={productState?.name} />
-      <Container class1="main-product-wrapper py-5 home-wrapper-2">
+      <Container class1="main-product-wrapper pt-5 home-wrapper-2">
         <div className="row">
           <div className="col-12">
             <div className="product-wrapper-box flex flex-wrap gap-3 w-full">
@@ -688,21 +701,48 @@ useEffect(() => {
                       <p className="mb-0 t-review">
                         ( {productState?.quantityComments} Đánh giá )
                       </p>
+                      <a className="text-dark text-decoration-underline ms-3" href="#review">
+                        Viết đánh giá
+                      </a>
                     </div>
-                    <a className="review-btn" href="#review">
-                      Viết đánh giá
-                    </a>
+                    
                   </div>
                   <div className="py-3">
-                    <div className="d-flex gap-10 align-items-center my-2">
-                      <h3 className="product-heading">Mã sản phẩm :</h3>
-                      <p className="product-data">{productState?.code}</p>
+                    <div className="d-flex gap-30 align-items-center my-2">
+                      <div className="d-flex gap-10 align-items-center">
+                        <h3 className="product-heading">Mã sản phẩm:</h3>
+                        <p className="product-data">{productState?.code}</p>
+                      </div>
+                      <div className="d-flex gap-10 align-items-center">
+                        <h3 className="product-heading">Thương hiệu:</h3>
+                        <p className="product-data">{productState?.brand}</p>
+                      </div>
                     </div>
-                    <div className="d-flex gap-10 align-items-center my-2">
-                      <h3 className="product-heading">Thương hiệu :</h3>
-                      <p className="product-data">{productState?.brand}</p>
+
+                    {/* Ưu đãi khuyến mãi */}
+                    <div
+                      style={{
+                        border: "2px dashed red",
+                        padding: "16px",
+                        borderRadius: "8px",
+                        marginBottom: "16px",
+                        backgroundColor: "#fff5f5",
+                      }}
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <FiGift style={{ color: "red", fontSize: "20px" }} />
+                        <strong style={{ color: "red", fontSize: "16px" }}>ƯU ĐÃI</strong>
+                      </div>
+                      <ul style={{ marginBottom: 0, paddingLeft: "20px", color: "#333", fontSize: "15px" }}>
+                        <li>Freeship cho đơn hàng từ 1000K</li>
+                        <li>
+                          Hỗ trợ đổi hàng trong vòng 7 ngày từ lúc nhận hàng (Không áp dụng cho hàng khuyến mãi trên 10%)
+                        </li>
+                        <li>Và thêm các mã khuyến mãi bên dưới</li>
+                      </ul>
                     </div>
-                    <div className="d-flex gap-10 align-items-center my-2">
+
+                    {/* <div className="d-flex gap-10 align-items-center my-2">
                       <h3 className="product-heading">Danh mục :</h3>
                       <p className="product-data">
                         {productState?.category?.name || categoryName}
@@ -711,7 +751,7 @@ useEffect(() => {
                     <div className="d-flex gap-10 align-items-center my-2">
                       <h3 className="product-heading">Tags :</h3>
                       <p className="product-data">{productState?.tags}</p>
-                    </div>
+                    </div> */}
                     {features.includes("color") && (
                       <div className="mb-3">
                         <strong>Màu:</strong>
@@ -829,7 +869,7 @@ useEffect(() => {
                             }}
                             className="px-4 py-2 text-gray-700 hover:bg-gray-100"
                           >
-                            <FaMinus />
+                            <FaMinus style={{ opacity: 0.5 }}/>
                           </button>
 
                           <input
@@ -859,7 +899,7 @@ useEffect(() => {
                             }}
                             className="px-4 py-2 text-gray-700 hover:bg-gray-100"
                           >
-                            <FaPlus />
+                            <FaPlus style={{ opacity: 0.5 }}/>
                           </button>
                         </div>
                         <div>
@@ -889,9 +929,9 @@ useEffect(() => {
                       </div>
                     ) : null}
 
-                    <div className="mt-4 mb-3">
-                      <div className="d-flex align-items-center">
-                        {getSelectedVariantStock() === 0 ? (
+                    <div className="mt-4 mb-3 d-flex align-items-center gap-2">
+                      {/* Nút đầu tiên (Mua ngay / Sản phẩm vào giỏ hàng / Hết hàng) */}
+                      {getSelectedVariantStock() === 0 ? (
                         <button
                           className="button border-0"
                           disabled
@@ -903,24 +943,95 @@ useEffect(() => {
                         >
                           Hết hàng
                         </button>
+                      ) : (
+                        <button
+                          className="btn-order-submit"
+                          type="button"
+                          onClick={() => {
+                            if (alreadyAdded) {
+                              navigate("/cart");
+                            } else {
+                              uploadCart();
+                            }
+                          }}
+                        >
+                          <div className="btn-inner-order d-flex align-items-center justify-content-center position-relative">
+                            <img
+                              src="/images/icon-left.png"
+                              alt="left"
+                              className="btn-icon-order icon-left-order"
+                            />
+                            <span className="btn-text-order">
+                              {alreadyAdded ? "Sản phẩm vào giỏ hàng" : "Mua ngay"}
+                            </span>
+                            <img
+                              src="/images/icon-right.png"
+                              alt="right"
+                              className="btn-icon-order icon-right-order"
+                            />
+                          </div>
+                        </button>
 
-                        ) : (
-                          <button
-                            className="button border-0"
-                            type="button"
-                            onClick={() => {
-                              if (alreadyAdded) {
-                                navigate("/cart");
-                              } else {
-                                uploadCart();
-                              }
-                            }}
-                          >
-                            {alreadyAdded ? "Sản phẩm vào giỏ hàng" : "Mua ngay"}
-                          </button>
-                        )}
-                      </div>
+                      )}
+
+                      {/* Nút thêm vào giỏ hàng */}
+                      <button onClick={async () => {
+                          const hasColor = features.includes("color");
+                          const hasSize = features.includes("size");
+
+                          if (hasColor && hasSize && (!selectedColor || !selectedSize)) {
+                            toast.error("Vui lòng chọn cả màu và kích thước");
+                            return;
+                          }
+
+                          if (hasColor && !hasSize && !selectedColor) {
+                            toast.error("Vui lòng chọn màu sắc");
+                            return;
+                          }
+
+                          if (!hasColor && hasSize && !selectedSize) {
+                            toast.error("Vui lòng chọn kích thước");
+                            return;
+                          }
+
+                          if (quantity > getSelectedVariantStock()) {
+                            toast.error("Số lượng vượt quá tồn kho");
+                            return;
+                          }
+
+                          const productPayload = {
+                            _id: productState?._id,
+                            price: getSelectedVariantPriceValue(),
+                            quantity: +quantity,
+                          };
+
+                          if (hasColor) productPayload.color = selectedColor;
+                          if (hasSize) productPayload.size = selectedSize;
+
+                          try {
+                            await dispatch(addProdToCart({ product: productPayload })).unwrap();
+                            await dispatch(getUserCart()).unwrap();
+                          } catch (err) {}
+                        }}
+                        className="gold-toggle-btn-sp"
+                      >
+                        <div className="btn-inner d-flex align-items-center justify-content-center position-relative">
+                          <img
+                            src="/images/icon-left.png"
+                            alt="left"
+                            className="btn-icon icon-left"
+                          />
+                          <span className="btn-text">Thêm vào giỏ hàng</span>
+                          <img
+                            src="/images/icon-right.png"
+                            alt="right"
+                            className="btn-icon icon-right"
+                          />
+                        </div>
+                      </button>
+
                     </div>
+
 
                     <div className="border-bottom d-flex align-items-center gap-15">
                       <div></div>
@@ -968,9 +1079,20 @@ useEffect(() => {
                     )}
                     <div className="flex flex-col md:flex-row justify-between border-b py-1 text-sm">
                       <div className="flex flex-col md:flex-row">
-                        <div className="flex cursor-pointer gap-1 p-3 items-center leading-none">
-                          <FiHeart className="text-sm" />
-                          Thêm vào yêu thích
+                        <div className="flex cursor-pointer gap-1 p-3 items-center leading-none"
+                          onClick={() => handleWishlistToggle(productState?._id)}
+                        >
+                          {isProductInWishlist(productState?._id) ? (
+                            <>
+                              <AiFillHeart className="text-red-500 text-sm" />
+                              Đã yêu thích
+                            </>
+                          ) : (
+                            <>
+                              <FiHeart className="text-sm" />
+                              Thêm vào yêu thích
+                            </>
+                          )}
                         </div>
                         <div className="flex cursor-pointer gap-1 p-3 items-center leading-none">
                           <FiLayers className="text-sm" />
@@ -1013,10 +1135,119 @@ useEffect(() => {
           </div>
         </div>
       </Container>
-      <Container class1="description-wrapper py-2 home-wrapper-2">
-        <div className="row">
+
+<Container class1="home-wrapper-2  p-4 rounded-md">
+  {/* Phần nút chọn tab với icon trái/phải */}
+  <div className="flex items-center justify-center my-4 gap-3">
+    <img
+      src="/images/Left.png"
+      alt="Left Icon"
+      className="w-48 h-15 object-contain"
+    />
+
+    <div className="relative flex w-fit border border-gray-300 rounded-md overflow-hidden text-base font-medium h-16">
+      {/* Nền trượt */}
+      <motion.div
+        layout
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className={`absolute top-0 bottom-0 w-1/2  z-0 ${
+          activeTab === "reviews" ? "left-1/2" : "left-0"
+        }`}
+        style={{
+        background: 'radial-gradient(circle, rgba(0, 82, 72, 1) 0%, rgba(0, 46, 39, 1) 66%, rgba(0, 0, 0, 1) 100%)'
+      }}
+      />
+
+      {/* Nút Mô tả */}
+      <button
+        onClick={() => setActiveTab("description")}
+        className={`text-2xl relative z-10 min-w-[12rem] flex items-center justify-evenly gap-2 transition-colors duration-200 ${
+          activeTab === "description" ? "text-white" : "text-black"
+        }`}
+      >
+        {activeTab === "description" && (
+          <motion.img
+            src="/images/icon-left.png"
+            alt="icon"
+            className="w-10 h-10 object-contain"
+            variants={floatingIconVariants}
+            animate="animate"
+          />
+        )}
+        Mô tả
+        {activeTab === "description" && (
+          <motion.img
+            src="/images/icon-right.png"
+            alt="icon"
+            className="w-10 h-10 object-contain"
+            variants={{
+              animate: {
+                x: [0, 5, 0],
+                transition: {
+                  repeat: Infinity,
+                  duration: 1.2,
+                  ease: "easeInOut",
+                },
+              },
+            }}
+            animate="animate"
+          />
+        )}
+      </button>
+
+      {/* Đường ngăn */}
+      <div className="w-px bg-gray-300 z-10" />
+
+      {/* Nút Đánh giá */}
+      <button
+        onClick={() => setActiveTab("reviews")}
+        className={`text-2xl relative z-10 min-w-[12rem] flex items-center justify-evenly gap-2 transition-colors duration-200 ${
+          activeTab === "reviews" ? "text-white" : "text-black"
+        }`}
+      >
+        {activeTab === "reviews" && (
+          <motion.img
+            src="/images/icon-left.png"
+            alt="icon"
+            className="w-10 h-10 object-contain"
+            variants={floatingIconVariants}
+            animate="animate"
+          />
+        )}
+        Đánh giá
+        {activeTab === "reviews" && (
+          <motion.img
+            src="/images/icon-right.png"
+            alt="icon"
+            className="w-10 h-10 object-contain"
+            variants={{
+              animate: {
+                x: [0, 5, 0],
+                transition: {
+                  repeat: Infinity,
+                  duration: 1.2,
+                  ease: "easeInOut",
+                },
+              },
+            }}
+            animate="animate"
+          />
+        )}
+      </button>
+    </div>
+
+    <img
+      src="/images/Right.png"
+      alt="Right Icon"
+      className="w-48 h-15 object-contain"
+    />
+  </div>
+
+  {/* Phần nội dung tương ứng tab */}
+  {activeTab === "description" && (
+    <div className="description-wrapper py-2 home-wrapper-2">
+      <div className="row">
           <div className="col-12">
-            <h4>Mô tả</h4>
             <div className="bg-white p-3">
               <p
                 dangerouslySetInnerHTML={{ __html: productState?.description }}
@@ -1024,193 +1255,139 @@ useEffect(() => {
             </div>
           </div>
         </div>
-      </Container>
+    </div>
+  )}
 
-<Container class1="reviews-wrapper home-wrapper-2">
-  <div className="row">
-    <div className="col-12">
-      <h3 id="review">Đánh giá</h3>
-      <div className="review-inner-wrapper">
-        <div className="review-head d-flex justify-content-between align-items-end">
-          <div>
-            <h4 className="mb-2">Đánh giá của khách hàng</h4>
-            <div className="d-flex align-items-center gap-10">
-            {productState?.rating !== undefined && (
-              <ReactStars
-                count={5}
-                size={24}
-                value={Number(productState.rating)}
-                isHalf={true}
-                edit={false}
-                activeColor="#ffd700"
-              />
-            )}
-               <span className="text-muted">
-                  {productState?.rating?.toFixed(1)} / 5
-                </span>
-              <p className="mb-0">
-                Dựa trên {productState?.quantityComments} đánh giá
-              </p>
-            </div>
-          </div>
-
-          {orderedProduct && (
-            <div>
-              <a className="text-dark text-decoration-underline" href="#review">
-                Viết đánh giá
-              </a>
-            </div>
-          )}
-        </div>
-
-        {/* FORM đánh giá */}
-        <div className="review-form py-4">
-          <h4>Viết đánh giá</h4>
-
-          <div>
-            <ReactStars
-              count={+5}
-              size={24}
-              value={+0}
-              edit={true}
-              activeColor="#ffd700"
-              onChange={(e) => {
-                setStar(e);
-                setShowUploadBox(true);
-              }}
-            />
-          </div>
-
-          <div>
-          <textarea
-            className="w-100 form-control"
-            cols="30"
-            rows="4"
-            placeholder="Nội dung..."
-            onChange={(e) => {
-              setComment(e.target.value);
-              if (e.target.value.trim() !== "") {
-                setShowUploadBox(true); // 👈 Hiển thị upload khi bắt đầu nhập
-              }
-            }}
-          ></textarea>
-
-          </div>
-          {showUploadBox && (
-            <div
-              style={{
-                backgroundColor: "#fff",
-                padding: "20px",
-                borderRadius: "8px",
-                marginTop: "16px",
-              }}
-            >
-              <Dropzone
-                onDrop={(acceptedFiles) => {
-                  setReviewImages(acceptedFiles);
-                  setPreviewImages(acceptedFiles.map((file) => URL.createObjectURL(file)));
-                }}
-                accept={{ "image/*": [] }}
-                multiple
-              >
-                {({ getRootProps, getInputProps }) => (
-                  <div
-                    {...getRootProps()}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "16px",
-                      border: "2px dashed #ccc",
-                      borderRadius: "8px",
-                      cursor: "pointer",
-                      transition: "border-color 0.3s ease",
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#3b82f6")}
-                    onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#ccc")}
-                  >
-                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                      <LuImagePlus size={24} color="#3b82f6" />
-                      <p style={{ color: "#4B5563", fontSize: "14px", margin: "0" }}>
-                        Upload hoặc kéo ảnh vào đây
-                      </p>
-                    </div>
-                    <p style={{ color: "#9CA3AF", fontSize: "14px", margin: "0" }}>
-                      JPEG, PNG, GIF...
+  {activeTab === "reviews" && (
+    <div className="reviews-wrapper py-2 home-wrapper-2">
+      <div className="row">
+          <div className="col-12">
+   
+            <div className="review-inner-wrapper">
+              <div className="review-head d-flex justify-content-between align-items-end">
+                <div>
+                  <h4 className="mb-2">Đánh giá của khách hàng</h4>
+                  <div className="d-flex align-items-center gap-10">
+                  {productState?.rating !== undefined && (
+                    <ReactStars
+                      count={5}
+                      size={24}
+                      value={Number(productState.rating)}
+                      isHalf={true}
+                      edit={false}
+                      activeColor="#ffd700"
+                    />
+                  )}
+                    <span className="text-muted">
+                        {productState?.rating?.toFixed(1)} / 5
+                      </span>
+                    <p className="mb-0">
+                      Dựa trên {productState?.quantityComments} đánh giá
                     </p>
-                    <input {...getInputProps()} />
+                  </div>
+                </div>
+
+                {orderedProduct && (
+                  <div>
+                    <a className="text-dark text-decoration-underline" href="#review">
+                      Viết đánh giá
+                    </a>
                   </div>
                 )}
-              </Dropzone>
-            </div>
-          )}
+              </div>
 
-          {previewImages.length > 0 && (
-            <div className="d-flex mt-2 flex-wrap gap-2 justify-content-start">
-              {previewImages.map((src, idx) => (
-                <img
-                  key={idx}
-                  src={src}
-                  alt={`preview-${idx}`}
-                  style={{
-                    width: "80px",
-                    height: "80px",
-                    objectFit: "cover",
-                    borderRadius: "4px",
-                    border: "1px solid #ccc",
-                  }}
-                />
-              ))}
-            </div>
-          )}
+              {/* FORM đánh giá */}
+              <div className="review-form py-4">
+                <h4>Viết đánh giá</h4>
 
-          <div className="d-flex justify-content-end mt-3">
-            <button
-              onClick={addRatingToProduct}
-              className="button border-0"
-              type="button"
-            >
-              Gửi đánh giá
-            </button>
-          </div>
-        </div>
-
-        {/* Hiển thị danh sách đánh giá */}
-        <div className="reviews mt-4">
-          {reviews &&
-            reviews.map((item, index) => (
-              <div className="review" key={index}>
-                <div className="d-flex gap-10 align-items-center">
-                  <img
-                    src={item?.userId.avatar}
-                    alt={`${item?.userId.name}'s avatar`}
-                    className="rounded-circle"
-                    style={{
-                      width: "40px",
-                      height: "40px",
-                      objectFit: "cover",
-                    }}
-                  />
-                  <h6 className="mb-0">{item?.userId.name}</h6>
+                <div>
                   <ReactStars
                     count={+5}
                     size={24}
-                    value={+item?.rating}
-                    edit={false}
+                    value={+0}
+                    edit={true}
                     activeColor="#ffd700"
+                    onChange={(e) => {
+                      setStar(e);
+                      setShowUploadBox(true);
+                    }}
                   />
                 </div>
-                <p className="mt-3">{item?.comment}</p>
-                {item?.fileUrl?.length > 0 && (
-                  <div className="d-flex gap-2 flex-wrap mt-2 justify-content-start">
-                    {item.fileUrl.map((img, i) => (
+
+                <div>
+                <textarea
+                  className="w-100 form-control"
+                  cols="30"
+                  rows="4"
+                  placeholder="Nội dung..."
+                  onChange={(e) => {
+                    setComment(e.target.value);
+                    if (e.target.value.trim() !== "") {
+                      setShowUploadBox(true); // 👈 Hiển thị upload khi bắt đầu nhập
+                    }
+                  }}
+                ></textarea>
+
+                </div>
+                {showUploadBox && (
+                  <div
+                    style={{
+                      backgroundColor: "#fff",
+                      padding: "20px",
+                      borderRadius: "8px",
+                      marginTop: "16px",
+                    }}
+                  >
+                    <Dropzone
+                      onDrop={(acceptedFiles) => {
+                        setReviewImages(acceptedFiles);
+                        setPreviewImages(acceptedFiles.map((file) => URL.createObjectURL(file)));
+                      }}
+                      accept={{ "image/*": [] }}
+                      multiple
+                    >
+                      {({ getRootProps, getInputProps }) => (
+                        <div
+                          {...getRootProps()}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            padding: "16px",
+                            border: "2px dashed #ccc",
+                            borderRadius: "8px",
+                            cursor: "pointer",
+                            transition: "border-color 0.3s ease",
+                          }}
+                          onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#3b82f6")}
+                          onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#ccc")}
+                        >
+                          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                            <LuImagePlus size={24} color="#3b82f6" />
+                            <p style={{ color: "#4B5563", fontSize: "14px", margin: "0" }}>
+                              Upload hoặc kéo ảnh vào đây
+                            </p>
+                          </div>
+                          <p style={{ color: "#9CA3AF", fontSize: "14px", margin: "0" }}>
+                            JPEG, PNG, GIF...
+                          </p>
+                          <input {...getInputProps()} />
+                        </div>
+                      )}
+                    </Dropzone>
+                  </div>
+                )}
+
+                {previewImages.length > 0 && (
+                  <div className="d-flex mt-2 flex-wrap gap-2 justify-content-start">
+                    {previewImages.map((src, idx) => (
                       <img
-                        key={i}
-                        src={img}
-                        alt="Đánh giá"
+                        key={idx}
+                        src={src}
+                        alt={`preview-${idx}`}
                         style={{
-                          width: "100px",
-                          height: "100px",
+                          width: "80px",
+                          height: "80px",
                           objectFit: "cover",
                           borderRadius: "4px",
                           border: "1px solid #ccc",
@@ -1219,51 +1396,142 @@ useEffect(() => {
                     ))}
                   </div>
                 )}
+
+                <div className="d-flex justify-content-end mt-3">
+                  <button
+                    onClick={addRatingToProduct}
+                    className="button border-0"
+                    type="button"
+                  >
+                    Gửi đánh giá
+                  </button>
+                </div>
               </div>
-            ))}
-        </div>
-      </div>
-    </div>
-  </div>
-</Container>
-      {sameCategoryWishlist.length > 0 && (
-        <Container class1="related-wrapper py-5 home-wrapper-2">
-          <div className="row">
-            <div className="col-12">
-              <h3 className="section-heading">Sản phẩm yêu thích liên quan</h3>
+
+              {/* Hiển thị danh sách đánh giá */}
+              <div className="reviews mt-4">
+                {reviews &&
+                  reviews.map((item, index) => (
+                    <div className="review" key={index}>
+                      <div className="d-flex gap-10 align-items-center">
+                        <img
+                          src={item?.userId.avatar}
+                          alt={`${item?.userId.name}'s avatar`}
+                          className="rounded-circle"
+                          style={{
+                            width: "40px",
+                            height: "40px",
+                            objectFit: "cover",
+                          }}
+                        />
+                        <h6 className="mb-0">{item?.userId.name}</h6>
+                        <ReactStars
+                          count={+5}
+                          size={24}
+                          value={+item?.rating}
+                          edit={false}
+                          activeColor="#ffd700"
+                        />
+                      </div>
+                      <p className="mt-3">{item?.comment}</p>
+                      {item?.fileUrl?.length > 0 && (
+                        <div className="d-flex gap-2 flex-wrap mt-2 justify-content-start">
+                          {item.fileUrl.map((img, i) => (
+                            <img
+                              key={i}
+                              src={img}
+                              alt="Đánh giá"
+                              style={{
+                                width: "100px",
+                                height: "100px",
+                                objectFit: "cover",
+                                borderRadius: "4px",
+                                border: "1px solid #ccc",
+                              }}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+              </div>
             </div>
           </div>
-          <div className="row">
-            <ProductCard data={sameCategoryWishlist} />
-          </div>
-        </Container>
-      )}
+        </div>
+    </div>
+  )}
+</Container>
 
 
-      <Container class1="related-wrapper py-5 home-wrapper-2">
+
+
+    {sameCategoryWishlist.length > 0 && (
+      <Container class1="related-wrapper py-2 home-wrapper-2">
         <div className="row">
-          <div className="col-12">
-            <h3 className="section-heading">Sản phẩm cùng thương hiệu</h3>
+          <div className="col-12 flex items-center justify-center ">
+            {/* Ảnh bên trái */}
+            <img src="/images/Left.png" alt="left icon" className="w-48 h-15 object-contain" />
+
+            {/* Tiêu đề căn giữa */}
+            <h3 className="section-heading text-center m-0">Sản phẩm yêu thích liên quan</h3>
+
+            {/* Ảnh bên phải */}
+            <img src="/images/Right.png" alt="right icon" className="w-48 h-15 object-contain" />
+          </div>
+        </div>
+        <div className="row">
+          <ProductCard data={sameCategoryWishlist} />
+        </div>
+      </Container>
+    )}
+
+
+
+      <Container class1="related-wrapper py-2 home-wrapper-2">
+        <div className="row">
+          <div className="col-12 flex items-center justify-center ">
+            {/* Ảnh bên trái */}
+            <img src="/images/Left.png" alt="left icon" className="w-48 h-15 object-contain" />
+
+            {/* Tiêu đề căn giữa */}
+            <h3 className="section-heading text-center m-0">Sản phẩm cùng thương hiệu</h3>
+
+            {/* Ảnh bên phải */}
+            <img src="/images/Right.png" alt="right icon" className="w-48 h-15 object-contain" />
           </div>
         </div>
         <div className="row">
           <ProductCard data={relatedByBrand} />
         </div>
       </Container>
-      <Container class1="related-wrapper py-3 home-wrapper-2">
+      <Container class1="related-wrapper py-2 home-wrapper-2">
         <div className="row">
-          <div className="col-12">
-            <h3 className="section-heading">Sản phẩm liên quan</h3>
+          <div className="col-12 flex items-center justify-center ">
+            {/* Ảnh bên trái */}
+            <img src="/images/Left.png" alt="left icon" className="w-48 h-15 object-contain" />
+
+            {/* Tiêu đề căn giữa */}
+            <h3 className="section-heading text-center m-0">Sản phẩm liên quan</h3>
+
+            {/* Ảnh bên phải */}
+            <img src="/images/Right.png" alt="right icon" className="w-48 h-15 object-contain" />
           </div>
         </div>
         <div className="row">
           <ProductCard data={relatedProducts} />
         </div>
       </Container>
-      <Container class1="popular-wrapper py-3 home-wrapper-2">
+      <Container class1="popular-wrapper py-2 home-wrapper-2">
         <div className="row">
-          <div className="col-12">
-            <h3 className="section-heading">Sản phẩm phổ biến</h3>
+          <div className="col-12 flex items-center justify-center ">
+            {/* Ảnh bên trái */}
+            <img src="/images/Left.png" alt="left icon" className="w-48 h-15 object-contain" />
+
+            {/* Tiêu đề căn giữa */}
+            <h3 className="section-heading text-center m-0">Sản phẩm phổ biến</h3>
+
+            {/* Ảnh bên phải */}
+            <img src="/images/Right.png" alt="right icon" className="w-48 h-15 object-contain" />
           </div>
         </div>
         <div className="row">

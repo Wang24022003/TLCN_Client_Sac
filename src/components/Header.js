@@ -618,7 +618,7 @@ const Header = ({ socket }) => {
               position: "fixed",
               bottom: "150px",
               right: "25px",
-              backgroundColor: "#ff5a5a",
+              backgroundColor: "#F30C00FF",
               color: "white",
               border: "none",
               borderRadius: "50%",
@@ -626,13 +626,13 @@ const Header = ({ socket }) => {
               height: "50px",
               fontSize: "24px",
               cursor: "pointer",
-              zIndex: 1000,
+              zIndex: 900,
             }}
           >
             ↑
           </button>
         )}
-        {<ChatButton token={token} socket={socket} user={userState} />}
+        {/* {<ChatButton token={token} socket={socket} user={userState} />} */}
       </>
     </div>
   );

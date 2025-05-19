@@ -7,9 +7,12 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { io } from 'socket.io-client';
 import ChatBot from './ChatBot';
+import ChatButton from './ChatButton';
+import { useSelector } from 'react-redux';
 
 const Layout = () => {
   const token = localStorage.getItem('access_token');
+  const user = useSelector((state) => state.auth.user);
 
   const [socket, setSocket] = useState(null);
   useEffect(() => {
@@ -45,8 +48,13 @@ const Layout = () => {
       <Outlet />
       <Footer />
       <div className="fixed bottom-6 right-6 z-50">
+        <ChatButton token={token} socket={socket} user={user} />
+      </div>
+      <div className="fixed bottom-6 right-6 z-50">
         <ChatBot />
       </div>
+      
+
       <ToastContainer
         position="top-right"
         autoClose={5000}
