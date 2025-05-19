@@ -27,7 +27,19 @@ useEffect(() => {
 
  const handleSend = async () => {
   if (!input.trim()) return;
-
+  if (!user) {
+      const timestamp = new Date().toISOString();
+      const warningMsg = {
+        from: "bot",
+        text: "Để sử dụng Trợ lý ảo Sắc, bạn vui lòng đăng nhập hoặc đăng ký tài khoản nhé!",
+        timestamp,
+      };
+      // Gửi tin nhắn người dùng trước rồi tới tin nhắn bot cảnh báo
+      const userMessage = { from: "user", text: input, timestamp };
+      setMessages((prev) => [...prev, userMessage, warningMsg]);
+      setInput("");
+      return;
+    }
   const timestamp = new Date().toISOString();
   const userMessage = { from: "user", text: input, timestamp };
   const updatedMessages = [...messages, userMessage];
@@ -115,7 +127,7 @@ useEffect(() => {
               {/* Avatar */}
               <div className="relative flex-shrink-0">
                 <img
-                  src={msg.from === "bot" ? "images/sac.png" : user?.avatar || "/images/default-user.png"}
+                  src={msg.from === "bot" ? "images/sac.png" : user?.avatar || "https://www.w3schools.com/howto/img_avatar.png"}
                   alt="Avatar"
                   className="w-8 h-8 rounded-full object-cover border-[2px] border-#181818FF"
                 />
