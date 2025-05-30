@@ -7,6 +7,8 @@ import { FaPlus, FaMinus, FaListUl, FaClipboardList, FaCheckCircle, FaTools, FaT
 import { useNavigate } from "react-router-dom";
 import { updateOrder } from "../features/products/productSlilce";
 import { toast } from "react-toastify";
+import ReviewPopup from "../components/ReviewPopup";
+
 
 const Orders = () => {
   const dispatch = useDispatch();
@@ -16,10 +18,17 @@ const Orders = () => {
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [statusFilter, setStatusFilter] = useState("");
   const [expandedOrders, setExpandedOrders] = useState({});
+  const [reviewProductId, setReviewProductId] = useState(null);
 
-  useEffect(() => {
+ useEffect(() => {
+  dispatch(getOrders());
+
+  const interval = setInterval(() => {
     dispatch(getOrders());
-  }, [dispatch]);
+  }, 5000); // gọi lại sau mỗi 10 giây
+
+  return () => clearInterval(interval); // clear interval khi component bị unmount
+}, [dispatch]);
 
   // useEffect(() => {
   //   if (orderState) {
@@ -73,7 +82,7 @@ const Orders = () => {
 
   const handleReview = (productId) => {
     if (productId) {
-      navigate(`/product/${productId}`);
+      setReviewProductId(productId);
     } else {
       console.error("Không tìm thấy ID sản phẩm");
     }
@@ -233,6 +242,7 @@ const statusCounts = orderState?.reduce((acc, order) => {
   acc[status] = (acc[status] || 0) + 1;
   return acc;
 }, {});
+
 
 
   return (
@@ -516,6 +526,13 @@ const statusCounts = orderState?.reduce((acc, order) => {
           </table>
         </div>
       </Container>
+      {reviewProductId && (
+        <ReviewPopup
+          productId={reviewProductId}
+          onClose={() => setReviewProductId(null)}
+        />
+      )}
+
     </>
   );
 };

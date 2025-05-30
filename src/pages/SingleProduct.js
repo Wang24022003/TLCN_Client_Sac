@@ -1304,7 +1304,7 @@ const floatingIconVariants = {
                   <ReactStars
                     count={+5}
                     size={24}
-                    value={+0}
+                    value={star || 0}
                     edit={true}
                     activeColor="#ffd700"
                     onChange={(e) => {
@@ -1320,6 +1320,7 @@ const floatingIconVariants = {
                   cols="30"
                   rows="4"
                   placeholder="Nội dung..."
+                   value={comment || ""}
                   onChange={(e) => {
                     setComment(e.target.value);
                     if (e.target.value.trim() !== "") {
@@ -1424,7 +1425,20 @@ const floatingIconVariants = {
                             objectFit: "cover",
                           }}
                         />
-                        <h6 className="mb-0">{item?.userId.name}</h6>
+                        <div>
+                          <h6 className="mb-0">{item?.userId.name}</h6>
+                          {item?.createdAt && (
+                            <small className="text-muted">
+                              {new Date(item.createdAt).toLocaleString("vi-VN", {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </small>
+                          )}
+                        </div>
                         <ReactStars
                           count={+5}
                           size={24}
