@@ -292,6 +292,33 @@ export const chatbot = createAsyncThunk(
   }
 );
 
+
+
+export const getUserCoupons = createAsyncThunk(
+  "user/coupons/get",
+  async (userId, thunkAPI) => {
+    const re = await authService.getCoupounUser(userId);
+    if (re && re.data) {
+      return re;
+    } else {
+      return thunkAPI.rejectWithValue(re);
+    }
+  }
+);
+
+export const getByIdCoupon = createAsyncThunk(
+  "coupons/get",
+  async (Id, thunkAPI) => {
+    const re = await authService.getCouponById(Id);
+    if (re && re.data) {
+      return re;
+    } else {
+      return thunkAPI.rejectWithValue(re);
+    }
+  }
+);
+
+
 export const resetState = createAction("Reset_all");
 
 const getCustomerfromLocalStorage = localStorage.getItem("customer")
@@ -301,6 +328,7 @@ const getCustomerfromLocalStorage = localStorage.getItem("customer")
 const initialState = {
   user: getCustomerfromLocalStorage,
   address: {},
+  userCoupons: [],
   isError: false,
   isSuccess: false,
   isLoading: false,
@@ -818,6 +846,41 @@ export const authSlice = createSlice({
         }
         state.message = action.error;
       })
+       .addCase(getUserCoupons.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getUserCoupons.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.userCoupons = action.payload.data.couponsUser;
+        state.isReload = false;
+      })
+      .addCase(getUserCoupons.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
+
+       .addCase(getByIdCoupon.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getByIdCoupon.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.userCoupons = action.payload.data;
+        state.isReload = false;
+      })
+      .addCase(getByIdCoupon.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
+
+
       .addCase(resetState, () => initialState);
   },
 });

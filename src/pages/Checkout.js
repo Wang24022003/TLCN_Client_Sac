@@ -11,6 +11,7 @@ import {
   deleteUserCart,
   getAddress,
   getUserCart,
+  getUserCoupons,
   resetState,
 } from "../features/user/userSlice";
 import DiscountCodeModal from "../components/DiscountCodeModal"; // Corrected path
@@ -56,6 +57,17 @@ const Checkout = () => {
       navigate("/dashboard/address");
     }
   };
+  useEffect(() => {
+  getAddressUser();
+  if (userState?._id) {
+    dispatch(getUserCoupons(userState._id));
+  }
+  getListAddress();
+}, [dispatch, userState]);
+
+const userCoupons = useSelector((state) => state.auth.userCoupons);
+
+
   const getCouponUser = async () => {
     const re = await getCoupounUserAccept(userState._id);
     if (re && re.data) {
@@ -614,7 +626,7 @@ const Checkout = () => {
         </div>
       </Container>
       <DiscountCodeModal
-        data={stateReceiptDefaultCoupon}
+        data={userCoupons}
         show={showModalCode}
         handleClose={() => setShowModalCode(false)}
         handleSelectCode={handleSelectCode}
