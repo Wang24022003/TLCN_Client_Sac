@@ -10,6 +10,7 @@ import {
   createAnOrder,
   deleteUserCart,
   getAddress,
+  getByIdCoupon,
   getUserCart,
   getUserCoupons,
   resetState,
@@ -127,7 +128,7 @@ const userCoupons = useSelector((state) => state.auth.userCoupons);
     const data = {
       paymentMethod: values.paymentMethod,
       items: cartState.map((item) => ({
-        product: item.product._id, // Ensure productId is sent
+        product: item.product._id, 
         color: item.color?._id || item.color || null,
         size: item.size || null,
         quantity: item.quantity,
@@ -137,6 +138,7 @@ const userCoupons = useSelector((state) => state.auth.userCoupons);
       supplier: "x",
       notes: "x",
       address: values?._id,
+      
     };
 
     setTimeout(() => {
@@ -185,14 +187,47 @@ const userCoupons = useSelector((state) => state.auth.userCoupons);
     }
   };
 
-  const handleSelectCode = (discount) => {
+const handleSelectCode = async (discount) => {
+  try {
+    const res = await dispatch(getByIdCoupon(discount._id)).unwrap();
+    const data = res?.data;
 
-    console.log("🚀 ~ file: Checkout.js:176 ~ handleSelectCode ~ discount:", discount);
+    if (!data || !data.description?.value) {
+      toast.error("Không tìm thấy thông tin giảm giá.");
+      return;
+    }
 
-    setDiscountCode(discount.code);
-    setDiscountAmount(10000);
+    const type = data.type;
+    const value = data.description.value;
+    const maxDiscount = data.description?.maxDiscount;
+
+    let calculatedDiscount = 0;
+
+    if (type === "PRICE") {
+      calculatedDiscount = value;
+    } else if (type === "PERCENT") {
+      const percentDiscount = (totalAmount * value) / 100;
+      calculatedDiscount = Math.min(percentDiscount, maxDiscount || percentDiscount);
+    } else {
+      toast.error("Loại mã giảm giá không hợp lệ.");
+      return;
+    }
+
+    setDiscountCode(data.code);
+    setDiscountAmount(calculatedDiscount);
     setShowModalCode(false);
-  };
+
+    toast.success("Áp dụng mã giảm giá thành công!");
+  } catch (err) {
+    console.error("Lỗi khi lấy mã giảm giá:", err);
+    toast.error("Không thể áp dụng mã giảm.");
+  }
+};
+
+
+
+
+
 
   const handleShippingMethodChange = (cost, method) => {
     setShippingCost(cost);
@@ -408,13 +443,13 @@ const userCoupons = useSelector((state) => state.auth.userCoupons);
                             <button type="submit" className="btn-order-submit">
                               <div className="btn-inner-order d-flex align-items-center justify-content-center position-relative">
                                 <img
-                                  src="/images/icon-left.png"
+                                  src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
                                   alt="left"
                                   className="btn-icon-order icon-left-order"
                                 />
                                 <span className="btn-text-order">Đặt hàng</span>
                                 <img
-                                  src="/images/icon-right.png"
+                                  src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
                                   alt="right"
                                   className="btn-icon-order icon-right-order"
                                 />

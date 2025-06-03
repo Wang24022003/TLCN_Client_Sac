@@ -67,7 +67,7 @@ const getCoupounUser = async (idUser) => {
 };
 
 const getCouponById  = async (id) => {
-  const response = await instance.get(`coupon/${id}`);
+  const response = await instance.get(`coupons/${id}`);
   if (response) {
     return response;
   }

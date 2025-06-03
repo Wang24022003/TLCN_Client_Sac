@@ -209,13 +209,13 @@ const Cart = () => {
                 <button onClick={deleteAllCartProduct} className="gold-toggle-btn1">
                   <div className="btn-inner d-flex align-items-center justify-content-center position-relative">
                     <img
-                      src="/images/icon-left.png"
+                      src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
                       alt="left"
                       className="btn-icon icon-left"
                     />
                     <span className="btn-text">Xóa giỏ hàng</span>
                     <img
-                      src="/images/icon-right.png"
+                      src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
                       alt="right"
                       className="btn-icon icon-right"
                     />
@@ -280,13 +280,13 @@ const Cart = () => {
               <Link to="/checkout" className="checkout-fancy-btn">
                 <div className="btn-inner d-flex align-items-center justify-content-center position-relative">
                   <img
-                    src="/images/icon-left.png"
+                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
                     alt="left"
                     className="btn-icon icon-left"
                   />
                   <span className="btn-text">Thanh toán</span>
                   <img
-                    src="/images/icon-right.png"
+                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
                     alt="right"
                     className="btn-icon icon-right"
                   />

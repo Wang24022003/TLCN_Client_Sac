@@ -870,7 +870,7 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
-        state.userCoupons = action.payload.data;
+        state.selectedCoupon = action.payload.data;
         state.isReload = false;
       })
       .addCase(getByIdCoupon.rejected, (state, action) => {

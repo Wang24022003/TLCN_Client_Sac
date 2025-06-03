@@ -11,7 +11,7 @@ const Footer = () => {
       <div
         className="footer-overlay"
         style={{
-          backgroundImage: `url("/images/BRF.png")`,
+          backgroundImage: `url("https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748926731/BRF_h8pceu.png")`,
           backgroundSize: "cover",
           backgroundPosition: "top center",
           backgroundRepeat: "no-repeat",
@@ -33,7 +33,7 @@ const Footer = () => {
             <div className="row align-items-center">
               <div className="col-5">
                 <div className="footer-top-data d-flex gap-30 align-items-center">
-                  <img src={newsletter} alt="newsletter" />
+                  <img src={"https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748926813/newsletter_ghrlcd.png"} alt="newsletter" />
                   <h2 className="mb-0 text-white">Đăng ký nhận bản tin</h2>
                 </div>
               </div>

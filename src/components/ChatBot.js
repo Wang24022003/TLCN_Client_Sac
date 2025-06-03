@@ -104,7 +104,7 @@ useEffect(() => {
           {/* Bên trái: Avatar + Tên + Trạng thái */}
           <div className="flex items-center space-x-3">
             <img
-              src="images/sac.png" // ← đổi đường dẫn ảnh tại đây
+              src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748926638/sac_i6km92.png" // ← đổi đường dẫn ảnh tại đây
               alt="Avatar"
               className="w-10 h-10 rounded-full border-2 border-black"
             />
@@ -127,7 +127,7 @@ useEffect(() => {
               {/* Avatar */}
               <div className="relative flex-shrink-0">
                 <img
-                  src={msg.from === "bot" ? "images/sac.png" : user?.avatar || "https://www.w3schools.com/howto/img_avatar.png"}
+                  src={msg.from === "bot" ? "https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748926638/sac_i6km92.png" : user?.avatar || "https://www.w3schools.com/howto/img_avatar.png"}
                   alt="Avatar"
                   className="w-8 h-8 rounded-full object-cover border-[2px] border-#181818FF"
                 />
@@ -180,7 +180,7 @@ useEffect(() => {
             {/* Avatar bot */}
             <div className="relative flex-shrink-0">
               <img
-                src="images/sac.png"
+                src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748926638/sac_i6km92.png"
                 alt="Bot Avatar"
                 className="w-8 h-8 rounded-full object-cover border-[2px] border-black"
               />

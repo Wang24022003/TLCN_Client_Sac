@@ -219,7 +219,7 @@ const getUniqueColorsWishlist = (product) => {
             }}
           >
             <img
-              src="images/Home1.jpg"
+              src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924176/Home1_gqwmnb.jpg"
               alt="Outfit 1"
               style={{
                 width: "100%",
@@ -250,7 +250,7 @@ const getUniqueColorsWishlist = (product) => {
             }}
           >
             <img
-              src="images/Home2.jpg"
+              src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924247/Home2_fwsjlf.jpg"
               alt="Outfit 2"
               style={{
                 width: "100%",
@@ -281,7 +281,7 @@ const getUniqueColorsWishlist = (product) => {
             }}
           >
             <img
-              src="images/Home3.jpg"
+              src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924325/Home3_x2suga.jpg"
               alt="Outfit 3"
               style={{
                 width: "100%",
@@ -312,7 +312,7 @@ const getUniqueColorsWishlist = (product) => {
             }}
           >
             <img
-              src="images/Home4.jpg"
+              src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924369/Home4_gnlwg8.jpg"
               alt="Outfit 4"
               style={{
                 width: "100%",
@@ -343,7 +343,7 @@ const getUniqueColorsWishlist = (product) => {
             }}
           >
             <img
-              src="images/Home5.jpg"
+              src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924384/Home5_ey0qyl.jpg"
               alt="Outfit 1"
               style={{
                 width: "100%",
@@ -400,7 +400,7 @@ const getUniqueColorsWishlist = (product) => {
         <div style={{ position: "relative",  zIndex: 0 }}>
           {/* Ảnh góc trên bên trái */}
           <img
-            src="images/corner-top-left.png"
+            src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924457/corner-top-left_md0qbu.png"
             alt="top left decoration"
             style={{
               position: "absolute",
@@ -414,7 +414,7 @@ const getUniqueColorsWishlist = (product) => {
 
           {/* Ảnh góc trên bên phải */}
           <img
-            src="images/corner-top-rightt.png"
+            src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924566/corner-top-rightt_p9uj4x.png"
             alt="top right decoration"
             style={{
               position: "absolute",
@@ -427,7 +427,7 @@ const getUniqueColorsWishlist = (product) => {
           />
           {/* Ảnh góc dưới bên trái */}
             <img
-              src="images/bottom-left.png"
+              src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924711/bottom-left_zliugn.png"
               alt="bottom left decoration"
               style={{
                 position: "absolute",
@@ -442,7 +442,7 @@ const getUniqueColorsWishlist = (product) => {
 
             {/* Ảnh góc dưới bên phải */}
             <img
-              src="images/bottom-right.png"
+              src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924773/bottom-right_d4mbqd.png"
               alt="bottom right decoration"
               style={{
                 position: "absolute",
@@ -461,7 +461,7 @@ const getUniqueColorsWishlist = (product) => {
             <div className="d-flex justify-content-center align-items-center">
               {/* Ảnh bên trái */}
               <img
-                src="images/Right.png"
+                src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924911/Right_hes5y0.png"
                 alt="left decoration"
                 style={{ width: "130px", height: "60px", objectFit: "contain" }}
               />
@@ -473,7 +473,7 @@ const getUniqueColorsWishlist = (product) => {
 
               {/* Ảnh bên phải */}
               <img
-                src="images/Left.png"
+                src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925086/Left_niuqcd.png"
                 alt="right decoration"
                 style={{ width: "130px", height: "60px", objectFit: "contain" }}
               />
@@ -631,9 +631,9 @@ const getUniqueColorsWishlist = (product) => {
             <div className="col-12 text-center mt-3">
               <button onClick={() => setShowMore(!showMore)} className="gold-toggle-btn">
                 <div className="btn-inner d-flex align-items-center justify-content-center position-relative">
-                  <img src="images/icon-left.png" alt="left" className="btn-icon icon-left" />
+                  <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png" alt="left" className="btn-icon icon-left" />
                   <span className="btn-text">{showMore ? "Thu gọn" : "Xem thêm"}</span>
-                  <img src="images/icon-right.png" alt="right" className="btn-icon icon-right" />
+                  <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png" alt="right" className="btn-icon icon-right" />
                 </div>
               </button>
             </div>
@@ -651,7 +651,7 @@ const getUniqueColorsWishlist = (product) => {
         <div style={{ position: "relative",  zIndex: 0 }}>
           {/* Ảnh góc trên bên trái */}
           <img
-            src="images/corner-top-left.png"
+            src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924457/corner-top-left_md0qbu.png"
             alt="top left decoration"
             style={{
               position: "absolute",
@@ -665,7 +665,7 @@ const getUniqueColorsWishlist = (product) => {
 
           {/* Ảnh góc trên bên phải */}
           <img
-            src="images/corner-top-rightt.png"
+            src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924566/corner-top-rightt_p9uj4x.png"
             alt="top right decoration"
             style={{
               position: "absolute",
@@ -678,7 +678,7 @@ const getUniqueColorsWishlist = (product) => {
           />
           {/* Ảnh góc dưới bên trái */}
             <img
-              src="images/bottom-left.png"
+              src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924711/bottom-left_zliugn.png"
               alt="bottom left decoration"
               style={{
                 position: "absolute",
@@ -693,7 +693,7 @@ const getUniqueColorsWishlist = (product) => {
 
             {/* Ảnh góc dưới bên phải */}
             <img
-              src="images/bottom-right.png"
+              src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924773/bottom-right_d4mbqd.png"
               alt="bottom right decoration"
               style={{
                 position: "absolute",
@@ -712,7 +712,7 @@ const getUniqueColorsWishlist = (product) => {
             <div className="d-flex justify-content-center align-items-center">
               {/* Ảnh bên trái */}
               <img
-                src="images/Right.png"
+                src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924911/Right_hes5y0.png"
                 alt="left decoration"
                 style={{ width: "130px", height: "60px", objectFit: "contain" }}
               />
@@ -724,7 +724,7 @@ const getUniqueColorsWishlist = (product) => {
 
               {/* Ảnh bên phải */}
               <img
-                src="images/Left.png"
+                src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925086/Left_niuqcd.png"
                 alt="right decoration"
                 style={{ width: "130px", height: "60px", objectFit: "contain" }}
               />
@@ -778,7 +778,7 @@ const getUniqueColorsWishlist = (product) => {
 
               {/* Ảnh đè lên video và tràn ra ngoài một phần */}
               <img
-                src="images/aodai1.png"
+                src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748923819/aodai1_yoctdl.png"
                 alt="Decor Overlay"
                 style={{
                   position: "absolute",
@@ -790,7 +790,7 @@ const getUniqueColorsWishlist = (product) => {
                 }}
               />
               <img
-                src="images/aodai2.png" 
+                src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748923923/aodai2_xddoqy.png" 
                 alt="Decor Bottom Right"
                 style={{
                   position: "absolute",
@@ -943,9 +943,9 @@ const getUniqueColorsWishlist = (product) => {
                 <div className="col-12 text-center mt-3">
                   <button onClick={() => setShowMore(!showMore)} className="gold-toggle-btn">
                     <div className="btn-inner d-flex align-items-center justify-content-center position-relative">
-                      <img src="images/icon-left.png" alt="left" className="btn-icon icon-left" />
+                      <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png" alt="left" className="btn-icon icon-left" />
                       <span className="btn-text">{showMore ? "Thu gọn" : "Xem thêm"}</span>
-                      <img src="images/icon-right.png" alt="right" className="btn-icon icon-right" />
+                      <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png" alt="right" className="btn-icon icon-right" />
                     </div>
                   </button>
                 </div>
@@ -962,7 +962,7 @@ const getUniqueColorsWishlist = (product) => {
           <div className="col-3">
             <div className="famous-card position-relative">
               <img
-                src="images/famous-11.jpg"
+                src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925594/famous-11_dhrzke.jpg"
                 className="img-fluid"
                 alt="famous"
               />
@@ -976,7 +976,7 @@ const getUniqueColorsWishlist = (product) => {
           <div className="col-3">
             <div className="famous-card position-relative">
               <img
-                src="images/famous-2.jpg"
+                src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925628/famous-2_lwa40w.jpg"
                 className="img-fluid"
                 alt="famous"
               />
@@ -1011,7 +1011,7 @@ const getUniqueColorsWishlist = (product) => {
           <div className="col-3">
             <div className="famous-card position-relative">
               <img
-                src="images/famous-3.jpg"
+                src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925657/famous-3_uwsnao.jpg"
                 className="img-fluid"
                 alt="famous"
               />
@@ -1046,7 +1046,7 @@ const getUniqueColorsWishlist = (product) => {
           <div className="col-3">
             <div className="famous-card position-relative">
               <img
-                src="images/famous-4.jpg"
+                src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925681/famous-4_n9gbrw.jpg"
                 className="img-fluid"
                 alt="famous"
               />
@@ -1086,7 +1086,7 @@ const getUniqueColorsWishlist = (product) => {
         <div style={{ position: "relative",  zIndex: 0 }}>
           {/* Ảnh góc trên bên trái */}
           <img
-            src="images/corner-top-left.png"
+            src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924457/corner-top-left_md0qbu.png"
             alt="top left decoration"
             style={{
               position: "absolute",
@@ -1100,7 +1100,7 @@ const getUniqueColorsWishlist = (product) => {
 
           {/* Ảnh góc trên bên phải */}
           <img
-            src="images/corner-top-rightt.png"
+            src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924566/corner-top-rightt_p9uj4x.png"
             alt="top right decoration"
             style={{
               position: "absolute",
@@ -1113,7 +1113,7 @@ const getUniqueColorsWishlist = (product) => {
           />
           {/* Ảnh góc dưới bên trái */}
             <img
-              src="images/bottom-left.png"
+              src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924711/bottom-left_zliugn.png"
               alt="bottom left decoration"
               style={{
                 position: "absolute",
@@ -1128,7 +1128,7 @@ const getUniqueColorsWishlist = (product) => {
 
             {/* Ảnh góc dưới bên phải */}
             <img
-              src="images/bottom-right.png"
+              src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924773/bottom-right_d4mbqd.png"
               alt="bottom right decoration"
               style={{
                 position: "absolute",
@@ -1147,7 +1147,7 @@ const getUniqueColorsWishlist = (product) => {
             <div className="d-flex justify-content-center align-items-center">
               {/* Ảnh bên trái */}
               <img
-                src="images/Right.png"
+                src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924911/Right_hes5y0.png"
                 alt="left decoration"
                 style={{ width: "130px", height: "60px", objectFit: "contain" }}
               />
@@ -1159,7 +1159,7 @@ const getUniqueColorsWishlist = (product) => {
 
               {/* Ảnh bên phải */}
               <img
-                src="images/Left.png"
+                src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925086/Left_niuqcd.png"
                 alt="right decoration"
                 style={{ width: "130px", height: "60px", objectFit: "contain" }}
               />
@@ -1316,9 +1316,9 @@ const getUniqueColorsWishlist = (product) => {
                 <div className="col-12 text-center mt-3">
                   <button onClick={() => setShowMore(!showMore)} className="gold-toggle-btn">
                     <div className="btn-inner d-flex align-items-center justify-content-center position-relative">
-                      <img src="images/icon-left.png" alt="left" className="btn-icon icon-left" />
+                      <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png" alt="left" className="btn-icon icon-left" />
                       <span className="btn-text">{showMore ? "Thu gọn" : "Xem thêm"}</span>
-                      <img src="images/icon-right.png" alt="right" className="btn-icon icon-right" />
+                      <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png" alt="right" className="btn-icon icon-right" />
                     </div>
                   </button>
                 </div>
@@ -1335,7 +1335,7 @@ const getUniqueColorsWishlist = (product) => {
         <div style={{ position: "relative",  zIndex: 0 }}>
           {/* Ảnh góc trên bên trái */}
           <img
-            src="images/corner-top-left.png"
+            src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924457/corner-top-left_md0qbu.png"
             alt="top left decoration"
             style={{
               position: "absolute",
@@ -1349,7 +1349,7 @@ const getUniqueColorsWishlist = (product) => {
 
           {/* Ảnh góc trên bên phải */}
           <img
-            src="images/corner-top-rightt.png"
+            src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924566/corner-top-rightt_p9uj4x.png"
             alt="top right decoration"
             style={{
               position: "absolute",
@@ -1362,7 +1362,7 @@ const getUniqueColorsWishlist = (product) => {
           />
           {/* Ảnh góc dưới bên trái */}
             <img
-              src="images/bottom-left.png"
+              src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924711/bottom-left_zliugn.png"
               alt="bottom left decoration"
               style={{
                 position: "absolute",
@@ -1377,7 +1377,7 @@ const getUniqueColorsWishlist = (product) => {
 
             {/* Ảnh góc dưới bên phải */}
             <img
-              src="images/bottom-right.png"
+              src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924773/bottom-right_d4mbqd.png"
               alt="bottom right decoration"
               style={{
                 position: "absolute",
@@ -1396,7 +1396,7 @@ const getUniqueColorsWishlist = (product) => {
             <div className="d-flex justify-content-center align-items-center">
               {/* Ảnh bên trái */}
               <img
-                src="images/Right.png"
+                src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924911/Right_hes5y0.png"
                 alt="left decoration"
                 style={{ width: "130px", height: "60px", objectFit: "contain" }}
               />
@@ -1408,7 +1408,7 @@ const getUniqueColorsWishlist = (product) => {
 
               {/* Ảnh bên phải */}
               <img
-                src="images/Left.png"
+                src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925086/Left_niuqcd.png"
                 alt="right decoration"
                 style={{ width: "130px", height: "60px", objectFit: "contain" }}
               />
@@ -1566,9 +1566,9 @@ const getUniqueColorsWishlist = (product) => {
             <div className="col-12 text-center mt-3">
               <button onClick={() => setShowMore(!showMore)} className="gold-toggle-btn">
                 <div className="btn-inner d-flex align-items-center justify-content-center position-relative">
-                  <img src="images/icon-left.png" alt="left" className="btn-icon icon-left" />
+                  <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png" alt="left" className="btn-icon icon-left" />
                   <span className="btn-text">{showMore ? "Thu gọn" : "Xem thêm"}</span>
-                  <img src="images/icon-right.png" alt="right" className="btn-icon icon-right" />
+                  <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png" alt="right" className="btn-icon icon-right" />
                 </div>
               </button>
             </div>
@@ -1586,7 +1586,7 @@ const getUniqueColorsWishlist = (product) => {
         <div style={{ position: "relative",  zIndex: 0 }}>
           {/* Ảnh góc trên bên trái */}
           <img
-            src="images/corner-top-left.png"
+            src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924457/corner-top-left_md0qbu.png"
             alt="top left decoration"
             style={{
               position: "absolute",
@@ -1600,7 +1600,7 @@ const getUniqueColorsWishlist = (product) => {
 
           {/* Ảnh góc trên bên phải */}
           <img
-            src="images/corner-top-rightt.png"
+            src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924566/corner-top-rightt_p9uj4x.png"
             alt="top right decoration"
             style={{
               position: "absolute",
@@ -1613,7 +1613,7 @@ const getUniqueColorsWishlist = (product) => {
           />
           {/* Ảnh góc dưới bên trái */}
             <img
-              src="images/bottom-left.png"
+              src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924711/bottom-left_zliugn.png"
               alt="bottom left decoration"
               style={{
                 position: "absolute",
@@ -1628,7 +1628,7 @@ const getUniqueColorsWishlist = (product) => {
 
             {/* Ảnh góc dưới bên phải */}
             <img
-              src="images/bottom-right.png"
+              src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924773/bottom-right_d4mbqd.png"
               alt="bottom right decoration"
               style={{
                 position: "absolute",
@@ -1647,7 +1647,7 @@ const getUniqueColorsWishlist = (product) => {
             <div className="d-flex justify-content-center align-items-center">
               {/* Ảnh bên trái */}
               <img
-                src="images/Right.png"
+                src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924911/Right_hes5y0.png"
                 alt="left decoration"
                 style={{ width: "130px", height: "60px", objectFit: "contain" }}
               />
@@ -1659,7 +1659,7 @@ const getUniqueColorsWishlist = (product) => {
 
               {/* Ảnh bên phải */}
               <img
-                src="images/Left.png"
+                src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925086/Left_niuqcd.png"
                 alt="right decoration"
                 style={{ width: "130px", height: "60px", objectFit: "contain" }}
               />
@@ -1821,9 +1821,9 @@ const getUniqueColorsWishlist = (product) => {
                 <div className="col-12 text-center mt-3">
                   <button onClick={() => setShowMore(!showMore)} className="gold-toggle-btn">
                     <div className="btn-inner d-flex align-items-center justify-content-center position-relative">
-                      <img src="images/icon-left.png" alt="left" className="btn-icon icon-left" />
+                      <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png" alt="left" className="btn-icon icon-left" />
                       <span className="btn-text">{showMore ? "Thu gọn" : "Xem thêm"}</span>
-                      <img src="images/icon-right.png" alt="right" className="btn-icon icon-right" />
+                      <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png" alt="right" className="btn-icon icon-right" />
                     </div>
                   </button>
                 </div>
@@ -1864,7 +1864,7 @@ const getUniqueColorsWishlist = (product) => {
 
               {/* Ảnh đè lên video và tràn ra ngoài một phần */}
               <img
-                src="images/nhatbinh2.png"
+                src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925725/nhatbinh2_yelabo.png"
                 alt="Decor Overlay"
                 style={{
                   position: "absolute",
@@ -1876,7 +1876,7 @@ const getUniqueColorsWishlist = (product) => {
                 }}
               />
               <img
-                src="images/nhatbinh1.png" 
+                src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925750/nhatbinh1_uefadu.png" 
                 alt="Decor Bottom Right"
                 style={{
                   position: "absolute",
@@ -1899,19 +1899,19 @@ const getUniqueColorsWishlist = (product) => {
         <Container class1="featured-wrapper py-4 home-wrapper-2x">
           <div style={{ position: "relative", zIndex: 0 }}>
             {/* Ảnh góc trang trí */}
-            <img src="images/corner-top-left.png" alt="top left decoration" style={{ position: "absolute", top: "-12px", left: "-51px", width: "290px", zIndex: -1 }} />
-            <img src="images/corner-top-rightt.png" alt="top right decoration" style={{ position: "absolute", top: "-12px", right: "-51px", width: "290px", zIndex: -1 }} />
+            <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924457/corner-top-left_md0qbu.png" alt="top left decoration" style={{ position: "absolute", top: "-12px", left: "-51px", width: "290px", zIndex: -1 }} />
+            <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924566/corner-top-rightt_p9uj4x.png" alt="top right decoration" style={{ position: "absolute", top: "-12px", right: "-51px", width: "290px", zIndex: -1 }} />
             {/* <img src="images/bottom-left.png" alt="bottom left decoration" style={{ position: "absolute", bottom: "0px", left: "-54px", width: "540px", opacity: 0.3, zIndex: -1 }} />
             <img src="images/bottom-right.png" alt="bottom right decoration" style={{ position: "absolute", bottom: "-16px", right: "-50px", width: "400px", opacity: 0.3, zIndex: -1 }} /> */}
 
             <div className="row">
               <div className="col-12 mb-3">
                 <div className="d-flex justify-content-center align-items-center">
-                  <img src="images/Right.png" alt="left decoration" style={{ width: "130px", height: "60px", objectFit: "contain" }} />
+                  <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924911/Right_hes5y0.png" alt="left decoration" style={{ width: "130px", height: "60px", objectFit: "contain" }} />
                   <h3 className="section-heading text-center mb-0" style={{ color: "#000000" }}>
                     Sản phẩm yêu thích
                   </h3>
-                  <img src="images/Left.png" alt="right decoration" style={{ width: "130px", height: "60px", objectFit: "contain" }} />
+                  <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925086/Left_niuqcd.png" alt="right decoration" style={{ width: "130px", height: "60px", objectFit: "contain" }} />
                 </div>
                 <div className="text-center mt-2">
                   <span
@@ -2034,9 +2034,9 @@ const getUniqueColorsWishlist = (product) => {
                 <div className="col-12 text-center mt-3">
                   <button onClick={() => setShowMore(!showMore)} className="gold-toggle-btn">
                     <div className="btn-inner d-flex align-items-center justify-content-center position-relative">
-                      <img src="images/icon-left.png" alt="left" className="btn-icon icon-left" />
+                      <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png" alt="left" className="btn-icon icon-left" />
                       <span className="btn-text">{showMore ? "Thu gọn" : "Xem thêm"}</span>
-                      <img src="images/icon-right.png" alt="right" className="btn-icon icon-right" />
+                      <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png" alt="right" className="btn-icon icon-right" />
                     </div>
                   </button>
                 </div>
@@ -2051,18 +2051,18 @@ const getUniqueColorsWishlist = (product) => {
   <Container class1="featured-wrapper py-4 home-wrapper-z">
     <div style={{ position: "relative", zIndex: 0 }}>
       {/* Các ảnh góc trang trí */}
-      <img src="images/corner-top-left.png" alt="top left decoration" style={{ position: "absolute", top: "-12px", left: "-51px", width: "290px", zIndex: -1 }} />
-      <img src="images/corner-top-rightt.png" alt="top right decoration" style={{ position: "absolute", top: "-12px", right: "-51px", width: "290px", zIndex: -1 }} />
-      <img src="images/bottom-left.png" alt="bottom left decoration" style={{ position: "absolute", bottom: "0px", left: "-54px", width: "540px", opacity: 0.3, zIndex: -1 }} />
-      <img src="images/bottom-right.png" alt="bottom right decoration" style={{ position: "absolute", bottom: "-16px", right: "-50px", width: "400px", opacity: 0.3, zIndex: -1 }} />
+      <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924457/corner-top-left_md0qbu.png" alt="top left decoration" style={{ position: "absolute", top: "-12px", left: "-51px", width: "290px", zIndex: -1 }} />
+      <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924566/corner-top-rightt_p9uj4x.png" alt="top right decoration" style={{ position: "absolute", top: "-12px", right: "-51px", width: "290px", zIndex: -1 }} />
+      <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924711/bottom-left_zliugn.png" alt="bottom left decoration" style={{ position: "absolute", bottom: "0px", left: "-54px", width: "540px", opacity: 0.3, zIndex: -1 }} />
+      <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924773/bottom-right_d4mbqd.png" alt="bottom right decoration" style={{ position: "absolute", bottom: "-16px", right: "-50px", width: "400px", opacity: 0.3, zIndex: -1 }} />
 
       {/* Nội dung chính */}
       <div className="row">
         <div className="col-12 mb-3">
           <div className="d-flex justify-content-center align-items-center">
-            <img src="images/Right.png" alt="left decoration" style={{ width: "130px", height: "60px", objectFit: "contain" }} />
+            <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924911/Right_hes5y0.png" alt="left decoration" style={{ width: "130px", height: "60px", objectFit: "contain" }} />
             <h3 className="section-heading text-center mb-0" style={{ color: "#fff" }}>Sản phẩm đã xem</h3>
-            <img src="images/Left.png" alt="right decoration" style={{ width: "130px", height: "60px", objectFit: "contain" }} />
+            <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925086/Left_niuqcd.png" alt="right decoration" style={{ width: "130px", height: "60px", objectFit: "contain" }} />
           </div>
 
           <div className="text-center mt-2">
@@ -2180,9 +2180,9 @@ const getUniqueColorsWishlist = (product) => {
           <div className="col-12 text-center mt-3">
             <button onClick={() => setShowMore(!showMore)} className="gold-toggle-btn">
               <div className="btn-inner d-flex align-items-center justify-content-center position-relative">
-                <img src="images/icon-left.png" alt="left" className="btn-icon icon-left" />
+                <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png" alt="left" className="btn-icon icon-left" />
                 <span className="btn-text">{showMore ? "Thu gọn" : "Xem thêm"}</span>
-                <img src="images/icon-right.png" alt="right" className="btn-icon icon-right" />
+                <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png" alt="right" className="btn-icon icon-right" />
               </div>
             </button>
           </div>
@@ -2199,9 +2199,9 @@ const getUniqueColorsWishlist = (product) => {
         <div className="row">
           <div className="col-12">
           <div className="d-flex justify-content-center align-items-center">
-            <img src="images/Right.png" alt="left decoration" style={{ width: "130px", height: "60px", objectFit: "contain" }} />
+            <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924911/Right_hes5y0.png" alt="left decoration" style={{ width: "130px", height: "60px", objectFit: "contain" }} />
             <h3 className="section-heading text-center mb-0" style={{ color: "#000000" }}>Bài viết mới nhất</h3>
-            <img src="images/Left.png" alt="right decoration" style={{ width: "130px", height: "60px", objectFit: "contain" }} />
+            <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925086/Left_niuqcd.png" alt="right decoration" style={{ width: "130px", height: "60px", objectFit: "contain" }} />
           </div>
           </div>
         </div>

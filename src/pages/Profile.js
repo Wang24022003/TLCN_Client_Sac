@@ -96,10 +96,10 @@ const Profile = () => {
             <div className="text-center mb-4">
               <div className="avatar-wrapper">
                 <div className="avatar-background-second">
-                  <img src="/images/TD_nho.png" alt="Background Layer 2" />
+                  <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748927044/TD_nho_er2gba.png" alt="Background Layer 2" />
                 </div>
                 <div className="avatar-background">
-                  <img src="/images/TD_lon.png" alt="Background Layer 1" />
+                  <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748927049/TD_lon_oqnoye.png" alt="Background Layer 1" />
                 </div>
                 <img
                   src={profilebase64 || dataProfile?.avatar}
