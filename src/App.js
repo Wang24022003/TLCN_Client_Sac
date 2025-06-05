@@ -35,6 +35,7 @@ import ProductHistory from "./pages/ProductHistory";
 import Dashboard from "./pages/Dashboard";
 import ProtectUser from "./utils/ProtectUser";
 import Notifications from "./pages/Notifications";
+import VoucherList from "./pages/VoucherList";
 
 function App() {
   return (
@@ -127,6 +128,7 @@ function App() {
                 <Route path='my-wishlist' element={<Wishlist/>} /> 
                 <Route path='history' element={<History/>} /> 
                 <Route path='address' element={<Address/>} />
+                <Route path='voucher' element={<VoucherList/>} />
                 <Route path='add-address' element={<AddAddress/>} /> 
                 <Route path='update-address/:_id' element={<UpdateAddress/>} />
                 </Route> 

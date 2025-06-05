@@ -59,6 +59,21 @@ const getCart = async () => {
   }
 };
 
+const getCoupounUser = async (idUser) => {
+  const response = await instance.get(`users/coupon/${idUser}`);
+  if (response) {
+    return response;
+  }
+};
+
+const getCouponById  = async (id) => {
+  const response = await instance.get(`coupons/${id}`);
+  if (response) {
+    return response;
+  }
+};
+
+
 const removeProductFromCart = async (data) => {
   const response = await instance.delete(
     `carts/${data}`,
@@ -237,4 +252,6 @@ export const authService = {
   getProductUserRecentView,
   getNewInfoUser,
   chatbot,
+  getCoupounUser,
+  getCouponById, 
 };

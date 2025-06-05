@@ -4,10 +4,7 @@ import { IoMdSearch } from "react-icons/io";
 import { FaBell, FaHeart, FaRegBell, FaRegHeart } from "react-icons/fa";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { FiUser } from "react-icons/fi";
-import compare from "../images/compare.svg";
-import wishlist from "../images/wishlist.svg";
-import cart from "../images/cart.svg";
-import menu from "../images/menu.svg";
+
 import { useDispatch, useSelector } from "react-redux";
 import { Typeahead } from "react-bootstrap-typeahead";
 import "react-bootstrap-typeahead/css/Typeahead.css";

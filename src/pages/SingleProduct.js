@@ -957,7 +957,7 @@ const floatingIconVariants = {
                         >
                           <div className="btn-inner-order d-flex align-items-center justify-content-center position-relative">
                             <img
-                              src="/images/icon-left.png"
+                              src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
                               alt="left"
                               className="btn-icon-order icon-left-order"
                             />
@@ -965,7 +965,7 @@ const floatingIconVariants = {
                               {alreadyAdded ? "Sản phẩm vào giỏ hàng" : "Mua ngay"}
                             </span>
                             <img
-                              src="/images/icon-right.png"
+                              src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
                               alt="right"
                               className="btn-icon-order icon-right-order"
                             />
@@ -1017,13 +1017,13 @@ const floatingIconVariants = {
                       >
                         <div className="btn-inner d-flex align-items-center justify-content-center position-relative">
                           <img
-                            src="/images/icon-left.png"
+                            src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
                             alt="left"
                             className="btn-icon icon-left"
                           />
                           <span className="btn-text">Thêm vào giỏ hàng</span>
                           <img
-                            src="/images/icon-right.png"
+                            src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
                             alt="right"
                             className="btn-icon icon-right"
                           />
@@ -1070,7 +1070,7 @@ const floatingIconVariants = {
                           onClick={(e) => e.stopPropagation()} // Ngăn đóng khi click vào ảnh
                         >
                           <img
-                            src="/images/size.png"
+                            src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748927097/size_k4s5rt.png"
                             alt="Kích thước"
                             className="max-w-full max-h-[80vh] object-contain"
                           />
@@ -1140,7 +1140,7 @@ const floatingIconVariants = {
   {/* Phần nút chọn tab với icon trái/phải */}
   <div className="flex items-center justify-center my-4 gap-3">
     <img
-      src="/images/Left.png"
+      src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925086/Left_niuqcd.png"
       alt="Left Icon"
       className="w-48 h-15 object-contain"
     />
@@ -1167,7 +1167,7 @@ const floatingIconVariants = {
       >
         {activeTab === "description" && (
           <motion.img
-            src="/images/icon-left.png"
+            src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
             alt="icon"
             className="w-10 h-10 object-contain"
             variants={floatingIconVariants}
@@ -1177,7 +1177,7 @@ const floatingIconVariants = {
         Mô tả
         {activeTab === "description" && (
           <motion.img
-            src="/images/icon-right.png"
+            src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
             alt="icon"
             className="w-10 h-10 object-contain"
             variants={{
@@ -1207,7 +1207,7 @@ const floatingIconVariants = {
       >
         {activeTab === "reviews" && (
           <motion.img
-            src="/images/icon-left.png"
+            src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
             alt="icon"
             className="w-10 h-10 object-contain"
             variants={floatingIconVariants}
@@ -1217,7 +1217,7 @@ const floatingIconVariants = {
         Đánh giá
         {activeTab === "reviews" && (
           <motion.img
-            src="/images/icon-right.png"
+            src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
             alt="icon"
             className="w-10 h-10 object-contain"
             variants={{
@@ -1237,7 +1237,7 @@ const floatingIconVariants = {
     </div>
 
     <img
-      src="/images/Right.png"
+      src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924911/Right_hes5y0.png"
       alt="Right Icon"
       className="w-48 h-15 object-contain"
     />
@@ -1484,13 +1484,13 @@ const floatingIconVariants = {
         <div className="row">
           <div className="col-12 flex items-center justify-center ">
             {/* Ảnh bên trái */}
-            <img src="/images/Left.png" alt="left icon" className="w-48 h-15 object-contain" />
+            <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925086/Left_niuqcd.png" alt="left icon" className="w-48 h-15 object-contain" />
 
             {/* Tiêu đề căn giữa */}
             <h3 className="section-heading text-center m-0">Sản phẩm yêu thích liên quan</h3>
 
             {/* Ảnh bên phải */}
-            <img src="/images/Right.png" alt="right icon" className="w-48 h-15 object-contain" />
+            <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924911/Right_hes5y0.png" alt="right icon" className="w-48 h-15 object-contain" />
           </div>
         </div>
         <div className="row">
@@ -1505,13 +1505,13 @@ const floatingIconVariants = {
         <div className="row">
           <div className="col-12 flex items-center justify-center ">
             {/* Ảnh bên trái */}
-            <img src="/images/Left.png" alt="left icon" className="w-48 h-15 object-contain" />
+            <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925086/Left_niuqcd.png" alt="left icon" className="w-48 h-15 object-contain" />
 
             {/* Tiêu đề căn giữa */}
             <h3 className="section-heading text-center m-0">Sản phẩm cùng thương hiệu</h3>
 
             {/* Ảnh bên phải */}
-            <img src="/images/Right.png" alt="right icon" className="w-48 h-15 object-contain" />
+            <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924911/Right_hes5y0.png" alt="right icon" className="w-48 h-15 object-contain" />
           </div>
         </div>
         <div className="row">
@@ -1522,13 +1522,13 @@ const floatingIconVariants = {
         <div className="row">
           <div className="col-12 flex items-center justify-center ">
             {/* Ảnh bên trái */}
-            <img src="/images/Left.png" alt="left icon" className="w-48 h-15 object-contain" />
+            <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925086/Left_niuqcd.png" alt="left icon" className="w-48 h-15 object-contain" />
 
             {/* Tiêu đề căn giữa */}
             <h3 className="section-heading text-center m-0">Sản phẩm liên quan</h3>
 
             {/* Ảnh bên phải */}
-            <img src="/images/Right.png" alt="right icon" className="w-48 h-15 object-contain" />
+            <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924911/Right_hes5y0.png" alt="right icon" className="w-48 h-15 object-contain" />
           </div>
         </div>
         <div className="row">
@@ -1539,13 +1539,13 @@ const floatingIconVariants = {
         <div className="row">
           <div className="col-12 flex items-center justify-center ">
             {/* Ảnh bên trái */}
-            <img src="/images/Left.png" alt="left icon" className="w-48 h-15 object-contain" />
+            <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925086/Left_niuqcd.png" alt="left icon" className="w-48 h-15 object-contain" />
 
             {/* Tiêu đề căn giữa */}
             <h3 className="section-heading text-center m-0">Sản phẩm phổ biến</h3>
 
             {/* Ảnh bên phải */}
-            <img src="/images/Right.png" alt="right icon" className="w-48 h-15 object-contain" />
+            <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924911/Right_hes5y0.png" alt="right icon" className="w-48 h-15 object-contain" />
           </div>
         </div>
         <div className="row">

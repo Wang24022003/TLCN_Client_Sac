@@ -65,7 +65,7 @@ const Login = () => {
           {/* Bên trái - Ảnh */}
           <div className="login-image d-flex justify-content-center align-items-center">
             <img
-              src="images/Home1.jpg"
+              src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924176/Home1_gqwmnb.jpg"
               alt="Login Illustration"
               className="img-fluid"
             />

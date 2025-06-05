@@ -92,7 +92,7 @@ const Dashboard = () => {
                 {/* Ảnh nền bên trái */}
                 {selectedMenu === 'my-profile' && (
                   <img
-                    src="/images/icon-left.png"
+                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
                     alt="left-decor"
                     className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
                     style={{ transform: 'translateY(-50%)' }}
@@ -112,7 +112,7 @@ const Dashboard = () => {
                 {/* Ảnh nền bên phải */}
                 {selectedMenu === 'my-profile' && (
                   <img
-                    src="/images/icon-right.png"
+                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
                     alt="right-decor"
                     className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
                     style={{ transform: 'translateY(-50%)' }}
@@ -131,7 +131,7 @@ const Dashboard = () => {
                 {/* Ảnh nền bên trái */}
                 {selectedMenu === 'address' && (
                   <img
-                    src="/images/icon-left.png"
+                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
                     alt="left-decor"
                     className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
                     style={{ transform: 'translateY(-50%)' }}
@@ -151,7 +151,7 @@ const Dashboard = () => {
                 {/* Ảnh nền bên phải */}
                 {selectedMenu === 'address' && (
                   <img
-                    src="/images/icon-right.png"
+                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
                     alt="right-decor"
                     className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
                     style={{ transform: 'translateY(-50%)' }}
@@ -168,7 +168,7 @@ const Dashboard = () => {
                 {/* Ảnh nền bên trái */}
                 {selectedMenu === 'my-orders' && (
                   <img
-                    src="/images/icon-left.png"
+                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
                     alt="left-decor"
                     className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
                     style={{ transform: 'translateY(-50%)' }}
@@ -188,7 +188,7 @@ const Dashboard = () => {
                 {/* Ảnh nền bên phải */}
                 {selectedMenu === 'my-orders' && (
                   <img
-                    src="/images/icon-right.png"
+                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
                     alt="right-decor"
                     className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
                     style={{ transform: 'translateY(-50%)' }}
@@ -205,7 +205,7 @@ const Dashboard = () => {
                 {/* Ảnh nền bên trái */}
                 {selectedMenu === 'product-history' && (
                   <img
-                    src="/images/icon-left.png"
+                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
                     alt="left-decor"
                     className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
                     style={{ transform: 'translateY(-50%)' }}
@@ -225,7 +225,7 @@ const Dashboard = () => {
                 {/* Ảnh nền bên phải */}
                 {selectedMenu === 'product-history' && (
                   <img
-                    src="/images/icon-right.png"
+                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
                     alt="right-decor"
                     className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
                     style={{ transform: 'translateY(-50%)' }}
@@ -242,7 +242,7 @@ const Dashboard = () => {
                 {/* Ảnh nền bên trái */}
                 {selectedMenu === 'my-wishlist' && (
                   <img
-                    src="/images/icon-left.png"
+                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
                     alt="left-decor"
                     className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
                     style={{ transform: 'translateY(-50%)' }}
@@ -262,7 +262,7 @@ const Dashboard = () => {
                 {/* Ảnh nền bên phải */}
                 {selectedMenu === 'my-wishlist' && (
                   <img
-                    src="/images/icon-right.png"
+                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
                     alt="right-decor"
                     className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
                     style={{ transform: 'translateY(-50%)' }}
@@ -279,7 +279,7 @@ const Dashboard = () => {
                 {/* Ảnh nền bên trái */}
                 {selectedMenu === 'history' && (
                   <img
-                    src="/images/icon-left.png"
+                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
                     alt="left-decor"
                     className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
                     style={{ transform: 'translateY(-50%)' }}
@@ -299,7 +299,7 @@ const Dashboard = () => {
                 {/* Ảnh nền bên phải */}
                 {selectedMenu === 'history' && (
                   <img
-                    src="/images/icon-right.png"
+                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
                     alt="right-decor"
                     className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
                     style={{ transform: 'translateY(-50%)' }}
@@ -316,7 +316,7 @@ const Dashboard = () => {
                 {/* Ảnh nền bên trái */}
                 {selectedMenu === 'voucher' && (
                   <img
-                    src="/images/icon-left.png"
+                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
                     alt="left-decor"
                     className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
                     style={{ transform: 'translateY(-50%)' }}
@@ -336,7 +336,7 @@ const Dashboard = () => {
                 {/* Ảnh nền bên phải */}
                 {selectedMenu === 'voucher' && (
                   <img
-                    src="/images/icon-right.png"
+                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
                     alt="right-decor"
                     className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
                     style={{ transform: 'translateY(-50%)' }}
@@ -353,7 +353,7 @@ const Dashboard = () => {
                 {/* Ảnh nền bên trái */}
                 {selectedMenu === 'notifications' && (
                   <img
-                    src="/images/icon-left.png"
+                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
                     alt="left-decor"
                     className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
                     style={{ transform: 'translateY(-50%)' }}
@@ -373,7 +373,7 @@ const Dashboard = () => {
                 {/* Ảnh nền bên phải */}
                 {selectedMenu === 'notifications' && (
                   <img
-                    src="/images/icon-right.png"
+                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
                     alt="right-decor"
                     className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
                     style={{ transform: 'translateY(-50%)' }}
