@@ -14,15 +14,6 @@ import {
 import { useNavigate } from "react-router-dom";
 import ReactStars from "react-rating-stars-component";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid,
-} from "recharts";
 
 
 const ProductHistory = () => {
@@ -38,7 +29,7 @@ const ProductHistory = () => {
   const navigate = useNavigate();
   const wishlist = useSelector((state) => state?.auth?.wishlist);
 
-  const wishlistState = useSelector((state) => state?.auth?.recentView);
+  const wishlistState = useSelector((state) => state?.auth?.recentView || []);
 
   const getPriceRangeFromVariants = (product) => {
   
@@ -90,18 +81,17 @@ const filterOptions = [
   { label: "30 ngày qua", value: "last30days" },
 ];
 
-const filterByTime = (list) => {
+const filterByTime = (list = []) => {
+  if (!Array.isArray(list)) return [];
   if (selectedFilter === "all") return list;
 
   const now = new Date();
-  return list?.filter((item) => {
+  return list.filter((item) => {
     const viewTime = new Date(item?.timeView);
     if (!item?.timeView) return false;
 
     if (selectedFilter === "today") {
-      return (
-        viewTime.toDateString() === now.toDateString()
-      );
+      return viewTime.toDateString() === now.toDateString();
     } else if (selectedFilter === "last7days") {
       const sevenDaysAgo = new Date();
       sevenDaysAgo.setDate(now.getDate() - 7);
@@ -117,22 +107,23 @@ const filterByTime = (list) => {
 };
 
 const filteredWishlist = filterByTime(wishlistState);
+// const chartData = getChartData(filteredWishlist);
 
-const getChartData = (data) => {
-  const grouped = {};
+// const getChartData = (data) => {
+//   const grouped = {};
 
-  data.forEach((item) => {
-    if (!item.timeView) return;
-    const dateKey = new Date(item.timeView).toLocaleDateString("vi-VN");
-    grouped[dateKey] = (grouped[dateKey] || 0) + 1;
-  });
+//   data.forEach((item) => {
+//     if (!item.timeView) return;
+//     const dateKey = new Date(item.timeView).toLocaleDateString("vi-VN");
+//     grouped[dateKey] = (grouped[dateKey] || 0) + 1;
+//   });
 
-  return Object.entries(grouped)
-    .map(([date, count]) => ({ date, count }))
-    .sort((a, b) => new Date(a.date) - new Date(b.date));
-};
+//   return Object.entries(grouped)
+//     .map(([date, count]) => ({ date, count }))
+//     .sort((a, b) => new Date(a.date) - new Date(b.date));
+// };
 
-const chartData = getChartData(filteredWishlist);
+
 const sortedWishlist = [...filteredWishlist].sort((a, b) => new Date(b.timeView) - new Date(a.timeView));
 
 
@@ -154,7 +145,7 @@ const sortedWishlist = [...filteredWishlist].sort((a, b) => new Date(b.timeView)
               ))}
             </select>
 
-            <div style={{ width: "400px", minWidth: "300px" }} className="bg-white p-2 rounded shadow-sm">
+            {/* <div style={{ width: "400px", minWidth: "300px" }} className="bg-white p-2 rounded shadow-sm">
               <h6 className="text-center mb-2" style={{ fontSize: "14px" }}>
                 Biểu đồ lượt xem
               </h6>
@@ -174,7 +165,7 @@ const sortedWishlist = [...filteredWishlist].sort((a, b) => new Date(b.timeView)
                   </BarChart>
                 </ResponsiveContainer>
               )}
-            </div>
+            </div> */}
           </div>
         </div>
 
