@@ -443,7 +443,7 @@ export const authSlice = createSlice({
             JSON.stringify(action.payload.data.user)
           );
           localStorage.removeItem("password");
-          toast.info("User Logged In Successfully");
+          toast.info("Đăng nhập thành công!");
         }
         //toast.info("User Logged In Successfully");
       })
@@ -515,7 +515,7 @@ export const authSlice = createSlice({
         state.isSuccess = true;
         state.cartProduct = action.payload.data;
         if (state.isSuccess) {
-          toast.success("Product Added To Cart");
+          toast.success("Đã thêm sản phẩm vào giỏ hàng");
         }
       })
       .addCase(addProdToCart.rejected, (state, action) => {
@@ -549,7 +549,7 @@ export const authSlice = createSlice({
         state.isSuccess = true;
         state.deletedCartProduct = action.payload;
         if (state.isSuccess) {
-          toast.success("Product Deleted From Cart Successfully!");
+          toast.success("Đã xóa sản phẩm khỏi giỏ hàng thành công!");
         }
       })
       .addCase(deleteCartProduct.rejected, (state, action) => {
@@ -570,7 +570,7 @@ export const authSlice = createSlice({
         state.isSuccess = true;
         state.updatedCartProduct = action.payload.data;
         if (state.isSuccess) {
-          toast.success("Product Updated Successfully!");
+          toast.success("Cập nhật sản phẩm thành công!");
         }
       })
       .addCase(updateCartProduct.rejected, (state, action) => {
@@ -579,7 +579,7 @@ export const authSlice = createSlice({
         state.isSuccess = false;
         state.message = action.error;
         if (state.isError) {
-          toast.error("Something Went Wrong!");
+          toast.error("Đã xảy ra lỗi, vui lòng thử lại!");
         }
       })
       .addCase(createAnOrder.pending, (state) => {
@@ -591,7 +591,7 @@ export const authSlice = createSlice({
         state.isSuccess = true;
         state.orderedProduct = action.payload;
         if (state.isSuccess) {
-          toast.success("Ordered createad Successfully!");
+          toast.success("Đặt hàng thành công!");
         }
       })
       .addCase(createAnOrder.rejected, (state, action) => {
@@ -600,7 +600,7 @@ export const authSlice = createSlice({
         state.isSuccess = false;
         state.message = action.error;
         if (state.isError) {
-          toast.error("Something Went Wrong!");
+          toast.error("Đã xảy ra lỗi, vui lòng thử lại!");
         }
       })
       .addCase(getOrders.pending, (state) => {
@@ -634,7 +634,7 @@ export const authSlice = createSlice({
         state.isSuccess = false;
         state.message = action.error;
         if (state.isError) {
-          toast.error("Something Went Wrong!");
+          toast.error("Đã xảy ra lỗi, vui lòng thử lại!");
         }
       })
       .addCase(getNewProfile.pending, (state) => {
@@ -652,7 +652,7 @@ export const authSlice = createSlice({
             JSON.stringify(action.payload.data.user)
           );
           state.user = action.payload.data.user;
-          toast.success("Profile Updated Successfully!");
+          toast.success("Cập nhật hồ sơ thành công!");
         }
       })
       .addCase(getNewProfile.rejected, (state, action) => {
@@ -661,7 +661,7 @@ export const authSlice = createSlice({
         state.isSuccess = false;
         state.message = action.error;
         if (state.isError) {
-          toast.error("Something Went Wrong!");
+          toast.error("Đã xảy ra lỗi, vui lòng thử lại!");
         }
       })
 
@@ -695,7 +695,7 @@ export const authSlice = createSlice({
         state.isSuccess = true;
         state.pass = action.payload;
         if (state.isSuccess) {
-          toast.success("Password change Successfully!");
+          toast.success("Đổi mật khẩu thành công!");
         }
       })
       .addCase(resetPassword.rejected, (state, action) => {
@@ -704,7 +704,7 @@ export const authSlice = createSlice({
         state.isSuccess = false;
         state.message = action.error;
         if (state.isError) {
-          toast.error("Something Went Wrong!");
+          toast.error("Đã xảy ra lỗi, vui lòng thử lại!");
         }
       })
       .addCase(deleteUserCart.pending, (state) => {
@@ -788,7 +788,7 @@ export const authSlice = createSlice({
         state.isSuccess = true;
         state.isReload = true;
         if (state.isSuccess) {
-          toast.success("Create new address successful");
+          toast.success("Tạo địa chỉ mới thành công!");
         }
         // state.addressUser = action.payload.data.result;
       })
@@ -810,7 +810,7 @@ export const authSlice = createSlice({
         state.isSuccess = true;
         state.isReload = true;
         if (state.isSuccess) {
-          toast.success("Update address successful");
+          toast.success("Cập nhật địa chỉ thành công!");
         }
         // state.addressUser = action.payload.data.result;
       })

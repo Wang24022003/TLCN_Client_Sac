@@ -219,10 +219,13 @@ const getProductUserRecentView = async () => {
   }
 };
 
-const chatbot = async (chatbotData) => {
-  const response = await instance.post(`chat-ai`, chatbotData);
+const chatbot = async (question) => {
+  const response = await instance.get(`chat-ai/interact`, {
+    params: { question },
+  });
   return response;
 };
+
 
 export const authService = {
   register,

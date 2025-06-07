@@ -1413,7 +1413,7 @@ const floatingIconVariants = {
               <div className="reviews mt-4">
                 {reviews &&
                   reviews.map((item, index) => (
-                    <div className="review" key={index}>
+                    <div className="review my-4" key={index}>
                       <div className="d-flex gap-10 align-items-center">
                         <img
                           src={item?.userId.avatar}

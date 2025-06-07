@@ -84,7 +84,7 @@ const userCoupons = useSelector((state) => state.auth.userCoupons);
     );
   };
   useEffect(() => {
-    getAddressUser();
+    // getAddressUser();
     getCouponUser();
     getListAddress();
     return () => {};

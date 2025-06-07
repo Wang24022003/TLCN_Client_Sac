@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BlogCard from "../components/BlogCard";
 import SpecialProduct from "../components/SpecialProduct";
@@ -11,7 +11,7 @@ import moment from "moment";
 import { getAllProducts, removeToWishlist } from "../features/products/productSlilce";
 import ReactStars from "react-rating-stars-component";
 import { addToWishlist } from "../features/products/productSlilce";
-import { getProductUserRecentView, getuserProductHistory, getuserProductWishlist } from "../features/user/userSlice";
+import { getOrders, getProductUserRecentView, getuserProductHistory, getuserProductWishlist } from "../features/user/userSlice";
 import {
   AiFillHeart,
   AiOutlineHeart,
@@ -186,6 +186,86 @@ const getUniqueColorsWishlist = (product) => {
 
   return colors; // mảng các màu dưới dạng chuỗi CSS (#hex hoặc tên màu)
 };
+// gợi ý cá nhân hóa 
+const orderState = useSelector((state) => state?.auth?.getorderedProduct);
+
+useEffect(() => {
+  dispatch(getOrders());
+
+}, []);
+
+const [orderedProducts, setOrderedProducts] = useState([]);
+
+useEffect(() => {
+  if (orderState && productState) {
+    const productIdsInOrders = new Set();
+
+    orderState.forEach(order => {
+      order.items.forEach(item => {
+        productIdsInOrders.add(item.product._id);
+      });
+    });
+
+    const matchedProducts = productState.filter(product => productIdsInOrders.has(product._id));
+    setOrderedProducts(matchedProducts);
+  }
+}, [orderState, productState]);
+
+// Danh sách gợi ý cá nhân hóa dựa trên wishlist và sản phẩm đã xem, bỏ qua sản phẩm đã mua
+const personalizedSuggestions = useMemo(() => {
+  const orderedIds = new Set(orderedProducts.map(p => p._id));
+  const wishlistIds = new Set((wishlistState || []).map(p => p._id));
+  const recentIds = new Set((historyState || []).map(p => p._id));
+  const suggestionMap = new Map();
+
+  // Ưu tiên 1: wishlist
+  (wishlistState || []).forEach(product => {
+    if (product && !orderedIds.has(product._id)) {
+      suggestionMap.set(product._id, { ...product, priority: 1 });
+    }
+  });
+
+  // Ưu tiên 2: sản phẩm đã xem
+  (historyState || []).forEach(product => {
+    if (product && !orderedIds.has(product._id) && !suggestionMap.has(product._id)) {
+      suggestionMap.set(product._id, { ...product, priority: 2 });
+    }
+  });
+
+  // Ưu tiên 3: gợi ý theo sản phẩm đã mua
+  orderedProducts.forEach(ordered => {
+    const orderedCategory = ordered?.category?._id;
+    const orderedVariants = ordered?.inventory?.productVariants || [];
+
+    productState.forEach(candidate => {
+      if (
+        !candidate ||
+        orderedIds.has(candidate._id) ||
+        suggestionMap.has(candidate._id)
+      ) return;
+
+      if (candidate?.category?._id !== orderedCategory) return;
+
+      const candidateVariants = candidate?.inventory?.productVariants || [];
+
+      const match = candidateVariants.some(cv =>
+        orderedVariants.some(ov => {
+          const sameSize = ov.attributes?.size === cv.attributes?.size;
+          const sameColor = ov.attributes?.color === cv.attributes?.color;
+          return sameSize || sameColor;
+        })
+      );
+
+      if (match) {
+        suggestionMap.set(candidate._id, { ...candidate, priority: 3 });
+      }
+    });
+  });
+
+  // Trả về mảng đã sắp xếp theo priority tăng dần
+  return Array.from(suggestionMap.values()).sort((a, b) => a.priority - b.priority).reverse();
+}, [wishlistState, historyState, orderedProducts, productState]);
+
 
 
   
@@ -395,6 +475,257 @@ const getUniqueColorsWishlist = (product) => {
           </div>
         </div>
       </Container>
+        {/* gợi ý cá nhân hóa  */}
+        {authState?.user && personalizedSuggestions  && personalizedSuggestions.length > 0 && (
+          <Container class1="featured-wrapper py-4 home-wrapper-xq">
+                <div style={{ position: "relative",  zIndex: 0 }}>
+                  {/* Ảnh góc trên bên trái */}
+                  <img
+                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924457/corner-top-left_md0qbu.png"
+                    alt="top left decoration"
+                    style={{
+                      position: "absolute",
+                      top: "-12px",
+                      left: "-51px",
+                      width: "290px",
+                      height: "auto",
+                      zIndex: -1,
+                    }}
+                  />
+
+                  {/* Ảnh góc trên bên phải */}
+                  <img
+                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924566/corner-top-rightt_p9uj4x.png"
+                    alt="top right decoration"
+                    style={{
+                      position: "absolute",
+                      top: "-12px",
+                      right: "-51px",
+                      width: "290px",
+                      height: "auto",
+                      zIndex: -1,
+                    }}
+                  />
+                  {/* Ảnh góc dưới bên trái */}
+                    <img
+                      src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924711/bottom-left_zliugn.png"
+                      alt="bottom left decoration"
+                      style={{
+                        position: "absolute",
+                        bottom: "-25px",
+                        left: "-54px",
+                        width: "540px",
+                        height: "auto",
+                        zIndex: -1,
+                        opacity: 0.3,
+                      }}
+                    />
+
+                    {/* Ảnh góc dưới bên phải */}
+                    <img
+                      src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924773/bottom-right_d4mbqd.png"
+                      alt="bottom right decoration"
+                      style={{
+                        position: "absolute",
+                        bottom: "-16px",
+                        right: "-50px",
+                        width: "400px",
+                        height: "auto",
+                        zIndex: -1,
+                        opacity: 0.3,
+                      }}
+                  />
+
+                  {/* Nội dung chính */}
+                  <div className="row">
+                  <div className="col-12 mb-3">
+                    <div className="d-flex justify-content-center align-items-center">
+                      {/* Ảnh bên trái */}
+                      <img
+                        src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748924911/Right_hes5y0.png"
+                        alt="left decoration"
+                        style={{ width: "130px", height: "60px", objectFit: "contain" }}
+                      />
+
+                      {/* Tiêu đề ở giữa */}
+                      <h3 className="section-heading text-center mb-0" style={{ color: "#fff" }}>
+                        Dành riêng cho bạn
+                      </h3>
+
+                      {/* Ảnh bên phải */}
+                      <img
+                        src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925086/Left_niuqcd.png"
+                        alt="right decoration"
+                        style={{ width: "130px", height: "60px", objectFit: "contain" }}
+                      />
+                    </div>
+
+                    {/* Xem tất cả: để dưới nếu vẫn muốn dùng */}
+                    <div className="text-center mt-2">
+                      <span
+                        onClick={() => navigate("/product")}
+                        style={{
+                          cursor: "pointer",
+                          color: "#d1d1d1",
+                          fontSize: "14px",
+                        }}
+                        onMouseEnter={(e) => (e.target.style.color = "#28a745")}
+                        onMouseLeave={(e) => (e.target.style.color = "#d1d1d1")}
+                      >
+                        Xem tất cả
+                      </span>
+                    </div>
+                  </div>
+
+                          {[...personalizedSuggestions ].reverse().slice(0, showMore ? personalizedSuggestions.length : 8).map((item, index) => (
+
+                        <div
+                          key={index}
+                          className="col-3 my-2"
+                          data-aos="fade-up"
+                          data-aos-delay={index * 100}
+                          onMouseEnter={() => setHoveredProduct(index)} // Khi hover, lưu chỉ số sản phẩm
+                          onMouseLeave={() => setHoveredProduct(null)} // Khi rời chuột, reset trạng thái
+                        >
+                          <div className="product-card position-relative" style={{ cursor: "pointer" }}>
+                            <div
+                              className="product-image"
+                              style={{
+                                position: "relative",
+                                width: "100%",
+                                height: "0",
+                                paddingBottom: "150%",
+                              }}
+                            >
+                              <img
+                                src={
+                                  hoveredProduct === index && item?.images?.[1]
+                                    ? item?.images[1] // Hiển thị ảnh thứ 2 khi hover
+                                    : item?.images?.[0] || "/default-image.png" // Dùng ảnh mặc định nếu không có ảnh
+                                }
+                                alt="product image"
+                                height={"250px"}
+                                width={"260px"}
+                                onClick={() => navigate("/product/" + item?._id)}
+                                style={{
+                                  objectFit: "cover",
+                                  display: "block",
+                                  position: "absolute",
+                                  top: 0,
+                                  left: 0,
+                                  width: "100%",
+                                  height: "100%",
+                                }}
+                              />
+                            </div>
+                            <div className="product-details" style={{ padding: "15px", color: "#fff", textShadow: "0 1px 2px rgba(0, 0, 0, 0.6)", }}>
+                              {/* Name và Brand luôn hiển thị */}
+                              <div className="d-flex justify-content-between align-items-center">
+                                <h8 className="brand">{item?.brand}</h8>
+                                <p style={{ fontSize: "13px", marginBottom: "0", color: "#fff" }}>
+                                  Đã bán: {item?.inventory?.totalQuantitySell ?? 0}
+                                </p>
+                              </div>
+                              <h5 className="product-title" style={{ color: "#fff", textShadow: "0 1px 2px rgba(0, 0, 0, 0.6)", }}>
+                                {item?.name?.length > 35 ? item.name.substr(0, 35) + "..." : item?.name}
+                              </h5>
+                              {/* 3 phần còn lại chỉ hiển thị khi hover */}
+                              <div
+                                className={`hover-details ${hoveredProduct === index ? "hovered" : ""}`}
+                                style={{
+                                  opacity: hoveredProduct === index ? 1 : 0,
+                                  visibility: hoveredProduct === index ? "visible" : "hidden",
+                                  transition: "opacity 0.3s ease, visibility 0.3s ease",
+                                }}
+                              >
+                                <div className="d-flex align-items-center">
+                                  <ReactStars
+                                    count={+5}
+                                    size={24}
+                                    value={+item?.rating?.toString()}
+                                    isHalf={true}
+                                    edit={false}
+                                    color="#ccc"
+                                    activeColor="#ffd700"
+                                  />
+                                  
+                                  <div className="wishlist-icon ms-auto">
+                                    <button
+                                      className="border-0 bg-transparent"
+                                      onClick={() => handleWishlistToggle(item?._id)}
+                                    >
+                                      {isProductInWishlist(item?._id) ? (
+                                        <AiFillHeart className="fs-5 text-danger" />
+                                      ) : (
+                                        <AiOutlineHeart className="fs-5" />
+                                      )}
+                                    </button>
+                                  </div>
+                                </div>
+                                <p
+                                  className="price"
+                                  style={{
+                                    color: "#F90004FF",            // Màu đỏ tươi hơn
+                                    fontWeight: "bold",          // Chữ đậm
+                                    fontSize: "18px",            // Lớn hơn mặc định
+                                    display: "inline-block",     // Giữ khối gọn
+                                  }}
+                                >
+                                  {getPriceRangeFromVariants(item)}
+                                </p>
+                                {/* Hiển thị danh sách màu nếu có */}
+                                {getUniqueColors(item).length > 0 && (
+                                  <div className="d-flex justify-content-start gap-2 ">
+                                    {getUniqueColors(item).map((color, idx) => (
+                                      <div
+                                        key={idx}
+                                        title={color.name}
+                                        style={{
+                                          width: "18px",
+                                          height: "18px",
+                                          borderRadius: "50%",
+                                          backgroundColor: color.name,
+                                          border: "1px solid #ccc",
+                                        }}
+                                      />
+                                    ))}
+                                  </div>
+                                )}
+                                
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                  {/* Dòng "Xem thêm" */}
+                  
+              {personalizedSuggestions  && personalizedSuggestions.length > 4 && (
+                <div className="col-12 text-center mt-3">
+                  <div
+                    onClick={() => setShowMore(!showMore)}
+                    className="fancy-toggle-btn"
+                  >
+                    <div className="col-12 text-center mt-3">
+                      <button onClick={() => setShowMore(!showMore)} className="gold-toggle-btn">
+                        <div className="btn-inner d-flex align-items-center justify-content-center position-relative">
+                          <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png" alt="left" className="btn-icon icon-left" />
+                          <span className="btn-text">{showMore ? "Thu gọn" : "Xem thêm"}</span>
+                          <img src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png" alt="right" className="btn-icon icon-right" />
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+
+                </div>
+                </div>
+            
+              </Container>
+        )}
+
+  
 {/* nổi bật */}
       <Container class1="featured-wrapper py-4 home-wrapper-x1">
         <div style={{ position: "relative",  zIndex: 0 }}>
@@ -2191,6 +2522,7 @@ const getUniqueColorsWishlist = (product) => {
     </div>
   </Container>
 )}
+
 
       
 

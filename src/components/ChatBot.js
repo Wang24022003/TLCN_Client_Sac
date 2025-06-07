@@ -27,19 +27,19 @@ useEffect(() => {
 
  const handleSend = async () => {
   if (!input.trim()) return;
-  if (!user) {
-      const timestamp = new Date().toISOString();
-      const warningMsg = {
-        from: "bot",
-        text: "Để sử dụng Trợ lý ảo Sắc, bạn vui lòng đăng nhập hoặc đăng ký tài khoản nhé!",
-        timestamp,
-      };
-      // Gửi tin nhắn người dùng trước rồi tới tin nhắn bot cảnh báo
-      const userMessage = { from: "user", text: input, timestamp };
-      setMessages((prev) => [...prev, userMessage, warningMsg]);
-      setInput("");
-      return;
-    }
+  // if (!user) {
+  //     const timestamp = new Date().toISOString();
+  //     const warningMsg = {
+  //       from: "bot",
+  //       text: "Để sử dụng Trợ lý ảo Sắc, bạn vui lòng đăng nhập hoặc đăng ký tài khoản nhé!",
+  //       timestamp,
+  //     };
+  //     // Gửi tin nhắn người dùng trước rồi tới tin nhắn bot cảnh báo
+  //     const userMessage = { from: "user", text: input, timestamp };
+  //     setMessages((prev) => [...prev, userMessage, warningMsg]);
+  //     setInput("");
+  //     return;
+  //   }
   const timestamp = new Date().toISOString();
   const userMessage = { from: "user", text: input, timestamp };
   const updatedMessages = [...messages, userMessage];
@@ -48,14 +48,14 @@ useEffect(() => {
   setIsLoading(true);
 
   try {
-    const res = await dispatch(chatbot({ message: input }));
+    const res = await dispatch(chatbot(input));
 
     setIsLoading(false);
 
-    if (res.payload?.data?.reply) {
+    if (res.payload?.data?.answer) {
       const botMessage = {
         from: "bot",
-        text: res.payload.data.reply,
+        text: res.payload.data.answer,
         timestamp: new Date().toISOString(),
       };
       setMessages([...updatedMessages, botMessage]);
@@ -125,7 +125,7 @@ useEffect(() => {
               className={`flex items-start ${msg.from === "bot" ? "flex-row" : "flex-row-reverse"} gap-2`}
             >
               {/* Avatar */}
-              <div className="relative flex-shrink-0">
+              {/* <div className="relative flex-shrink-0">
                 <img
                   src={msg.from === "bot" ? "https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748926638/sac_i6km92.png" : user?.avatar || "https://www.w3schools.com/howto/img_avatar.png"}
                   alt="Avatar"
@@ -137,7 +137,7 @@ useEffect(() => {
                 {msg.from === "user" && (
                   <span className="absolute bottom-0 left-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
                 )}
-              </div>
+              </div> */}
 
 
               {/* Nội dung tin nhắn */}

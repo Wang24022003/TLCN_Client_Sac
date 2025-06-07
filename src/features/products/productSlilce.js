@@ -201,7 +201,7 @@ export const productSlice = createSlice({
         state.rating = action.payload.data;
         state.message = "Rating Added Successfully";
         if (state.isSuccess) {
-          toast.success("Rating Added Successfully");
+          
         }
       })
       .addCase(addRating.rejected, (state, action) => {
@@ -223,7 +223,7 @@ export const productSlice = createSlice({
         state.isSuccess = true;
         state.updateorder = action.payload;
         if (state.isSuccess === true) {
-          toast.success("Order Status Changed");
+          toast.success("Trạng thái đơn hàng đã được cập nhật");
         }
       })
       .addCase(updateOrder.rejected, (state, action) => {

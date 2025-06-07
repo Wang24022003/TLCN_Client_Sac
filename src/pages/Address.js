@@ -91,7 +91,7 @@ const Address = () => {
                     </div>
                   </div>
                   <div className="mt-2 text-gray-700">
-                    <p>{addr.specific}</p>
+                    <p>{addr.specific}, </p>
                     <p>
                       {addr.wards}, {addr.districts}, {addr.province}
                     </p>

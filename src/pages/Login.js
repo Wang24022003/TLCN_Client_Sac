@@ -8,6 +8,8 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../features/user/userSlice";
+import { toast } from "react-toastify";
+
  // Adjust the path according to your project structure
 import "./../Css/CssLogin.css";
 
@@ -19,6 +21,7 @@ let loginSchema = yup.object({
 
   password: yup.string().required("Password is Required"),
 });
+
 
 const Login = () => {
   const authState = useSelector((state) => state.auth);
@@ -45,7 +48,10 @@ const Login = () => {
 
   useEffect(() => {
     if (authState.user !== null && authState.isError === false) {
+      
+      setTimeout(() => {
       window.location.href = "/";
+    }, 1000);
     }
     if (authState.isError === true) {
       if (handleApi === "retryActive") {
