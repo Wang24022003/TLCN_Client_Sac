@@ -1,6 +1,7 @@
 import {
   CloseOutlined,
   CustomerServiceOutlined,
+  MenuOutlined,
   SendOutlined,
 } from '@ant-design/icons';
 import { notification, Tooltip } from 'antd';
@@ -16,6 +17,13 @@ import { toast } from 'react-toastify';
 import { chatService } from '../features/chat/chatService';
 import { formatMessageTime } from '../utils/dayConvert';
 import IconButtonUpload from './IconButtonUpload';
+import { Drawer, Button, List } from 'antd';
+
+const suggestions = [
+  { id: 1, question: 'Làm thế nào để đăng ký?' },
+  { id: 2, question: 'Phí dịch vụ là bao nhiêu?' },
+  { id: 3, question: 'Tôi cần chuẩn bị giấy tờ gì?' },
+];
 
 const Context = React.createContext({ name: 'Default' });
 function ChatButton({ token, socket, user }) {
@@ -35,6 +43,7 @@ function ChatButton({ token, socket, user }) {
   const [chatRoom, setChatRoom] = useState(null);
   const [showChat, setShowChat] = useState(false);
   const [messages, setMessages] = useState([]);
+  const [openDrawer, setOpenDrawer] = useState(false);
 
   const openNotification = useCallback(
     (placement, sender, message) => {
@@ -74,7 +83,6 @@ function ChatButton({ token, socket, user }) {
 
   const handleImageUpload = async ({ file }) => {
     if (file.status === 'done') {
-      console.log(file);
       await chatService.sendMessage({
         content: '',
         chatRoom: chatRoom._id,
@@ -87,6 +95,7 @@ function ChatButton({ token, socket, user }) {
   const formik = useFormik({
     initialValues: {
       message: '',
+      questionId: '',
     },
     onSubmit: async (values, { resetForm }) => {
       await chatService.sendMessage({
@@ -94,6 +103,7 @@ function ChatButton({ token, socket, user }) {
         chatRoom: chatRoom._id,
         messageType: 'text',
         fileUrl: [],
+        questionId: values.questionId,
       });
       resetForm();
     },
@@ -130,7 +140,6 @@ function ChatButton({ token, socket, user }) {
 
   return (
     <div>
-      {/* Floating Chat Button - Only renders if showChat is false */}
       {!showChat && (
         <>
           <button
@@ -147,18 +156,16 @@ function ChatButton({ token, socket, user }) {
               zIndex: 1000,
             }}
           >
-            {/* Tooltip to show text when hovering */}
             <Tooltip title="Nhấn để hỗ trợ" placement="top">
-              {/* Customer Service Icon (Ant Design) with padding */}
               <CustomerServiceOutlined
                 style={{
-                  fontSize: '34px', // Adjust size to match the image size (64px)
-                  color: '#002E29', // Set a color similar to the image background
+                  fontSize: '34px',
+                  color: '#002E29',
                   cursor: 'pointer',
-                  boxShadow: 'rgba(17, 1, 9, 0.2) 0px 4px 8px 0px', // Shadow effect
-                  borderRadius: '50%', // Circular shape (optional)
-                  padding: '10px', // Add padding around the icon
-                  backgroundColor: 'white', // Optional: Add a background color for better visibility
+                  boxShadow: 'rgba(17, 1, 9, 0.2) 0px 4px 8px 0px',
+                  borderRadius: '50%',
+                  padding: '10px',
+                  backgroundColor: 'white',
                 }}
               />
             </Tooltip>
@@ -169,53 +176,53 @@ function ChatButton({ token, socket, user }) {
         </>
       )}
 
-      {/* Chat interface (hidden or shown based on state) */}
       {showChat && (
         <div
-          className="chat-container" // Added class for animation
+          className="chat-container"
           style={{
             position: 'fixed',
             bottom: '100px',
             right: '25px',
             backgroundColor: '#fff',
             borderRadius: '8px',
-            width: '370px', // Increased width
+            width: '370px',
             height: '450px',
             boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
             padding: '15px',
             zIndex: 999,
-            animation: 'slideIn 0.5s ease-out', // Animation when chat opens
+            animation: 'slideIn 0.5s ease-out',
             display: 'flex',
             flexDirection: 'column',
           }}
         >
-          {/* Chat Header with Divider */}
           <div
             style={{
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              borderBottom: '2px solid #ddd', // Divider in header
+              borderBottom: '2px solid #ddd',
               paddingBottom: '10px',
               marginBottom: '10px',
             }}
           >
             <h4 style={{ margin: 0 }}>Hỗ trợ (CSKH)</h4>
-            <div style={{ fontSize: '18px', cursor: 'pointer' }}>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <Button size="small" onClick={() => setOpenDrawer(true)}>
+                Gợi ý
+              </Button>
               <button onClick={handleCloseChat}>
-                <CloseOutlined /> {/* Close icon */}
+                <CloseOutlined />
               </button>
             </div>
           </div>
 
-          {/* Chat messages */}
           <div
             ref={chatContainerRef}
             style={{
               flexGrow: 1,
               height: '300px',
               overflowY: 'auto',
-              paddingRight: '5px', // To prevent scroll bar from covering the input
+              paddingRight: '5px',
             }}
           >
             {messages.map((message, index) => (
@@ -305,9 +312,33 @@ function ChatButton({ token, socket, user }) {
               ref={messagesEndRef}
               style={{ float: 'left', clear: 'both' }}
             />
-          </div>
 
-          {/* Message Input Section with Send and Upload File Icons */}
+            <Drawer
+              title="Câu hỏi gợi ý"
+              placement="left"
+              onClose={() => setOpenDrawer(false)}
+              open={openDrawer}
+            >
+              <List
+                dataSource={suggestions}
+                renderItem={(item) => (
+                  <List.Item
+                    key={item.id}
+                    onClick={() => {
+                      formik.setFieldValue('message', item.question);
+                      formik.setFieldValue('questionId', item.id);
+                      setTimeout(() => {
+                        formik.submitForm();
+                      }, 0);
+                      setOpenDrawer(false);
+                    }}
+                  >
+                    {item.question}
+                  </List.Item>
+                )}
+              />
+            </Drawer>
+          </div>
 
           <form
             onSubmit={formik.handleSubmit}
@@ -321,10 +352,8 @@ function ChatButton({ token, socket, user }) {
                 paddingTop: '10px',
               }}
             >
-              {/* File Upload Icon */}
               <IconButtonUpload onChange={handleImageUpload} />
 
-              {/* Message Input Field */}
               <input
                 type="text"
                 placeholder="Soạn tin nhắn..."
@@ -340,7 +369,6 @@ function ChatButton({ token, socket, user }) {
                 onBlur={formik.handleBlur('message')}
               />
 
-              {/* Send Icon */}
               <SendOutlined
                 type="submit"
                 style={{
