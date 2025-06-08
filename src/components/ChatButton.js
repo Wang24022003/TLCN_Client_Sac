@@ -103,7 +103,7 @@ function ChatButton({ token, socket, user }) {
         chatRoom: chatRoom._id,
         messageType: 'text',
         fileUrl: [],
-        questionId: values.questionId,
+        questionId: values.questionId || 0,
       });
       resetForm();
     },
