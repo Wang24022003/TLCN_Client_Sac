@@ -17,8 +17,8 @@ const Layout = () => {
   useEffect(() => {
     if (token) {
       const newSocket = io(
-        process.env.REACT_APP_SOCKET_URL || 'http://localhost:3006',
-      // 'https://demo-deploy-be.onrender.com',
+        // process.env.REACT_APP_SOCKET_URL || 'http://localhost:3006',
+      'https://demo-deploy-be.onrender.com',
         {
           extraHeaders: {
             Authorization: `Bearer ${token}`,
