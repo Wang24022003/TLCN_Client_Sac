@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
@@ -36,11 +36,27 @@ import Dashboard from "./pages/Dashboard";
 import ProtectUser from "./utils/ProtectUser";
 import Notifications from "./pages/Notifications";
 import VoucherList from "./pages/VoucherList";
+import ScrollToTop from "./components/ScrollToTop";
+import LogoSplashScreen from "./components/LogoSplashScreen";
 
 function App() {
+const [isSplashVisible, setIsSplashVisible] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsSplashVisible(false);
+    }, 1500); // thời gian splash screen (ms) – bạn có thể đổi
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isSplashVisible) {
+    return <LogoSplashScreen />;
+  }
+
   return (
     <>
       <BrowserRouter>
+      <ScrollToTop />
         <Routes>
             <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />

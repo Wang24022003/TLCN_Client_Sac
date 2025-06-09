@@ -47,10 +47,10 @@ const Layout = () => {
       <Header socket={socket} />
       <Outlet />
       <Footer />
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className="fixed bottom-6 right-6 z-[1100]">
         <ChatButton token={token} socket={socket} user={user} />
       </div>
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className="fixed bottom-6 right-6 z-[1100]">
         <ChatBot />
       </div>
 

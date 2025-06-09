@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { FaRegQuestionCircle } from "react-icons/fa";
+import { FaRegQuestionCircle, FaThumbsUp } from "react-icons/fa";
 import { FiMessageSquare } from "react-icons/fi";
 import { IoMdSend } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,38 +17,87 @@ const ChatBot = () => {
 useEffect(() => {
   localStorage.setItem("chatMessages", JSON.stringify(messages));
 }, [messages]);
+  const textareaRef = useRef(null);
 
   const [input, setInput] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const user = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
 
+useEffect(() => {
+  if (textareaRef.current) {
+    textareaRef.current.style.height = "auto";
+    textareaRef.current.style.height = textareaRef.current.scrollHeight + "px";
+  }
+}, [input]);
 
 
- const handleSend = async () => {
-  if (!input.trim()) return;
-  // if (!user) {
-  //     const timestamp = new Date().toISOString();
-  //     const warningMsg = {
-  //       from: "bot",
-  //       text: "Để sử dụng Trợ lý ảo Sắc, bạn vui lòng đăng nhập hoặc đăng ký tài khoản nhé!",
-  //       timestamp,
-  //     };
-  //     // Gửi tin nhắn người dùng trước rồi tới tin nhắn bot cảnh báo
-  //     const userMessage = { from: "user", text: input, timestamp };
-  //     setMessages((prev) => [...prev, userMessage, warningMsg]);
-  //     setInput("");
-  //     return;
-  //   }
+//  const handleSend = async () => {
+//   if (!input.trim()) return;
+//   // if (!user) {
+//   //     const timestamp = new Date().toISOString();
+//   //     const warningMsg = {
+//   //       from: "bot",
+//   //       text: "Để sử dụng Trợ lý ảo Sắc, bạn vui lòng đăng nhập hoặc đăng ký tài khoản nhé!",
+//   //       timestamp,
+//   //     };
+//   //     // Gửi tin nhắn người dùng trước rồi tới tin nhắn bot cảnh báo
+//   //     const userMessage = { from: "user", text: input, timestamp };
+//   //     setMessages((prev) => [...prev, userMessage, warningMsg]);
+//   //     setInput("");
+//   //     return;
+//   //   }
+//   const timestamp = new Date().toISOString();
+//   const userMessage = { from: "user", text: input, timestamp };
+//   const updatedMessages = [...messages, userMessage];
+//   setMessages(updatedMessages);
+//   setInput("");
+//   setIsLoading(true);
+
+//   try {
+//     const res = await dispatch(chatbot(input));
+
+//     setIsLoading(false);
+
+//     if (res.payload?.data?.answer) {
+//       const botMessage = {
+//         from: "bot",
+//         text: res.payload.data.answer,
+//         timestamp: new Date().toISOString(),
+//       };
+//       setMessages([...updatedMessages, botMessage]);
+//     } else {
+//       const errorMsg = {
+//         from: "bot",
+//         text: "Xin lỗi, tôi chưa hiểu ý bạn.",
+//         timestamp: new Date().toISOString(),
+//       };
+//       setMessages([...updatedMessages, errorMsg]);
+//     }
+//   } catch (error) {
+//     setIsLoading(false); 
+//     const errorMsg = {
+//       from: "bot",
+//       text: "Đã xảy ra lỗi khi gọi trợ lý. Vui lòng thử lại.",
+//       timestamp: new Date().toISOString(),
+//     };
+//     setMessages([...updatedMessages, errorMsg]);
+//   }
+// };
+
+const handleSend = async (customText) => {
+  const messageText = customText ?? input;
+  if (!messageText.trim()) return;
+
   const timestamp = new Date().toISOString();
-  const userMessage = { from: "user", text: input, timestamp };
+  const userMessage = { from: "user", text: messageText, timestamp };
   const updatedMessages = [...messages, userMessage];
   setMessages(updatedMessages);
   setInput("");
   setIsLoading(true);
 
   try {
-    const res = await dispatch(chatbot(input));
+    const res = await dispatch(chatbot(messageText)); // dùng messageText thay vì input
 
     setIsLoading(false);
 
@@ -68,7 +117,7 @@ useEffect(() => {
       setMessages([...updatedMessages, errorMsg]);
     }
   } catch (error) {
-    setIsLoading(false); 
+    setIsLoading(false);
     const errorMsg = {
       from: "bot",
       text: "Đã xảy ra lỗi khi gọi trợ lý. Vui lòng thử lại.",
@@ -78,10 +127,13 @@ useEffect(() => {
   }
 };
 
+const handleKeyPress = (e) => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault(); // tránh xuống dòng
+    handleSend();
+  }
+};
 
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") handleSend();
-  };
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -118,7 +170,7 @@ useEffect(() => {
           <button onClick={() => setIsOpen(false)} className="text-white text-xl">×</button>
         </div>
 
-        <div className="flex-1 overflow-y-auto overflow-x-hidden p-3 space-y-3">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden p-3 space-y-3  scrollbar-hide">
           {messages.map((msg, index) => (
             <div
               key={index}
@@ -143,22 +195,23 @@ useEffect(() => {
               {/* Nội dung tin nhắn */}
               <div className="flex flex-col max-w-[calc(100%-2.5rem)]">
                 <div
-                  className={`p-2 rounded-lg break-words whitespace-pre-wrap ${
+                  className={`p-2 rounded-lg break-words whitespace-pre-wrap shadow-md transition duration-300 ease-in-out transform hover:scale-[1.02] ${
                     msg.from === "bot"
-                      ? "bg-gray-100 text-left text-black"
-                      : "bg-[#013f37] text-right text-white"
+                      ? "bg-gray-100 text-left text-black rounded-bl-none"
+                      : "bg-gradient-to-r from-[#00796B] to-[#004D40] text-left text-white rounded-br-none"
                   }`}
                 >
                   <span
                     dangerouslySetInnerHTML={{
                       __html: msg.text.replace(
                         /(https?:\/\/[^\s]+)/g,
-                        (url) => `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline break-all">${url}</a>`
+                        (url) =>
+                          `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline break-all">${url}</a>`
                       ),
                     }}
                   />
-
                 </div>
+
                 <div
                   className={`text-[10px] mt-1 text-gray-500 ${
                     msg.from === "bot" ? "text-left" : "text-right self-end"
@@ -171,6 +224,7 @@ useEffect(() => {
                     })}
                 </div>
               </div>
+
             </div>
           ))}
           <div ref={messagesEndRef} />
@@ -201,23 +255,39 @@ useEffect(() => {
         )}
 
           <div className="p-2 border-t flex items-center gap-2">
-            <input
-              className="flex-1 border rounded-lg px-3 py-1 text-sm focus:outline-none"
-              type="text"
+           <textarea
+              ref={textareaRef}
+              className="flex-1 border rounded-lg px-3 py-1 text-sm focus:outline-none resize-none max-h-32 overflow-y-auto scrollbar-hide"
               value={input}
               placeholder="Hỏi Sắc về thời trang..."
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyPress}
+              rows={1}
             />
-            <button
-              onClick={handleSend}
-              style={{ color: "#002E27" }}
-              className="text-xl"
-              onMouseEnter={e => (e.currentTarget.style.color = "#005248")}
-              onMouseLeave={e => (e.currentTarget.style.color = "#002E27")}
-            >
-              <IoMdSend />
-            </button>
+
+
+            {input.trim() === "" ? (
+              <button
+                onClick={() => handleSend("👍")}
+                className="text-2xl text-green-600 hover:text-green-700 transition duration-200"
+                title="Gửi Like"
+              >
+                <FaThumbsUp />
+              </button>
+
+            ) : (
+              <button
+                onClick={handleSend}
+                style={{ color: "#002E27" }}
+                className="text-xl hover:scale-110 transition"
+                onMouseEnter={(e) => (e.currentTarget.style.color = "#005248")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "#002E27")}
+                title="Gửi tin nhắn"
+              >
+                <IoMdSend />
+              </button>
+            )}
+
 
           </div>
         </div>

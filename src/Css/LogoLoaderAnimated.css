@@ -1,0 +1,77 @@
+.logo-animated-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible; 
+}
+
+
+.spinner-dots {
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  animation: spin 1.2s linear infinite;
+  z-index: 0;
+}
+
+/* Mỗi chấm được đặt trên đường tròn bằng rotate + translate */
+.spinner-dots div {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: #006156;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform-origin: center;
+  animation: scale 1.2s infinite ease-in-out;
+}
+
+.spinner-dots div:nth-child(1)  { transform: rotate(0deg)    translate(80px); animation-delay: 0s; }
+.spinner-dots div:nth-child(2)  { transform: rotate(45deg)   translate(80px); animation-delay: 0.1s; }
+.spinner-dots div:nth-child(3)  { transform: rotate(90deg)   translate(80px); animation-delay: 0.2s; }
+.spinner-dots div:nth-child(4)  { transform: rotate(135deg)  translate(80px); animation-delay: 0.3s; }
+.spinner-dots div:nth-child(5)  { transform: rotate(180deg)  translate(80px); animation-delay: 0.4s; }
+.spinner-dots div:nth-child(6)  { transform: rotate(225deg)  translate(80px); animation-delay: 0.5s; }
+.spinner-dots div:nth-child(7)  { transform: rotate(270deg)  translate(80px); animation-delay: 0.6s; }
+.spinner-dots div:nth-child(8)  { transform: rotate(315deg)  translate(80px); animation-delay: 0.7s; }
+
+@keyframes spin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes scale {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.5); opacity: 0.5; }
+}
+
+.logo-text {
+  z-index: 1;
+  position: relative;
+  font-size: 56px;
+  font-family: 'Great Vibes', cursive;
+  font-weight: 400;
+  padding: 10px 20px; 
+  background: linear-gradient(270deg, #ff0080, #ff8c00, #40e0d0);
+  background-size: 600% 600%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: textGradient 4s ease infinite;
+  text-align: center;
+  line-height: 1.2;
+}
+
+
+@keyframes textGradient {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
