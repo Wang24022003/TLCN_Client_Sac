@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { chatbot } from "../features/user/userSlice";
 import "./../Css/CssChatBot.css";
 import { useNavigate } from "react-router-dom";
+import { BiReset } from "react-icons/bi";
+
 const ChatBot = () => {
   const [messages, setMessages] = useState(() => {
     const savedMessages = localStorage.getItem("chatMessages");
@@ -14,16 +16,21 @@ const ChatBot = () => {
         : [{ from: "bot", text: "Xin chào! Tôi có thể giúp gì cho bạn về thời trang hôm nay?" }];
   });
 
-
+const [enableStorage, setEnableStorage] = useState(true);
 useEffect(() => {
-  localStorage.setItem("chatMessages", JSON.stringify(messages));
-}, [messages]);
+  if (enableStorage) {
+    localStorage.setItem("chatMessages", JSON.stringify(messages));
+  }
+}, [messages, enableStorage]);
+
   const textareaRef = useRef(null);
 
   const [input, setInput] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const user = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
+  
+
 
 useEffect(() => {
   if (textareaRef.current) {
@@ -187,6 +194,37 @@ useEffect(() => {
   }
 }, [isOpen]);
 
+const handleResetConversation = async () => {
+  setEnableStorage(false); // ✳️ Dừng lưu tạm thời
+  setMessages([]);
+  setInput("");
+  setIsLoading(true);
+  localStorage.removeItem("chatMessages");
+  localStorage.removeItem("chatScrollPosition");
+
+  try {
+    await dispatch(chatbot("reset đoạn hội thoại"));
+  } catch (error) {
+    console.error("Lỗi khi reset hội thoại:", error);
+  } finally {
+    // Gán lại tin nhắn chào
+    const initial = [
+      {
+        from: "bot",
+        text: "Xin chào! Tôi có thể giúp gì cho bạn về thời trang hôm nay?",
+        timestamp: new Date().toISOString(),
+      },
+    ];
+    setMessages(initial);
+    setTimeout(() => {
+      setEnableStorage(true); // ✳️ Bật lưu lại sau khi reset hoàn tất
+    }, 300); // delay nhẹ để tránh write vội
+    setIsLoading(false);
+  }
+};
+
+
+
 
   return (
     <div className="text-sm font-sans">
@@ -207,73 +245,77 @@ useEffect(() => {
           </div>
 
           {/* Nút đóng */}
-          <button onClick={() => setIsOpen(false)} className="text-white text-xl">×</button>
-        </div>
-
-        <div className="flex-1 overflow-y-auto overflow-x-hidden p-3 space-y-3  scrollbar-hide"  
-        ref={chatBoxRef}
-        onScroll={handleScroll}>
-          {messages.map((msg, index) => (
-            <div
-              key={index}
-              className={`flex items-start ${msg.from === "bot" ? "flex-row" : "flex-row-reverse"} gap-2`}
+        <div className="flex items-center gap-2">
+            <button
+              onClick={handleResetConversation}
+              title="Đặt lại hội thoại"
+              className="text-white hover:text-yellow-300 transition text-lg"
             >
-              {/* Avatar */}
-              {/* <div className="relative flex-shrink-0">
-                <img
-                  src={msg.from === "bot" ? "https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748926638/sac_i6km92.png" : user?.avatar || "https://www.w3schools.com/howto/img_avatar.png"}
-                  alt="Avatar"
-                  className="w-8 h-8 rounded-full object-cover border-[2px] border-#181818FF"
-                />
-                {msg.from === "bot" && (
-                  <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
-                )}
-                {msg.from === "user" && (
-                  <span className="absolute bottom-0 left-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
-                )}
-              </div> */}
-
-
-              {/* Nội dung tin nhắn */}
-              <div className="flex flex-col max-w-[calc(100%-2.5rem)]">
-                <div
-                  className={`p-2 rounded-lg break-words whitespace-pre-wrap shadow-md transition duration-300 ease-in-out transform hover:scale-[1.02] ${
-                    msg.from === "bot"
-                      ? "bg-gray-100 text-left text-black rounded-bl-none"
-                      : "bg-gradient-to-r from-[#00796B] to-[#004D40] text-left text-white rounded-br-none"
-                  }`}
-                >
-                <span
-                  dangerouslySetInnerHTML={{
-                    __html: renderMessageWithLinks(
-                      msg.text.replace(
-                        /(https?:\/\/[^\s]+)/g,
-                        (url) =>
-                          `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline break-all">${url}</a>`
-                      )
-                    ),
-                  }}
-                />
-
-                </div>
-
-                <div
-                  className={`text-[10px] mt-1 text-gray-500 ${
-                    msg.from === "bot" ? "text-left" : "text-right self-end"
-                  }`}
-                >
-                  {msg.timestamp &&
-                    new Date(msg.timestamp).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                </div>
-              </div>
-
-            </div>
-          ))}
-          <div ref={messagesEndRef} />
+              <BiReset />
+            </button>
+            <button
+              onClick={() => setIsOpen(false)}
+              className="text-white text-xl hover:text-red-400 transition"
+            >
+              ×
+            </button>
+          </div>
         </div>
+
+        <div
+          className="flex-1 overflow-y-auto overflow-x-hidden p-3 space-y-3 scrollbar-hide"
+          ref={chatBoxRef}
+          onScroll={handleScroll}
+        >
+          {isLoading && messages.length === 0 ? (
+            <div className="flex justify-center items-center h-full">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-4 border-b-4 border-green-600 border-solid" />
+            </div>
+          ) : (
+            <>
+              {messages.map((msg, index) => (
+                <div
+                  key={index}
+                  className={`flex items-start ${msg.from === "bot" ? "flex-row" : "flex-row-reverse"} gap-2`}
+                >
+                  <div className="flex flex-col max-w-[calc(100%-2.5rem)]">
+                    <div
+                      className={`p-2 rounded-lg break-words whitespace-pre-wrap shadow-md transition duration-300 ease-in-out transform hover:scale-[1.02] ${
+                        msg.from === "bot"
+                          ? "bg-gray-100 text-left text-black rounded-bl-none"
+                          : "bg-gradient-to-r from-[#00796B] to-[#004D40] text-left text-white rounded-br-none"
+                      }`}
+                    >
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: renderMessageWithLinks(
+                            msg.text.replace(/(https?:\/\/[^\s]+)/g, (url) =>
+                              `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline break-all">${url}</a>`
+                            )
+                          ),
+                        }}
+                      />
+                    </div>
+
+                    <div
+                      className={`text-[10px] mt-1 text-gray-500 ${
+                        msg.from === "bot" ? "text-left" : "text-right self-end"
+                      }`}
+                    >
+                      {msg.timestamp &&
+                        new Date(msg.timestamp).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                    </div>
+                  </div>
+                </div>
+              ))}
+              <div ref={messagesEndRef} />
+            </>
+          )}
+        </div>
+
         {isLoading && (
           <div className="flex items-start flex-row gap-2">
             {/* Avatar bot */}
