@@ -458,7 +458,7 @@ const Header = ({ socket }) => {
                           src={userState?.avatar}
                           alt="Avatar"
                           style={{
-                            width: "44px",              // Đảm bảo chiều rộng là 24px
+                            width: "43px",              // Đảm bảo chiều rộng là 24px
                             height: "30px",             // Đảm bảo chiều cao là 24px
                             borderRadius: "50%",       // Để ảnh thành hình tròn
                             objectFit: "cover",        // Đảm bảo ảnh không bị méo

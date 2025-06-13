@@ -5,6 +5,7 @@ import { IoMdSend } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { chatbot } from "../features/user/userSlice";
 import "./../Css/CssChatBot.css";
+import { useNavigate } from "react-router-dom";
 const ChatBot = () => {
   const [messages, setMessages] = useState(() => {
     const savedMessages = localStorage.getItem("chatMessages");
@@ -143,10 +144,49 @@ const handleKeyPress = (e) => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
   
+  
   function extractLinks(text) {
   const urlRegex = /(https?:\/\/[^\s]+)/g;
   return text.match(urlRegex) || [];
 }
+
+const navigate = useNavigate();
+
+const renderMessageWithLinks = (text) => {
+  return text.replace(
+    /\*\*(.*?)\*\* - ID: `([a-f0-9]{24})`/g,
+    (_, name, id) =>
+      `<strong>${name}</strong> - <a href="#" onclick="navigateToProduct('${id}')" class="text-green-600 underline">Xem chi tiết</a>`
+  );
+};
+
+
+useEffect(() => {
+  window.navigateToProduct = (id) => {
+    navigate("/product/" + id);
+  };
+}, []);
+
+const chatBoxRef = useRef(null);
+
+const handleScroll = () => {
+  if (chatBoxRef.current) {
+    const scrollTop = chatBoxRef.current.scrollTop;
+    localStorage.setItem("chatScrollPosition", scrollTop);
+  }
+};
+
+useEffect(() => {
+  if (isOpen) {
+    setTimeout(() => {
+      const savedScroll = localStorage.getItem("chatScrollPosition");
+      if (chatBoxRef.current && savedScroll) {
+        chatBoxRef.current.scrollTop = parseInt(savedScroll, 10);
+      }
+    }, 100); // Delay nhẹ để khung chat render xong
+  }
+}, [isOpen]);
+
 
   return (
     <div className="text-sm font-sans">
@@ -170,7 +210,9 @@ const handleKeyPress = (e) => {
           <button onClick={() => setIsOpen(false)} className="text-white text-xl">×</button>
         </div>
 
-        <div className="flex-1 overflow-y-auto overflow-x-hidden p-3 space-y-3  scrollbar-hide">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden p-3 space-y-3  scrollbar-hide"  
+        ref={chatBoxRef}
+        onScroll={handleScroll}>
           {messages.map((msg, index) => (
             <div
               key={index}
@@ -201,15 +243,18 @@ const handleKeyPress = (e) => {
                       : "bg-gradient-to-r from-[#00796B] to-[#004D40] text-left text-white rounded-br-none"
                   }`}
                 >
-                  <span
-                    dangerouslySetInnerHTML={{
-                      __html: msg.text.replace(
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: renderMessageWithLinks(
+                      msg.text.replace(
                         /(https?:\/\/[^\s]+)/g,
                         (url) =>
                           `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline break-all">${url}</a>`
-                      ),
-                    }}
-                  />
+                      )
+                    ),
+                  }}
+                />
+
                 </div>
 
                 <div
