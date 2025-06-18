@@ -24,7 +24,7 @@ useEffect(() => {
 }, [messages, enableStorage]);
 
   const textareaRef = useRef(null);
-
+  const [isResetting, setIsResetting] = useState(false);
   const [input, setInput] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const user = useSelector((state) => state.auth.user);
@@ -95,7 +95,7 @@ useEffect(() => {
 
 const handleSend = async (customText) => {
   const messageText = customText ?? input;
-  if (!messageText.trim()) return;
+  if (typeof messageText !== "string" || !messageText.trim()) return;
 
   const timestamp = new Date().toISOString();
   const userMessage = { from: "user", text: messageText, timestamp };
@@ -159,13 +159,81 @@ const handleKeyPress = (e) => {
 
 const navigate = useNavigate();
 
+
+// const validProductIds = [
+//   "683eba0304766e3d92001022",
+//   "683ebb0104766e3d92001241",
+//   "683ebbfa04766e3d92001638",
+//   "683ebca904766e3d92001934",
+//   "683ebd5004766e3d92001b9d",
+//   "683ebdd704766e3d92001dc6",
+//   "683ebe6304766e3d92001fff",
+//   "683ebee004766e3d92002464",
+//   "683ebf9c04766e3d92002c49",
+//   "683ec06d04766e3d92002eaa",
+//   "683ec0ea04766e3d92003115",
+//   "683ec1a704766e3d9200338e",
+//   "683ec2e504766e3d920037cd",
+//   "683ec3f804766e3d920039c4",
+//   "683ec45004766e3d92003bc3",
+//   "683ec57e04766e3d92003fd4",
+//   "683ec94704766e3d92004239",
+//   "683ec9e204766e3d920044a2",
+//   "683eca5004766e3d9200471b",
+//   "683ecaf604766e3d920049b2",
+//   "683ecbaf04766e3d92004c52",
+//   "683ecc1f04766e3d92004eeb",
+//   "683ecc8304766e3d92005184"
+// ];
+
+const productIdToIdMap = {
+  "683eba0304766e3d92001010": "683eba0304766e3d92001010",
+  "683ebb0104766e3d92001237": "683ebb0104766e3d92001237",
+  "683ebbfa04766e3d9200162e": "683ebbfa04766e3d9200162e",
+  "683ebca904766e3d9200192a": "683ebca904766e3d9200192a",
+  "683ebd5004766e3d92001b93": "683ebd5004766e3d92001b93",
+  "683ebdd704766e3d92001dbc": "683ebdd704766e3d92001dbc",
+  "683ebe6304766e3d92001ff5": "683ebe6304766e3d92001ff5",
+  "683ebee004766e3d9200245e": "683ebee004766e3d9200245e",
+  "683ebf9c04766e3d92002c41": "683ebf9c04766e3d92002c41",
+  "683ec06d04766e3d92002ea0": "683ec06d04766e3d92002ea0",
+  "683ec0ea04766e3d9200310d": "683ec0ea04766e3d9200310d",
+  "683ec1a704766e3d92003386": "683ec1a704766e3d92003386",
+  "683ec2e504766e3d920037c5": "683ec2e504766e3d920037c5",
+  "683ec3f804766e3d920039ba": "683ec3f804766e3d920039ba",
+  "683ec45004766e3d92003bb9": "683ec45004766e3d92003bb9",
+  "683ec57e04766e3d92003fbe": "683ec57e04766e3d92003fbe",
+  "683ec94704766e3d92004223": "683ec94704766e3d92004223",
+  "683ec9e204766e3d92004494": "683ec9e204766e3d92004494",
+  "683eca5004766e3d92004711": "683eca5004766e3d92004711",
+  "683ecaf604766e3d920049a4": "683ecaf604766e3d920049a4",
+  "683ecbaf04766e3d92004c4d": "683ecbaf04766e3d92004c4d",
+  "683ecc1f04766e3d92004ee8": "683ecc1f04766e3d92004ee8",
+  "683ecc8204766e3d92005181": "683ecc8204766e3d92005181"
+};
+const validProductIds = Object.values(productIdToIdMap); 
+
 const renderMessageWithLinks = (text) => {
-  return text.replace(
-    /\*\*(.*?)\*\* - ID: `([a-f0-9]{24})`/g,
-    (_, name, id) =>
-      `<strong>${name}</strong> - <a href="#" onclick="navigateToProduct('${id}')" class="text-green-600 underline">Xem chi tiết</a>`
+  const linkedText = text.replace(
+    /(.+?)\s*[-:–]\s*ID:\s*([a-f0-9]{24})/gi,
+    (_, name, id) => {
+      const realId = productIdToIdMap[id] || id; // nếu là productId thì đổi sang _id
+
+      const isValid = validProductIds.includes(realId); // kiểm tra _id, không phải productId
+
+      return isValid
+        ? `<strong>${name.trim()}</strong> - <a href="#" onclick="navigateToProduct('${realId}')" class="text-green-600 underline">Xem chi tiết</a>`
+        : `<strong>${name.trim()}</strong> (ID: ${id})`;
+    }
+  );
+
+  return linkedText.replace(/(https?:\/\/[^\s]+)/g, (url) =>
+    `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline break-all">${url}</a>`
   );
 };
+
+
+
 
 
 useEffect(() => {
@@ -197,6 +265,7 @@ useEffect(() => {
 const handleResetConversation = async () => {
   setEnableStorage(false); // ✳️ Dừng lưu tạm thời
   setMessages([]);
+  setIsResetting(true);
   setInput("");
   setIsLoading(true);
   localStorage.removeItem("chatMessages");
@@ -220,8 +289,10 @@ const handleResetConversation = async () => {
       setEnableStorage(true); // ✳️ Bật lưu lại sau khi reset hoàn tất
     }, 300); // delay nhẹ để tránh write vội
     setIsLoading(false);
+    setIsResetting(false);
   }
 };
+
 
 
 
@@ -316,7 +387,7 @@ const handleResetConversation = async () => {
           )}
         </div>
 
-        {isLoading && (
+        {isLoading && !isResetting &&(
           <div className="flex items-start flex-row gap-2">
             {/* Avatar bot */}
             <div className="relative flex-shrink-0">

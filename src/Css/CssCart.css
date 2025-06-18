@@ -35,6 +35,21 @@
   position: relative;
   overflow: hidden;
 }
+.gold-toggle-btn2 {
+  background-color: rgba(255, 255, 255, 0.15); /* nền trắng mờ */
+  color: #002E29;
+  font-weight: bold;
+  font-size: 14px;
+  border: 1px solid #000000;
+  border-radius: 8px;
+  padding: 10px 20px;
+  width: 180px;
+  margin: 0 0 0 auto;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
 
 .btn-inner {
   position: relative;
@@ -91,6 +106,28 @@
   transform: scale(0.97);
 }
 
+.gold-toggle-btn2:hover {
+  background-color: #002E29; /* đỏ đẹp kiểu Bootstrap */
+  border-color: #002E29;
+  color: #fff;
+}
+
+.gold-toggle-btn2:hover .icon-left {
+  left: -10px;
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+.gold-toggle-btn2:hover .icon-right {
+  right: -10px;
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+
+.gold-toggle-btn2:active {
+  transform: scale(0.97);
+}
 
 /* thanh toán */
 .checkout-fancy-btn {

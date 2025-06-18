@@ -76,11 +76,26 @@ export const updateOrder = createAsyncThunk(
   }
 );
 
+
+export const getUserReviews = createAsyncThunk(
+  "product/getUserReviews",
+  async (data, thunkAPI) => {
+    const re = await productSevice.getUserReviews(data);
+    if (re && re.data) {
+      return re;
+    } else {
+      return thunkAPI.rejectWithValue(re);
+    }
+  }
+);
+
+
 const productState = {
   product: [],
   compareList: [],
   singleproduct: null,
   addToWishlist: null,
+  userReviews: [],
   rating: null,
   isReload: false,
   isError: false,
@@ -190,6 +205,22 @@ export const productSlice = createSlice({
         state.isSuccess = false;
         state.message = action.error;
       })
+      .addCase(getUserReviews.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getUserReviews.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.userReviews = action.payload.data.result; // ✅ Gán danh sách đánh giá
+      })
+      .addCase(getUserReviews.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
+
       .addCase(addRating.pending, (state) => {
         state.isLoading = true;
       })
@@ -232,6 +263,7 @@ export const productSlice = createSlice({
         state.message = action.error;
         state.isLoading = false;
       });
+      
   },
 });
 

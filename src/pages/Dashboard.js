@@ -41,7 +41,11 @@ const Dashboard = () => {
       setSelectedMenu('history');
     } else if (path.includes('/dashboard/my-orders')) {
       setSelectedMenu('my-orders');
-    } else if (path.includes('/dashboard/my-wishlist')) {
+    } 
+    else if (path.includes('/dashboard/my-reviews')) {
+      setSelectedMenu('my-reviews');
+    }
+    else if (path.includes('/dashboard/my-wishlist')) {
       setSelectedMenu('my-wishlist');
     } else if (path.includes('/dashboard/voucher')) {
       setSelectedMenu('voucher');
@@ -80,307 +84,336 @@ const Dashboard = () => {
                 style={{ backgroundColor: 'rgba(0, 46, 41, 1)' }}
                 className="h-[2px] w-full my-2"
               />
-
-              
-              <li
-                className={`relative flex items-center gap-2 py-3 px-4 rounded-lg cursor-pointer ${
-                  selectedMenu === 'my-profile' ? 'nav-selected justify-center' : 'hover:bg-slate-100'
-                }`}
-                
-                onClick={() => handleMenuClick('my-profile')}
-              >
-                {/* Ảnh nền bên trái */}
-                {selectedMenu === 'my-profile' && (
-                  <img
-                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
-                    alt="left-decor"
-                    className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
-                    style={{ transform: 'translateY(-50%)' }}
-                  />
-                )}
-
-                {/* Nội dung */}
-                <RiAccountCircleLine className="text-xl z-10" />
-                <Link
-                  to="/dashboard/my-profile"
-                  className="block z-10"
-                  style={{ textDecoration: 'none', color: 'inherit' }}
-                >
-                  Tài khoản của tôi
-                </Link>
-
-                {/* Ảnh nền bên phải */}
-                {selectedMenu === 'my-profile' && (
-                  <img
-                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
-                    alt="right-decor"
-                    className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
-                    style={{ transform: 'translateY(-50%)' }}
-                  />
-                )}
-              </li>
-
         
+              <Link
+                to="/dashboard/my-profile"
+                onClick={() => handleMenuClick('my-profile')}
+                className="block w-full"  // ⬅️ Đây là điểm quan trọng để giữ chiều ngang
+                style={{ textDecoration: 'none', color: 'inherit' }}
+              >
+                <li
+                  className={`relative flex items-center gap-2 py-3 px-4 rounded-lg cursor-pointer ${
+                    selectedMenu === 'my-profile' ? 'nav-selected justify-center' : 'hover:bg-slate-100'
+                  }`}
+                >
+                  {/* Ảnh nền bên trái */}
+                  {selectedMenu === 'my-profile' && (
+                    <img
+                      src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
+                      alt="left-decor"
+                      className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
+                      style={{ transform: 'translateY(-50%)' }}
+                    />
+                  )}
 
-              <li
-                className={`relative flex items-center  gap-2 py-3 px-4 rounded-lg cursor-pointer ${
-                  selectedMenu === 'address' ? 'nav-selected justify-center' : 'hover:bg-slate-100'
-                }`}
+                  {/* Nội dung */}
+                  <RiAccountCircleLine className="text-xl z-10" />
+                  <span className="block z-10">Tài khoản của tôi</span>
+
+                  {/* Ảnh nền bên phải */}
+                  {selectedMenu === 'my-profile' && (
+                    <img
+                      src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
+                      alt="right-decor"
+                      className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
+                      style={{ transform: 'translateY(-50%)' }}
+                    />
+                  )}
+                </li>
+              </Link>
+
+              <Link
+                to="/dashboard/address"
                 onClick={() => handleMenuClick('address')}
+                className="block w-full"
+                style={{ textDecoration: 'none', color: 'inherit' }}
               >
-                {/* Ảnh nền bên trái */}
-                {selectedMenu === 'address' && (
-                  <img
-                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
-                    alt="left-decor"
-                    className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
-                    style={{ transform: 'translateY(-50%)' }}
-                  />
-                )}
-
-                {/* Nội dung */}
-                <FaMapMarkerAlt className="text-xl z-10" />
-                <Link
-                  to="/dashboard/address"
-                  className="block z-10"
-                  style={{ textDecoration: 'none', color: 'inherit' }}
+                <li
+                  className={`relative flex items-center gap-2 py-3 px-4 rounded-lg cursor-pointer ${
+                    selectedMenu === 'address' ? 'nav-selected justify-center' : 'hover:bg-slate-100'
+                  }`}
                 >
-                  Địa chỉ
-                </Link>
+                  {/* Ảnh nền bên trái */}
+                  {selectedMenu === 'address' && (
+                    <img
+                      src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
+                      alt="left-decor"
+                      className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
+                      style={{ transform: 'translateY(-50%)' }}
+                    />
+                  )}
 
-                {/* Ảnh nền bên phải */}
-                {selectedMenu === 'address' && (
-                  <img
-                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
-                    alt="right-decor"
-                    className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
-                    style={{ transform: 'translateY(-50%)' }}
-                  />
-                )}
-              </li>
+                  {/* Nội dung */}
+                  <FaMapMarkerAlt className="text-xl z-10" />
+                  <span className="block z-10">Địa chỉ</span>
 
-              <li
-                className={`relative flex items-center gap-2 py-3 px-4 rounded-lg cursor-pointer ${
-                  selectedMenu === 'my-orders' ? 'nav-selected justify-center' : 'hover:bg-slate-100'
-                }`}
+                  {/* Ảnh nền bên phải */}
+                  {selectedMenu === 'address' && (
+                    <img
+                      src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
+                      alt="right-decor"
+                      className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
+                      style={{ transform: 'translateY(-50%)' }}
+                    />
+                  )}
+                </li>
+              </Link>
+
+              <Link
+                to="/dashboard/my-orders"
                 onClick={() => handleMenuClick('my-orders')}
+                className="block w-full"
+                style={{ textDecoration: 'none', color: 'inherit' }}
               >
-                {/* Ảnh nền bên trái */}
-                {selectedMenu === 'my-orders' && (
-                  <img
-                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
-                    alt="left-decor"
-                    className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
-                    style={{ transform: 'translateY(-50%)' }}
-                  />
-                )}
-
-                {/* Nội dung */}
-                <FaClipboardList className="text-xl z-10" />
-                <Link
-                  to="/dashboard/my-orders"
-                  className="block z-10"
-                  style={{ textDecoration: 'none', color: 'inherit' }}
+                <li
+                  className={`relative flex items-center gap-2 py-3 px-4 rounded-lg cursor-pointer ${
+                    selectedMenu === 'my-orders' ? 'nav-selected justify-center' : 'hover:bg-slate-100'
+                  }`}
                 >
-                  Đơn mua
-                </Link>
+                  {/* Ảnh nền bên trái */}
+                  {selectedMenu === 'my-orders' && (
+                    <img
+                      src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
+                      alt="left-decor"
+                      className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
+                      style={{ transform: 'translateY(-50%)' }}
+                    />
+                  )}
 
-                {/* Ảnh nền bên phải */}
-                {selectedMenu === 'my-orders' && (
-                  <img
-                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
-                    alt="right-decor"
-                    className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
-                    style={{ transform: 'translateY(-50%)' }}
-                  />
-                )}
-              </li>
+                  {/* Nội dung */}
+                  <FaClipboardList className="text-xl z-10" />
+                  <span className="block z-10">Đơn mua</span>
 
-              <li
-                className={`relative flex items-center gap-2 py-3 px-4 rounded-lg cursor-pointer ${
-                  selectedMenu === 'product-history' ? 'nav-selected justify-center' : 'hover:bg-slate-100'
-                }`}
+                  {/* Ảnh nền bên phải */}
+                  {selectedMenu === 'my-orders' && (
+                    <img
+                      src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
+                      alt="right-decor"
+                      className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
+                      style={{ transform: 'translateY(-50%)' }}
+                    />
+                  )}
+                </li>
+              </Link>
+ 
+              <Link
+                to="/dashboard/my-reviews"
+                onClick={() => handleMenuClick('my-reviews')}
+                className="block w-full"
+                style={{ textDecoration: 'none', color: 'inherit' }}
+              >
+                <li
+                  className={`relative flex items-center gap-2 py-3 px-4 rounded-lg cursor-pointer ${
+                    selectedMenu === 'my-reviews' ? 'nav-selected justify-center' : 'hover:bg-slate-100'
+                  }`}
+                >
+                  {selectedMenu === 'my-reviews' && (
+                    <img
+                      src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
+                      alt="left-decor"
+                      className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
+                      style={{ transform: 'translateY(-50%)' }}
+                    />
+                  )}
+
+                  <FaBorderAll className="text-xl z-10" />
+                  <span className="block z-10">Đánh giá của tôi</span>
+
+                  {selectedMenu === 'my-reviews' && (
+                    <img
+                      src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
+                      alt="right-decor"
+                      className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
+                      style={{ transform: 'translateY(-50%)' }}
+                    />
+                  )}
+                </li>
+              </Link>
+
+              <Link
+                to="/dashboard/product-history"
                 onClick={() => handleMenuClick('product-history')}
+                className="block w-full"
+                style={{ textDecoration: 'none', color: 'inherit' }}
               >
-                {/* Ảnh nền bên trái */}
-                {selectedMenu === 'product-history' && (
-                  <img
-                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
-                    alt="left-decor"
-                    className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
-                    style={{ transform: 'translateY(-50%)' }}
-                  />
-                )}
-
-                {/* Nội dung */}
-                <FaHistory className="text-xl z-10" />
-                <Link
-                  to="/dashboard/product-history"
-                  className="block z-10"
-                  style={{ textDecoration: 'none', color: 'inherit' }}
+                <li
+                  className={`relative flex items-center gap-2 py-3 px-4 rounded-lg cursor-pointer ${
+                    selectedMenu === 'product-history' ? 'nav-selected justify-center' : 'hover:bg-slate-100'
+                  }`}
                 >
-                  Lịch sử xem
-                </Link>
+                  {/* Ảnh nền bên trái */}
+                  {selectedMenu === 'product-history' && (
+                    <img
+                      src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
+                      alt="left-decor"
+                      className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
+                      style={{ transform: 'translateY(-50%)' }}
+                    />
+                  )}
 
-                {/* Ảnh nền bên phải */}
-                {selectedMenu === 'product-history' && (
-                  <img
-                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
-                    alt="right-decor"
-                    className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
-                    style={{ transform: 'translateY(-50%)' }}
-                  />
-                )}
-              </li>
+                  {/* Nội dung */}
+                  <FaHistory className="text-xl z-10" />
+                  <span className="block z-10">Lịch sử xem</span>
 
-              <li
-                className={`relative flex items-center gap-2 py-3 px-4 rounded-lg cursor-pointer ${
-                  selectedMenu === 'my-wishlist' ? 'nav-selected justify-center' : 'hover:bg-slate-100'
-                }`}
+                  {/* Ảnh nền bên phải */}
+                  {selectedMenu === 'product-history' && (
+                    <img
+                      src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
+                      alt="right-decor"
+                      className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
+                      style={{ transform: 'translateY(-50%)' }}
+                    />
+                  )}
+                </li>
+              </Link>
+
+              <Link
+                to="/dashboard/my-wishlist"
                 onClick={() => handleMenuClick('my-wishlist')}
+                className="block w-full"
+                style={{ textDecoration: 'none', color: 'inherit' }}
               >
-                {/* Ảnh nền bên trái */}
-                {selectedMenu === 'my-wishlist' && (
-                  <img
-                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
-                    alt="left-decor"
-                    className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
-                    style={{ transform: 'translateY(-50%)' }}
-                  />
-                )}
-
-                {/* Nội dung */}
-                <FaHeart className="text-xl z-10" />
-                <Link
-                  to="/dashboard/my-wishlist"
-                  className="block z-10"
-                  style={{ textDecoration: 'none', color: 'inherit' }}
+                <li
+                  className={`relative flex items-center gap-2 py-3 px-4 rounded-lg cursor-pointer ${
+                    selectedMenu === 'my-wishlist' ? 'nav-selected justify-center' : 'hover:bg-slate-100'
+                  }`}
                 >
-                  Sản phẩm yêu thích
-                </Link>
+                  {/* Ảnh nền bên trái */}
+                  {selectedMenu === 'my-wishlist' && (
+                    <img
+                      src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
+                      alt="left-decor"
+                      className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
+                      style={{ transform: 'translateY(-50%)' }}
+                    />
+                  )}
 
-                {/* Ảnh nền bên phải */}
-                {selectedMenu === 'my-wishlist' && (
-                  <img
-                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
-                    alt="right-decor"
-                    className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
-                    style={{ transform: 'translateY(-50%)' }}
-                  />
-                )}
-              </li>
-              
-              <li
-                className={`relative flex items-center gap-2 py-3 px-4 rounded-lg cursor-pointer ${
-                  selectedMenu === 'history' ? 'nav-selected justify-center' : 'hover:bg-slate-100'
-                }`}
+                  {/* Nội dung */}
+                  <FaHeart className="text-xl z-10" />
+                  <span className="block z-10">Sản phẩm yêu thích</span>
+
+                  {/* Ảnh nền bên phải */}
+                  {selectedMenu === 'my-wishlist' && (
+                    <img
+                      src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
+                      alt="right-decor"
+                      className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
+                      style={{ transform: 'translateY(-50%)' }}
+                    />
+                  )}
+                </li>
+              </Link>
+      
+              <Link
+                to="/dashboard/history"
                 onClick={() => handleMenuClick('history')}
+                className="block w-full"
+                style={{ textDecoration: 'none', color: 'inherit' }}
               >
-                {/* Ảnh nền bên trái */}
-                {selectedMenu === 'history' && (
-                  <img
-                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
-                    alt="left-decor"
-                    className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
-                    style={{ transform: 'translateY(-50%)' }}
-                  />
-                )}
-
-                {/* Nội dung */}
-                <FaShoppingCart className="text-xl z-10" />
-                <Link
-                  to="/dashboard/history"
-                  className="block z-10"
-                  style={{ textDecoration: 'none', color: 'inherit' }}
+                <li
+                  className={`relative flex items-center gap-2 py-3 px-4 rounded-lg cursor-pointer ${
+                    selectedMenu === 'history' ? 'nav-selected justify-center' : 'hover:bg-slate-100'
+                  }`}
                 >
-                  Sản phẩm đã mua
-                </Link>
+                  {/* Ảnh nền bên trái */}
+                  {selectedMenu === 'history' && (
+                    <img
+                      src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
+                      alt="left-decor"
+                      className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
+                      style={{ transform: 'translateY(-50%)' }}
+                    />
+                  )}
 
-                {/* Ảnh nền bên phải */}
-                {selectedMenu === 'history' && (
-                  <img
-                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
-                    alt="right-decor"
-                    className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
-                    style={{ transform: 'translateY(-50%)' }}
-                  />
-                )}
-              </li>
+                  {/* Nội dung */}
+                  <FaShoppingCart className="text-xl z-10" />
+                  <span className="block z-10">Sản phẩm đã mua</span>
 
-              <li
-                className={`relative flex items-center gap-2 py-3 px-4 rounded-lg cursor-pointer ${
-                  selectedMenu === 'voucher' ? 'nav-selected justify-center' : 'hover:bg-slate-100'
-                }`}
+                  {/* Ảnh nền bên phải */}
+                  {selectedMenu === 'history' && (
+                    <img
+                      src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
+                      alt="right-decor"
+                      className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
+                      style={{ transform: 'translateY(-50%)' }}
+                    />
+                  )}
+                </li>
+              </Link>
+
+              <Link
+                to="/dashboard/voucher"
                 onClick={() => handleMenuClick('voucher')}
+                className="block w-full"
+                style={{ textDecoration: 'none', color: 'inherit' }}
               >
-                {/* Ảnh nền bên trái */}
-                {selectedMenu === 'voucher' && (
-                  <img
-                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
-                    alt="left-decor"
-                    className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
-                    style={{ transform: 'translateY(-50%)' }}
-                  />
-                )}
-
-                {/* Nội dung */}
-                <FaGift className="text-xl z-10" />
-                <Link
-                  to="/dashboard/voucher"
-                  className="block z-10"
-                  style={{ textDecoration: 'none', color: 'inherit' }}
+                <li
+                  className={`relative flex items-center gap-2 py-3 px-4 rounded-lg cursor-pointer ${
+                    selectedMenu === 'voucher' ? 'nav-selected justify-center' : 'hover:bg-slate-100'
+                  }`}
                 >
-                  Kho Voucher
-                </Link>
+                  {/* Ảnh nền bên trái */}
+                  {selectedMenu === 'voucher' && (
+                    <img
+                      src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
+                      alt="left-decor"
+                      className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
+                      style={{ transform: 'translateY(-50%)' }}
+                    />
+                  )}
 
-                {/* Ảnh nền bên phải */}
-                {selectedMenu === 'voucher' && (
-                  <img
-                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
-                    alt="right-decor"
-                    className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
-                    style={{ transform: 'translateY(-50%)' }}
-                  />
-                )}
-              </li>
+                  {/* Nội dung */}
+                  <FaGift className="text-xl z-10" />
+                  <span className="block z-10">Kho Voucher</span>
 
-              <li
-                className={`relative flex items-center gap-2 py-3 px-4 rounded-lg cursor-pointer ${
-                  selectedMenu === 'notifications' ? 'nav-selected justify-center' : 'hover:bg-slate-100'
-                }`}
+                  {/* Ảnh nền bên phải */}
+                  {selectedMenu === 'voucher' && (
+                    <img
+                      src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
+                      alt="right-decor"
+                      className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
+                      style={{ transform: 'translateY(-50%)' }}
+                    />
+                  )}
+                </li>
+              </Link>
+
+              <Link
+                to="/dashboard/notifications"
                 onClick={() => handleMenuClick('notifications')}
+                className="block w-full"
+                style={{ textDecoration: 'none', color: 'inherit' }}
               >
-                {/* Ảnh nền bên trái */}
-                {selectedMenu === 'notifications' && (
-                  <img
-                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
-                    alt="left-decor"
-                    className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
-                    style={{ transform: 'translateY(-50%)' }}
-                  />
-                )}
-
-                {/* Nội dung */}
-                <FaBell className="text-xl z-10" />
-                <Link
-                  to="/dashboard/notifications"
-                  className="block z-10"
-                  style={{ textDecoration: 'none', color: 'inherit' }}
+                <li
+                  className={`relative flex items-center gap-2 py-3 px-4 rounded-lg cursor-pointer ${
+                    selectedMenu === 'notifications' ? 'nav-selected justify-center' : 'hover:bg-slate-100'
+                  }`}
                 >
-                  Thông Báo
-                </Link>
+                  {/* Ảnh nền bên trái */}
+                  {selectedMenu === 'notifications' && (
+                    <img
+                      src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
+                      alt="left-decor"
+                      className="absolute left-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-left-animation"
+                      style={{ transform: 'translateY(-50%)' }}
+                    />
+                  )}
 
-                {/* Ảnh nền bên phải */}
-                {selectedMenu === 'notifications' && (
-                  <img
-                    src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
-                    alt="right-decor"
-                    className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
-                    style={{ transform: 'translateY(-50%)' }}
-                  />
-                )}
-              </li>
+                  {/* Nội dung */}
+                  <FaBell className="text-xl z-10" />
+                  <span className="block z-10">Thông Báo</span>
 
+                  {/* Ảnh nền bên phải */}
+                  {selectedMenu === 'notifications' && (
+                    <img
+                      src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
+                      alt="right-decor"
+                      className="absolute right-2 top-1/2 w-14 h-14 object-contain pointer-events-none float-right-animation"
+                      style={{ transform: 'translateY(-50%)' }}
+                    />
+                  )}
+                </li>
+              </Link>
 
               {/* Logout */}
               <li

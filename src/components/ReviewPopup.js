@@ -57,7 +57,8 @@ const ReviewPopup = ({ productId, onClose }) => {
   return (
     <div className="popup-overlay" onClick={onClose}>
       <div className="popup-content" onClick={(e) => e.stopPropagation()}>
-        <h4>Viết đánh giá</h4>
+        <h4 className="text-xl font-semibold text-center mb-3">Viết đánh giá</h4>
+
 
         <ReactStars
           count={5}
@@ -140,18 +141,30 @@ const ReviewPopup = ({ productId, onClose }) => {
           </div>
         )}
 
-        <div className="d-flex justify-content-end mt-3">
-          <button className="btn btn-secondary me-2" onClick={onClose}>
+        <div className="d-flex justify-content-end align-items-center gap-2 mt-3">
+          <button className="btn btn-secondary px-4 py-2" style={{ width: "180px" }} onClick={onClose}>
             Hủy
           </button>
-          <button
-            onClick={addRatingToProduct}
-            className="btn btn-primary"
-            type="button"
-          >
-            Gửi đánh giá
-          </button>
+
+          <div className="gold-toggle-btn2" onClick={addRatingToProduct}>
+            <div className="btn-inner">
+              <span className="btn-text">Gửi đánh giá</span>
+
+              <img
+                src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925264/icon-left_zd68q2.png"
+                alt="icon-left"
+                className="btn-icon icon-left"
+              />
+              <img
+                src="https://res.cloudinary.com/dy7jzx0wn/image/upload/v1748925445/icon-right_s7mrvo.png"
+                alt="icon-right"
+                className="btn-icon icon-right"
+              />
+            </div>
+          </div>
         </div>
+
+
       </div>
     </div>
   );

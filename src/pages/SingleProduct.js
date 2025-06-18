@@ -529,6 +529,9 @@ const floatingIconVariants = {
   },
 };
 
+const [filterRating, setFilterRating] = useState(0); // 0 = tất cả, 1–5 = số sao
+
+
   return (
     <>
       <Meta title={productState?.name} />
@@ -1285,6 +1288,18 @@ const floatingIconVariants = {
                       Dựa trên {productState?.quantityComments} đánh giá
                     </p>
                   </div>
+                  <div className="d-flex align-items-center gap-2 mt-2">
+                    <span>Lọc theo sao:</span>
+                    {[5, 4, 3, 2, 1, 0].map((star) => (
+                      <button
+                        key={star}
+                        className={`btn btn-sm ${filterRating === star ? "btn-warning" : "btn-outline-secondary"}`}
+                        onClick={() => setFilterRating(star)}
+                      >
+                        {star === 0 ? "Tất cả" : `${star}★`}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 {orderedProduct && (
@@ -1297,7 +1312,7 @@ const floatingIconVariants = {
               </div>
 
               {/* FORM đánh giá */}
-              <div className="review-form py-4">
+              {/* <div className="review-form py-4">
                 <h4>Viết đánh giá</h4>
 
                 <div>
@@ -1407,12 +1422,14 @@ const floatingIconVariants = {
                     Gửi đánh giá
                   </button>
                 </div>
-              </div>
+              </div> */}
 
               {/* Hiển thị danh sách đánh giá */}
               <div className="reviews mt-4">
                 {reviews &&
-                  reviews.map((item, index) => (
+                reviews
+                  .filter((item) => filterRating === 0 || item.rating === filterRating)
+                  .map((item, index) => (
                     <div className="review my-4" key={index}>
                       <div className="d-flex gap-10 align-items-center">
                         <img
@@ -1449,7 +1466,7 @@ const floatingIconVariants = {
                       </div>
                       <p className="mt-3">{item?.comment}</p>
                       {item?.fileUrl?.length > 0 && (
-                        <div className="d-flex gap-2 flex-wrap mt-2 justify-content-start">
+                        <div className="d-flex gap-2 flex-wrap mt-2 justify-content-start" style={{ marginBottom: "12px" }}>
                           {item.fileUrl.map((img, i) => (
                             <img
                               key={i}
@@ -1461,6 +1478,7 @@ const floatingIconVariants = {
                                 objectFit: "cover",
                                 borderRadius: "4px",
                                 border: "1px solid #ccc",
+                                
                               }}
                             />
                           ))}

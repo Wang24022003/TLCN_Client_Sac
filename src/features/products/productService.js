@@ -50,6 +50,19 @@ const updateOrder = async (data) => {
   return response;
 };
 
+const getUserReviews = async (params = { current: 1, pageSize: 120 }) => {
+  const token = localStorage.getItem("token");
+  const response = await instance.get("/reviews", {
+    params,
+    headers: {
+      Authorization: `Bearer ${token}`, // 👈 Thêm dòng này
+    },
+  });
+  return response;
+};
+
+
+
 export const productSevice = {
   getProducts,
   addToWishlist,
@@ -58,4 +71,5 @@ export const productSevice = {
   updateOrder,
   removeToWishlist,
   getSingleProductForUser,
+  getUserReviews,
 };

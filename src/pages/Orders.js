@@ -466,11 +466,16 @@ const statusCounts = orderState?.reduce((acc, order) => {
                                             height={60}
                                             alt="product"
                                             style={{ objectFit: "cover", borderRadius: "6px", cursor: "pointer" }}
-                                            onClick={() => handleReview(i?.product?._id)}
+                                            // onClick={() => handleReview(i?.product?._id)}
                                           />
                                           {/* Tên + màu + size bên phải, căn lề trái */}
-                                          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
-                                            <span style={{ fontWeight: 600 }}>{i?.product?.name}</span>
+                                          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start",  textAlign: "left" }}>
+                                            <span
+                                              style={{ fontWeight: 600, cursor: "pointer", color: "#007bff" }}
+                                              onClick={() => navigate(`/product/${i?.product?._id}`)}
+                                            >
+                                              {i?.product?.name}
+                                            </span>
 
                                             {i?.color && (
                                               <div style={{ fontSize: "0.85rem", marginTop: 4 }}>

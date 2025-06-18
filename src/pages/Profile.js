@@ -31,31 +31,47 @@ const Profile = () => {
   const [edit, setEdit] = useState(true);
   const [dataProfile, setdataProfile] = useState();
   const [profilebase64, setprofilebase64] = useState();
+
   useEffect(() => {
+  if (!userState || !userState.name) {
+    dispatch(getNewProfile());
+  }
+}, []);
+
+useEffect(() => {
+  if (userState && userState.email) {
     setdataProfile({
       name: userState?.name || "",
-      age: userState?.age || "",
+      age: userState?.age ?? "",
       gender: userState?.gender || TYPE_GENDER.OTHER,
       email: userState?.email || "",
       point: userState?.point || 0,
-      avatar: userState?.avatar,
+      avatar: userState?.avatar || "",
     });
+  }
+}, [userState]);
 
-    return () => {};
-  }, [userState]);
 
-  const handleSubmit = (values) => {
-    dispatch(
-      updateProfile({
+  const handleSubmit = async (values) => {
+    try {
+      const result = await dispatch(updateProfile({
         name: values.name,
         age: values.age,
         gender: values.gender,
-        avatar: values.avatar,
-      })
-    );
-    dispatch(getNewProfile());
-    setEdit(true); // Đóng chế độ chỉnh sửa sau khi cập nhật
+        avatar: values.avatar || dataProfile?.avatar,
+      }));
+
+      if (result?.meta?.requestStatus === "fulfilled") {
+        await dispatch(getNewProfile()); // đảm bảo cập nhật lại dữ liệu mới
+        setEdit(true);
+      } else {
+        alert("Cập nhật thất bại. Vui lòng thử lại!");
+      }
+    } catch (error) {
+      console.error("Lỗi cập nhật hồ sơ:", error);
+    }
   };
+
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0]; // Lấy file được chọn

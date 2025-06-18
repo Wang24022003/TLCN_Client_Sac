@@ -38,6 +38,7 @@ import Notifications from "./pages/Notifications";
 import VoucherList from "./pages/VoucherList";
 import ScrollToTop from "./components/ScrollToTop";
 import LogoSplashScreen from "./components/LogoSplashScreen";
+import UserReviewsPage from "./pages/UserReviewsPage";
 
 function App() {
 const [isSplashVisible, setIsSplashVisible] = useState(true);
@@ -120,6 +121,7 @@ const [isSplashVisible, setIsSplashVisible] = useState(true);
                 <Route path='' element={<Dashboard/>} >
                 <Route path='my-profile' element={<Profile/>} />
                 <Route path='my-orders' element={<Orders/>} />
+                <Route path="my-reviews" element={<UserReviewsPage />} />
                 <Route path="add-address" element={
                     <PrivateRoutes>
                       <AddAddress />
